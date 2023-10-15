@@ -1,0 +1,22 @@
+<template>
+  <div class="flex flex-col gap-4 py-4">
+    <h2>デバイス</h2>
+    <div class="flex flex-col gap-8 mb-4">
+      <template v-for="device in data?.devices" :key="device.id">
+        <NatureDeviceCard :device="device" />
+      </template>
+    </div>
+    <h2>コントロール</h2>
+    <div class="flex flex-col gap-8 mb-4">
+      <template v-for="appliance in data?.appliances" :key="appliance.id">
+        <NatureApplianceCard :appliance="appliance" />
+      </template>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+definePageMeta({ layout: "app", middleware: "auth" });
+
+const { data } = await useFetch("/api/bff/home");
+</script>
