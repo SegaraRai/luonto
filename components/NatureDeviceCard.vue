@@ -8,7 +8,9 @@
           />
           <div v-text="device.name" />
         </div>
-        <NatureDeviceSensorList :items="sensorItems" />
+        <div class="w-20">
+          <NatureDeviceSensorList class="w-full" :items="sensorItems" />
+        </div>
       </div>
     </UCard>
   </ULink>
@@ -21,5 +23,8 @@ const props = defineProps<{
   device: NatureDeviceWithEvents;
 }>();
 
-const sensorItems = useNatureDeviceSensors(computed(() => props.device));
+const sensorItems = useNatureDeviceSensors(
+  computed(() => props.device),
+  true
+);
 </script>

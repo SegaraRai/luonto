@@ -1,18 +1,40 @@
 import { type UseTimeAgoUnitNamesDefault, formatTimeAgo } from "@vueuse/core";
 import { type NatureDeviceWithEvents } from "./natureTypes";
 
-export interface NatureDeviceSensorItem {
+export interface NatureDeviceSensorItemBase {
   readonly class: string;
   readonly icon: string;
   readonly label: string;
-  readonly value: string;
   readonly unit: string;
+  readonly available: boolean;
+  readonly value?: string;
+  readonly timestamp?: string;
+  readonly ago?: string;
+}
+
+export interface NatureDeviceSensorItemAvailable
+  extends NatureDeviceSensorItemBase {
+  readonly available: true;
+  readonly value: string;
   readonly timestamp: string;
   readonly ago: string;
 }
 
+export interface NatureDeviceSensorItemNotAvailable
+  extends NatureDeviceSensorItemBase {
+  readonly available: false;
+  readonly value?: undefined;
+  readonly timestamp?: undefined;
+  readonly ago?: undefined;
+}
+
+export type NatureDeviceSensorItem =
+  | NatureDeviceSensorItemAvailable
+  | NatureDeviceSensorItemNotAvailable;
+
 export function useNatureDeviceSensors(
-  device: MaybeRef<NatureDeviceWithEvents | null | undefined>
+  device: MaybeRef<NatureDeviceWithEvents | null | undefined>,
+  includesNA = false
 ) {
   const now = useNow({
     interval: 30_000,
@@ -23,37 +45,43 @@ export function useNatureDeviceSensors(
       return [];
     }
     return [
-      events.te && {
+      {
         class: "text-orange-400",
         icon: "i-mingcute-high-temperature-line",
         label: "室温",
-        value: `${events.te.val}`,
         unit: "\u00BAC",
-        timestamp: events.te.created_at,
+        object: events.te,
       },
-      events.hu && {
+      {
         class: "text-blue-400",
         icon: "i-mingcute-drop-line",
         label: "湿度",
-        value: `${events.hu.val}`,
         unit: "%",
-        timestamp: events.hu.created_at,
+        object: events.hu,
       },
-      events.il && {
+      {
         class: "text-yellow-400",
         icon: "i-mingcute-light-line",
         label: "明るさ",
-        value: `${events.il.val}`,
         unit: "lx",
-        timestamp: events.il.created_at,
+        object: events.il,
       },
     ]
-      .filter((v): v is NonNullable<typeof v> => !!v)
-      .map(
-        (item): NatureDeviceSensorItem => ({
-          ...item,
+      .map((item): NatureDeviceSensorItem | undefined => {
+        const { object, ...rest } = item;
+        if (!object) {
+          if (includesNA) {
+            return { ...rest, available: false };
+          }
+          return;
+        }
+        return {
+          ...rest,
+          available: true,
+          value: object.val.toString(),
+          timestamp: object.created_at,
           ago: formatTimeAgo<UseTimeAgoUnitNamesDefault>(
-            new Date(item.timestamp),
+            new Date(object.created_at),
             {
               messages: {
                 year: (n: number) => `${n}年`,
@@ -71,7 +99,8 @@ export function useNatureDeviceSensors(
             },
             now.value
           ),
-        })
-      );
+        };
+      })
+      .filter((v): v is NonNullable<typeof v> => !!v);
   });
 }

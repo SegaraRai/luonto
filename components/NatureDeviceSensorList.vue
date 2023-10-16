@@ -6,13 +6,20 @@
     <template v-for="item in items" :key="item.label">
       <div
         class="w-4 h-4"
-        :class="[item.class, item.icon]"
+        :class="[item.class, item.icon, !item.available && 'opacity-50']"
         :aria-label="item.label"
       />
-      <UTooltip :text="`${item.ago}更新`">
-        <span class="text-right pl-[0.5em] pr-[0.25em]" v-text="item.value" />
-      </UTooltip>
-      <span class="text-center" v-text="item.unit" />
+      <template v-if="item.available">
+        <UTooltip :text="`${item.ago}更新`">
+          <span class="text-right pl-[0.5em] pr-[0.25em]" v-text="item.value" />
+        </UTooltip>
+        <span class="text-center" v-text="item.unit" />
+      </template>
+      <template v-else>
+        <span class="text-right pl-[0.5em] pr-[0.25em] col-span-2 opacity-50">
+          N/A
+        </span>
+      </template>
     </template>
   </div>
 </template>
