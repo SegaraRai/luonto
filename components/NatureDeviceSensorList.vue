@@ -5,7 +5,7 @@
   >
     <template v-for="item in items" :key="item.label">
       <div
-        class="w-4 h-4"
+        class="w-[1.25em] h-[1.25em]"
         :class="[item.class, item.icon, !item.available && 'opacity-50']"
         :aria-label="item.label"
       />
