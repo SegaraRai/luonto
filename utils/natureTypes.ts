@@ -18,7 +18,7 @@ export interface NatureDevice {
   readonly id: string;
   readonly name: string;
   readonly mac_address: string;
-  readonly bt_mac_address: string;
+  readonly bt_mac_address?: string;
   readonly serial_number: string;
   readonly firmware_version: string;
   readonly temperature_offset: number;
@@ -34,7 +34,7 @@ export interface NatureDeviceEvent {
   readonly created_at: string;
 }
 
-export interface NatureDeviceDetail extends NatureDevice {
+export interface NatureDeviceWithEvents extends NatureDevice {
   readonly newest_events: Partial<
     Record<NatureDeviceEventType, NatureDeviceEvent>
   >;
@@ -181,5 +181,5 @@ export type NatureAppliance =
 // API
 
 export type NatureAPIGetAppliancesResponse = readonly NatureAppliance[];
-export type NatureAPIGetDevicesResponse = readonly NatureDeviceDetail[];
+export type NatureAPIGetDevicesResponse = readonly NatureDeviceWithEvents[];
 export type NatureAPIGetDeviceAppliancesResponse = readonly NatureAppliance[];

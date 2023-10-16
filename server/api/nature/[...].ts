@@ -1,11 +1,9 @@
-import { createError } from "h3";
-
 export default defineSWEventHandler(async (event) => {
   const token = await getNatureToken(event);
   if (!token) {
     throw createError({
-      status: 401,
-      message: "Unauthorized",
+      statusCode: 401,
+      statusMessage: "Unauthorized",
     });
   }
 

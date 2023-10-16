@@ -4,9 +4,7 @@ import type {
 } from "~/utils/natureTypes";
 
 export default defineSWEventHandler(async (event) => {
-  const headers: HeadersInit = {
-    cookie: event.headers.get("cookie") ?? "",
-  };
+  const headers = getAuthHeaders(event);
   const [appliances, devices] = await Promise.all([
     $fetch<NatureAPIGetAppliancesResponse>("/api/nature/1/appliances", {
       headers,

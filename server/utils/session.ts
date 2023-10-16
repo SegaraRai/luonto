@@ -11,3 +11,9 @@ export async function getNatureToken(event: H3Event): Promise<string | null> {
   const session = await getAuthSession(event);
   return session?.user?.email ?? null;
 }
+
+export function getAuthHeaders(event: H3Event): HeadersInit {
+  return {
+    cookie: event.headers.get("cookie") ?? "",
+  };
+}
