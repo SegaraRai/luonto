@@ -11,6 +11,12 @@ devDependencies:
   '@hebilicious/authjs-nuxt':
     specifier: ^0.3.4
     version: 0.3.4(@auth/core@0.16.1)(nuxt@3.7.4)
+  '@iconify-json/mingcute':
+    specifier: ^1.1.10
+    version: 1.1.10
+  '@iconify-json/solar':
+    specifier: ^1.1.5
+    version: 1.1.5
   '@nuxt/devtools':
     specifier: latest
     version: 1.0.0-beta.2(nuxt@3.7.4)(vite@4.4.11)
@@ -925,6 +931,18 @@ packages:
 
   /@iconify-json/heroicons@1.1.12:
     resolution: {integrity: sha512-9tsn/xUU+HX56OngEDRTej4LzVm2qcMVLvEJ+q+1ZJBO4sjMDxycmbHq16HGl1LOeVG21fq4jNZHslVveVCwSQ==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-json/mingcute@1.1.10:
+    resolution: {integrity: sha512-0PMgTc9RqLN8IZn5Icsu3mPmtruLS4TfecyNd6FuZ8q5e1EnsXIaV6K4J7ybiVxqCzXig5N/KxSceUonvhlhHA==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-json/solar@1.1.5:
+    resolution: {integrity: sha512-IeYbRYu0Y3GFXspGwUT876ok1n3Hkqw/CViP+zaDrGp+uLphjddLlL9hu8vkp5UOq+WnNWb5EG1vM1yro79Fzg==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: true

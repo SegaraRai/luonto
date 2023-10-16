@@ -7,7 +7,9 @@
         <UTooltip :text="`${user.name} としてサインイン中`">
           <UAvatar :alt="user.name ?? undefined" size="sm" />
         </UTooltip>
-        <UButton @click="signOutHandler">サインアウト</UButton>
+        <UButton variant="outline" @click="signOutHandler">
+          サインアウト
+        </UButton>
       </template>
     </div>
   </div>

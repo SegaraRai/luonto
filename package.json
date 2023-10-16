@@ -12,6 +12,8 @@
   "devDependencies": {
     "@auth/core": "^0.16.1",
     "@hebilicious/authjs-nuxt": "^0.3.4",
+    "@iconify-json/mingcute": "^1.1.10",
+    "@iconify-json/solar": "^1.1.5",
     "@nuxt/devtools": "latest",
     "@nuxt/ui": "^2.9.0",
     "@nuxtjs/pwa": "^3.3.5",

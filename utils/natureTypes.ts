@@ -27,6 +27,19 @@ export interface NatureDevice {
   readonly updated_at: string;
 }
 
+export type NatureDeviceEventType = "te" | "hu" | "il";
+
+export interface NatureDeviceEvent {
+  readonly val: number;
+  readonly created_at: string;
+}
+
+export interface NatureDeviceDetail extends NatureDevice {
+  readonly newest_events: Partial<
+    Record<NatureDeviceEventType, NatureDeviceEvent>
+  >;
+}
+
 /** 追加ボタン（ユーザー学習） */
 export interface NatureApplianceSignal {
   readonly id: string;
@@ -168,5 +181,5 @@ export type NatureAppliance =
 // API
 
 export type NatureAPIGetAppliancesResponse = readonly NatureAppliance[];
-export type NatureAPIGetDevicesResponse = readonly NatureDevice[];
+export type NatureAPIGetDevicesResponse = readonly NatureDeviceDetail[];
 export type NatureAPIGetDeviceAppliancesResponse = readonly NatureAppliance[];
