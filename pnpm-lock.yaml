@@ -26,6 +26,9 @@ devDependencies:
   '@nuxtjs/pwa':
     specifier: ^3.3.5
     version: 3.3.5
+  '@vueuse/nuxt':
+    specifier: ^10.5.0
+    version: 10.5.0(nuxt@3.7.4)(vue@3.3.4)
   defu:
     specifier: ^6.1.2
     version: 6.1.2
@@ -2388,6 +2391,24 @@ packages:
 
   /@vueuse/metadata@10.5.0:
     resolution: {integrity: sha512-fEbElR+MaIYyCkeM0SzWkdoMtOpIwO72x8WsZHRE7IggiOlILttqttM69AS13nrDxosnDBYdyy3C5mR1LCxHsw==}
+    dev: true
+
+  /@vueuse/nuxt@10.5.0(nuxt@3.7.4)(vue@3.3.4):
+    resolution: {integrity: sha512-x1mpjwcPB5DGA3cTM29Hf3bralslrma3Jr0fXm3Js3dbUHdadC/iVMf831W+sKPjZBhiZxR0S94B8gmGlvZ/1Q==}
+    peerDependencies:
+      nuxt: ^3.0.0
+    dependencies:
+      '@nuxt/kit': 3.7.4
+      '@vueuse/core': 10.5.0(vue@3.3.4)
+      '@vueuse/metadata': 10.5.0
+      local-pkg: 0.5.0
+      nuxt: 3.7.4
+      vue-demi: 0.14.6(vue@3.3.4)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - rollup
+      - supports-color
+      - vue
     dev: true
 
   /@vueuse/shared@10.5.0(vue@3.3.4):

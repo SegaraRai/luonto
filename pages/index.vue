@@ -7,7 +7,9 @@
       </template>
     </div>
     <h2>コントロール</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-4">
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-4"
+    >
       <template v-for="appliance in data?.appliances" :key="appliance.id">
         <NatureApplianceCard :appliance="appliance" />
       </template>
@@ -18,5 +20,9 @@
 <script setup lang="ts">
 definePageMeta({ layout: "app", middleware: "auth" });
 
-const { data } = await useFetch("/api/bff/home");
+const { data, refresh } = await useFetch("/api/bff/home");
+
+useRefreshCaller(refresh, {
+  refreshInterval: 30_000,
+});
 </script>

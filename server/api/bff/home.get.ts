@@ -18,5 +18,6 @@ export default defineSWEventHandler(async (event) => {
   return {
     appliances,
     devices,
+    timestamp: Date.now(),
   };
 });

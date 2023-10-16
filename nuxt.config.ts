@@ -3,7 +3,7 @@ import path from "node:path";
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ["@nuxt/ui", "@hebilicious/authjs-nuxt"],
+  modules: ["@hebilicious/authjs-nuxt", "@nuxt/ui", "@vueuse/nuxt"],
   nitro: {
     preset: "service-worker",
   },

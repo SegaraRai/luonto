@@ -17,6 +17,7 @@
     "@nuxt/devtools": "latest",
     "@nuxt/ui": "^2.9.0",
     "@nuxtjs/pwa": "^3.3.5",
+    "@vueuse/nuxt": "^10.5.0",
     "defu": "^6.1.2",
     "next-auth": "^4.23.2",
     "nuxt": "^3.7.4",
