@@ -1,4 +1,4 @@
-import { type NatureDeviceWithEvents } from "./natureTypes";
+import { type NatureDevice } from "./natureTypes";
 
 export interface NatureDeviceDetailItem {
   readonly label: string;
@@ -6,7 +6,7 @@ export interface NatureDeviceDetailItem {
 }
 
 export function getNatureDeviceDetails(
-  device: NatureDeviceWithEvents | null | undefined
+  device: NatureDevice | null | undefined
 ): readonly NatureDeviceDetailItem[] {
   if (!device) {
     return [];
@@ -52,7 +52,7 @@ export function getNatureDeviceDetails(
 }
 
 export function useNatureDeviceDetails(
-  device: MaybeRefOrGetter<NatureDeviceWithEvents | null | undefined>
+  device: MaybeRefOrGetter<NatureDevice | null | undefined>
 ) {
   return computed<readonly NatureDeviceDetailItem[]>(() =>
     getNatureDeviceDetails(toValue(device))

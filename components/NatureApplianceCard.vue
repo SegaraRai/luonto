@@ -3,7 +3,10 @@
     <UCard>
       <div class="flex flex-row items-center gap-4">
         <div class="flex-1 flex flex-col items-center gap-4">
-          <div class="w-24 h-24 dark:text-gray-200" :class="icon" />
+          <div
+            class="w-24 h-24 dark:text-gray-200"
+            :class="natureIconToClass(appliance.image)"
+          />
           <div v-text="appliance.nickname" />
         </div>
         <div
@@ -22,7 +25,11 @@
             :class="status.settings.class"
           >
             <span v-text="status.settings.label" />
-            <span class="pl-[0.25em]" v-if="status.settings.unit" v-text="status.settings.unit" />
+            <span
+              class="pl-[0.25em]"
+              v-if="status.settings.unit"
+              v-text="status.settings.unit"
+            />
           </div>
         </div>
       </div>
@@ -37,6 +44,5 @@ const props = defineProps<{
   appliance: NatureAppliance;
 }>();
 
-const icon = computed(() => natureIconToClass(props.appliance.image));
 const status = useNatureApplianceStatus(() => props.appliance);
 </script>

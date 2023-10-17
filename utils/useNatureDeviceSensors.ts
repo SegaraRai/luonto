@@ -33,7 +33,7 @@ export type NatureDeviceSensorItem =
   | NatureDeviceSensorItemNotAvailable;
 
 export function getNatureDeviceSensors(
-  device: NatureDeviceWithEvents | null | undefined,
+  device: NatureDevice | NatureDeviceWithEvents | null | undefined,
   now: Date | number,
   includesNA = false
 ): readonly NatureDeviceSensorItem[] {
@@ -102,7 +102,9 @@ export function getNatureDeviceSensors(
 }
 
 export function useNatureDeviceSensors(
-  device: MaybeRefOrGetter<NatureDeviceWithEvents | null | undefined>,
+  device: MaybeRefOrGetter<
+    NatureDevice | NatureDeviceWithEvents | null | undefined
+  >,
   includesNA: MaybeRefOrGetter<boolean> = false,
   now: MaybeRefOrGetter<Date | number> = useNow({
     interval: 30_000,
