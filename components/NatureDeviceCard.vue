@@ -23,8 +23,5 @@ const props = defineProps<{
   device: NatureDeviceWithEvents;
 }>();
 
-const sensorItems = useNatureDeviceSensors(
-  computed(() => props.device),
-  true
-);
+const sensorItems = useNatureDeviceSensors(() => props.device, true);
 </script>
