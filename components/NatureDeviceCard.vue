@@ -9,7 +9,7 @@
           <div v-text="device.name" />
         </div>
         <div class="w-20">
-          <NatureDeviceSensorList class="w-full" :items="sensorItems" />
+          <NatureDeviceSensorList class="w-full text-sm font-bold" :items="sensorItems" />
         </div>
       </div>
     </UCard>
