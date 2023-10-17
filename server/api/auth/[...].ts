@@ -26,7 +26,7 @@ export const authOptions: AuthConfig = {
         const user = (await $fetch("https://api.nature.global/1/users/me", {
           headers: {
             Authorization: `Bearer ${credentials.token as string}`,
-            "X-Requested-With": "Unofficial Nature Web App",
+            "X-Requested-With": "Luonto",
           },
         }).catch(() => null)) as { id: string; nickname: string } | null;
         if (!user) {

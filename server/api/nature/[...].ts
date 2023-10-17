@@ -12,7 +12,7 @@ export default defineSWEventHandler(async (event) => {
     {
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-Requested-With": "Unofficial Nature Web App",
+        "X-Requested-With": "Luonto",
       },
     }
   );
