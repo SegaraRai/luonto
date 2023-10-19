@@ -5,7 +5,7 @@ export default {
   content: [],
   plugins: [
     iconsPlugin({
-      collections: getIconCollections(["mingcute", "ph", "solar"]),
+      collections: getIconCollections(["mdi", "mingcute", "ph", "solar"]),
     }),
   ],
 } satisfies Config;

@@ -11,7 +11,8 @@
   },
   "devDependencies": {
     "@auth/core": "^0.17.0",
-    "@hebilicious/authjs-nuxt": "^0.3.4",
+    "@hebilicious/authjs-nuxt": "^0.3.5",
+    "@iconify-json/mdi": "^1.1.54",
     "@iconify-json/mingcute": "^1.1.10",
     "@iconify-json/ph": "^1.1.6",
     "@iconify-json/solar": "^1.1.5",
