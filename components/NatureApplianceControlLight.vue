@@ -4,79 +4,24 @@
       <div
         class="absolute inset-0 w-full h-full -z-1 border-[40px] rounded-full dark:border-gray-800"
       />
-      <div class="absolute m-auto inset-0 flex items-center justify-center">
-        <UButton
-          v-if="buttons.includes('on')"
-          class="rounded-full"
-          size="lg"
-          color="gray"
-          variant="solid"
-          aria-label="ON"
-          :icon="natureIconToClass('ico_on')"
-          :disabled="submitting"
-          @click="send('on')"
-        />
-      </div>
-      <div
-        class="absolute m-auto inset-0 bottom-auto flex items-center justify-center"
-      >
-        <UButton
-          v-if="buttons.includes('bright-up')"
-          class="rounded-full"
-          size="lg"
-          color="gray"
-          variant="link"
-          aria-label="明るくする"
-          :icon="natureIconToClass('ico_lightup')"
-          :disabled="submitting"
-          @click="send('bright-up')"
-        />
-      </div>
-      <div
-        class="absolute m-auto inset-0 top-auto flex items-center justify-center"
-      >
-        <UButton
-          v-if="buttons.includes('bright-down')"
-          class="rounded-full"
-          size="lg"
-          color="gray"
-          variant="link"
-          aria-label="暗くする"
-          :icon="natureIconToClass('ico_lightdown')"
-          :disabled="submitting"
-          @click="send('bright-down')"
-        />
-      </div>
-      <div
-        class="absolute m-auto inset-0 right-auto flex items-center justify-center"
-      >
-        <UButton
-          v-if="buttons.includes('colortemp-down')"
-          class="rounded-full"
-          size="lg"
-          color="blue"
-          variant="link"
-          aria-label="色温度を下げる"
-          :icon="natureIconToClass('ico_colortemp_down')"
-          :disabled="submitting"
-          @click="send('colortemp-down')"
-        />
-      </div>
-      <div
-        class="absolute m-auto inset-0 left-auto flex items-center justify-center"
-      >
-        <UButton
-          v-if="buttons.includes('colortemp-up')"
-          class="rounded-full"
-          size="lg"
-          color="orange"
-          variant="link"
-          aria-label="色温度を上げる"
-          :icon="natureIconToClass('ico_colortemp_up')"
-          :disabled="submitting"
-          @click="send('colortemp-up')"
-        />
-      </div>
+      <template v-for="button in presetButtons" v-key="button.name">
+        <div
+          v-if="buttons.includes(button.name)"
+          class="absolute m-auto inset-0 flex items-center justify-center"
+          :class="button.placeClass"
+        >
+          <UButton
+            class="rounded-full"
+            size="lg"
+            :color="button.color"
+            :variant="button.variant"
+            :aria-label="button.label"
+            :icon="natureIconToClass(button.image)"
+            :disabled="submitting"
+            @click="send(button.name)"
+          />
+        </div>
+      </template>
     </div>
     <div class="w-full grid grid-flow-col auto-cols-min gap-4">
       <template
@@ -116,6 +61,49 @@ const props = defineProps<{
   submitting: boolean;
   onSend: (promise: Promise<void>) => void;
 }>();
+
+const presetButtons = [
+  {
+    name: "on",
+    image: "ico_on",
+    label: "ON",
+    variant: "solid",
+    color: "gray",
+    placeClass: "",
+  },
+  {
+    name: "bright-up",
+    image: "ico_lightup",
+    label: "明るくする",
+    variant: "link",
+    color: "gray",
+    placeClass: "bottom-auto",
+  },
+  {
+    name: "bright-down",
+    image: "ico_lightdown",
+    label: "暗くする",
+    variant: "link",
+    color: "gray",
+    placeClass: "top-auto",
+  },
+  {
+    name: "colortemp-down",
+    image: "ico_colortemp_down",
+    label: "色温度を下げる",
+    variant: "link",
+    color: "blue",
+    placeClass: "right-auto",
+  },
+  {
+    name: "colortemp-up",
+    image: "ico_colortemp_up",
+    label: "色温度を上げる",
+    variant: "link",
+    color: "orange",
+    placeClass: "left-auto",
+  },
+] as const;
 
 const buttons = computed(() =>
   props.appliance.light.buttons.map((b) => b.name)
