@@ -21,21 +21,6 @@
         class="absolute m-auto inset-0 bottom-auto flex items-center justify-center"
       >
         <UButton
-          v-if="buttons.includes('bright-down')"
-          class="rounded-full"
-          size="lg"
-          color="gray"
-          variant="link"
-          aria-label="暗くする"
-          :icon="natureIconToClass('ico_lightdown')"
-          :disabled="submitting"
-          @click="send('bright-down')"
-        />
-      </div>
-      <div
-        class="absolute m-auto inset-0 top-auto flex items-center justify-center"
-      >
-        <UButton
           v-if="buttons.includes('bright-up')"
           class="rounded-full"
           size="lg"
@@ -45,6 +30,21 @@
           :icon="natureIconToClass('ico_lightup')"
           :disabled="submitting"
           @click="send('bright-up')"
+        />
+      </div>
+      <div
+        class="absolute m-auto inset-0 top-auto flex items-center justify-center"
+      >
+        <UButton
+          v-if="buttons.includes('bright-down')"
+          class="rounded-full"
+          size="lg"
+          color="gray"
+          variant="link"
+          aria-label="暗くする"
+          :icon="natureIconToClass('ico_lightdown')"
+          :disabled="submitting"
+          @click="send('bright-down')"
         />
       </div>
       <div
