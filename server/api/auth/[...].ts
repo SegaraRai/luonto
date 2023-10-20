@@ -1,6 +1,7 @@
 import Credentials from "@auth/core/providers/credentials";
 import type { AuthConfig, User } from "@auth/core/types";
 import { NuxtAuthHandler } from "#auth";
+import type { SessionUserData } from "~/server/utils/session";
 
 const runtimeConfig = useRuntimeConfig();
 
@@ -19,13 +20,13 @@ export const authOptions: AuthConfig = {
         },
       },
       async authorize(credentials): Promise<User | null> {
-        if (!credentials?.token) {
+        if (typeof credentials?.token !== "string") {
           return null;
         }
 
         const user = (await $fetch("https://api.nature.global/1/users/me", {
           headers: {
-            Authorization: `Bearer ${credentials.token as string}`,
+            Authorization: `Bearer ${credentials.token}`,
             "X-Requested-With": "Luonto",
           },
         }).catch(() => null)) as { id: string; nickname: string } | null;
@@ -36,7 +37,11 @@ export const authOptions: AuthConfig = {
         return {
           id: user.id,
           name: user.nickname,
-          email: credentials.token as string,
+          email: JSON.stringify({
+            id: user.id,
+            name: user.nickname,
+            token: credentials.token,
+          } satisfies SessionUserData),
         };
       },
     }),

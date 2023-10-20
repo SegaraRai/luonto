@@ -3,13 +3,21 @@ import type { H3Event } from "h3";
 import { getServerSession } from "#auth";
 import { authOptions } from "~/server/api/auth/[...]";
 
-export function getAuthSession(event: H3Event): Promise<Session | null> {
-  return getServerSession(event, authOptions);
+export interface SessionUserData {
+  readonly id: string;
+  readonly name: string;
+  readonly token: string;
 }
 
-export async function getNatureToken(event: H3Event): Promise<string | null> {
-  const session = await getAuthSession(event);
-  return session?.user?.email ?? null;
+export function getAuthSession(event: H3Event): Promise<Session | null> {
+  return getServerSession(event, authOptions) as Promise<Session | null>;
+}
+
+export async function getAuthSessionUserData(
+  event: H3Event
+): Promise<SessionUserData | null> {
+  const json = (await getAuthSession(event))?.user?.email;
+  return json ? JSON.parse(json) : null;
 }
 
 export function getAuthHeaders(event: H3Event): HeadersInit {

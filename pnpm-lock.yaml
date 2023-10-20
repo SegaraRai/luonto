@@ -38,6 +38,9 @@ devDependencies:
   defu:
     specifier: ^6.1.2
     version: 6.1.2
+  lru-cache:
+    specifier: ^10.0.1
+    version: 10.0.1
   nuxt:
     specifier: ^3.7.4
     version: 3.7.4
