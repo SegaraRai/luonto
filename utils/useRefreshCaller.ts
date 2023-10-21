@@ -10,7 +10,7 @@ export interface RefreshCallerOptions {
 }
 
 export function useRefreshCaller(
-  callback: () => void | Promise<void>,
+  callback: () => unknown | Promise<unknown>,
   options: RefreshCallerOptions = {}
 ): void {
   if (!process.client) {

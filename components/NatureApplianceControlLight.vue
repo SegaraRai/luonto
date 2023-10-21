@@ -59,7 +59,7 @@ import type {
 const props = defineProps<{
   appliance: NatureApplianceLight;
   submitting: boolean;
-  onSend: (promise: Promise<void>) => void;
+  onSend: (promise: Promise<unknown>) => void;
 }>();
 
 const presetButtons = [
@@ -113,9 +113,9 @@ const send = (button: NatureApplianceLightButtonName): void => {
   props.onSend(
     $fetch(`/api/nature/1/appliances/${props.appliance.id}/light`, {
       method: "POST",
-      body: JSON.stringify({
+      body: {
         button,
-      }),
+      },
     })
   );
 };
