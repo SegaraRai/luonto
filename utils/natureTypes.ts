@@ -296,6 +296,7 @@ export interface NatureApplianceACAirCon {
 
 export interface NatureApplianceAC extends NatureApplianceBase {
   readonly type: "AC";
+  readonly aircon: NatureApplianceACAirCon;
   readonly settings: NatureApplianceACSettings | null;
 }
 
