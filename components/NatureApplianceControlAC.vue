@@ -375,13 +375,6 @@ const displayDirH = computed(
     sendingSettings.value?.air_direction_h ?? props.appliance.settings?.dirh
 );
 
-watch(
-  () => props.appliance.settings,
-  (): void => {
-    sendingSettings.value = undefined;
-  }
-);
-
 const sendSettings = (
   settings: NatureAPIPostApplianceACSettingsRequest
 ): void => {
@@ -394,7 +387,11 @@ const sendSettings = (
     }
   );
   props.onSend(promise);
-  promise.then(() => props.onForceRefresh()).finally(() => {});
+  promise
+    .then(() => props.onForceRefresh())
+    .finally(() => {
+      sendingSettings.value = undefined;
+    });
 };
 
 // temperature slider
