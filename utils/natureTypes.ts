@@ -311,3 +311,13 @@ export type NatureAppliance =
 export type NatureAPIGetAppliancesResponse = readonly NatureAppliance[];
 export type NatureAPIGetDevicesResponse = readonly NatureDeviceWithEvents[];
 export type NatureAPIGetDeviceAppliancesResponse = readonly NatureAppliance[];
+
+export interface NatureAPIPostApplianceACSettingsRequest {
+  readonly temperature?: NatureApplianceACTemperature;
+  readonly temperature_unit?: NatureTemperatureUnit;
+  readonly operation_mode?: NatureApplianceACMode;
+  readonly air_volume?: NatureApplianceACVol;
+  readonly air_direction?: NatureApplianceACDir;
+  readonly air_direction_h?: NatureApplianceACDirH;
+  readonly button?: NatureApplianceACButton;
+}

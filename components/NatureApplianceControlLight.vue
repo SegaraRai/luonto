@@ -60,6 +60,7 @@ const props = defineProps<{
   appliance: NatureApplianceLight;
   submitting: boolean;
   onSend: (promise: Promise<unknown>) => void;
+  onForceRefresh: () => Promise<void>;
 }>();
 
 const allButtonNames = computed(() =>

@@ -7,6 +7,7 @@ export interface RefreshCallerOptions {
   refreshWhenOffline?: MaybeRef<boolean>;
   dedupingInterval?: MaybeRef<number>;
   focusThrottleInterval?: MaybeRef<number>;
+  disabled?: MaybeRef<boolean>;
 }
 
 export function useRefreshCaller(
@@ -25,9 +26,16 @@ export function useRefreshCaller(
     refreshWhenOffline = false,
     dedupingInterval = 2000,
     focusThrottleInterval = 5000,
+    disabled = false,
   } = options;
 
-  const debouncedCallback = useDebounceFn(callback, dedupingInterval);
+  const debouncedCallback = useDebounceFn(() => {
+    if (unref(disabled)) {
+      return;
+    }
+
+    callback();
+  }, dedupingInterval);
 
   // focus revalidate
   useEventListener(

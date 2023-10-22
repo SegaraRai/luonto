@@ -17,11 +17,19 @@
     </div>
     <hr class="w-full dark:border-gray-700" />
     <div class="max-w-xs px-4 w-full">
+      <NatureApplianceControlAC
+        v-if="appliance.type === 'AC'"
+        :appliance="appliance"
+        :submitting="submitting"
+        @send="onSend"
+        @forceRefresh="onForceRefresh"
+      />
       <NatureApplianceControlLight
         v-if="appliance.type === 'LIGHT'"
         :appliance="appliance"
         :submitting="submitting"
         @send="onSend"
+        @forceRefresh="onForceRefresh"
       />
     </div>
   </div>
@@ -30,10 +38,30 @@
 <script setup lang="ts">
 definePageMeta({ layout: "app", middleware: "auth" });
 
+const forceRefresh = ref(false);
+
 const route = useRoute();
 const toast = useToast();
 const { data, refresh } = await useFetch(
-  `/api/bff/appliances/${route.params.id}`
+  `/api/bff/appliances/${route.params.id}`,
+  {
+    onRequest: (context): void => {
+      if (!forceRefresh.value) {
+        return;
+      }
+
+      forceRefresh.value = false;
+
+      const headers = new Headers(
+        context.request instanceof Request ? context.request.headers : undefined
+      );
+      headers.set("cache-control", "no-cache");
+      context.request = new Request(context.request, {
+        cache: "reload",
+        headers,
+      });
+    },
+  }
 );
 
 const appliance = computed(() => data.value?.appliance);
@@ -64,7 +92,20 @@ const onSend = (promise: Promise<unknown>): void => {
     });
 };
 
+const onForceRefresh = (): Promise<void> => {
+  forceRefresh.value = true;
+  return refresh()
+    .then(
+      () => undefined,
+      () => undefined
+    )
+    .finally(() => {
+      forceRefresh.value = false;
+    });
+};
+
 useRefreshCaller(refresh, {
   refreshInterval: 30_000,
+  disabled: forceRefresh,
 });
 </script>
