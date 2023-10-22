@@ -334,7 +334,7 @@ const dropdowns = computed(() =>
       key: "vol",
       label: "風量変更",
       items: volItems.value,
-      iconClass: getDirIconClass(displayDir.value),
+      iconClass: getVolIconClass(displayVol.value),
     },
     supportsDir.value && {
       key: "dir",
