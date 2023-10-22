@@ -48,8 +48,7 @@ for (const file of await readdir("icons")) {
   const content = await readFile(`icons/${file}`, "utf-8");
   const { data } = await optimize(content, config);
 
-  const [, width, height] =
-    data.match(/<svg[^>]* viewBox="0 0 ([^"]+) ([^"]+)"/) ?? [];
+  const [, width, height] = data.match(/viewBox="0 0 (\d+) (\d+)"/) ?? [];
   if (!width || !height) {
     throw new Error(`Failed to parse viewBox of ${file}`);
   }
