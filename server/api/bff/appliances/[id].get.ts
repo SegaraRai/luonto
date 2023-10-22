@@ -4,7 +4,7 @@ import type {
 } from "~/utils/natureTypes";
 
 export default defineSWEventHandler(async (event) => {
-  const headers = getAuthHeaders(event);
+  const headers = getBFFForwardedHeaders(event);
   const id = getRouterParam(event, "id");
 
   const [appliances, devices] = await Promise.all([

@@ -19,9 +19,3 @@ export async function getAuthSessionUserData(
   const json = (await getAuthSession(event))?.user?.email;
   return json ? JSON.parse(json) : null;
 }
-
-export function getAuthHeaders(event: H3Event): HeadersInit {
-  return {
-    cookie: event.headers.get("cookie") ?? "",
-  };
-}

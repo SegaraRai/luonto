@@ -1,7 +1,7 @@
 import type { NatureAPIGetDevicesResponse } from "~/utils/natureTypes";
 
 export default defineSWEventHandler(async (event) => {
-  const headers = getAuthHeaders(event);
+  const headers = getBFFForwardedHeaders(event);
   const id = getRouterParam(event, "id");
 
   const devices = await $fetch<NatureAPIGetDevicesResponse>(
