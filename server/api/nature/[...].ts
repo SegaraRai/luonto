@@ -1,5 +1,14 @@
 import { LRUCache } from "lru-cache";
 
+function createRequestHeaderInit(token: string): HeadersInit {
+  return {
+    Accept: "application/json",
+    Authorization: `Bearer ${token}`,
+    "Cache-Control": "no-store",
+    "X-Requested-With": "Luonto",
+  };
+}
+
 type CacheValue = readonly [res: Response, body: Blob, timestamp: number];
 type FetchContext = { readonly token: string };
 
@@ -17,10 +26,7 @@ const cache = new LRUCache<string, CacheValue, FetchContext>({
     const [, method, url] = key.split("\0");
     const res = await fetch(url, {
       method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "X-Requested-With": "Luonto",
-      },
+      headers: createRequestHeaderInit(token),
       signal,
     });
     if (!res.ok) {
@@ -58,22 +64,24 @@ export default defineSWEventHandler(async (event) => {
     body = new URLSearchParams(await readBody(event));
   }
 
-  const shouldCache = method === "GET" || method === "HEAD";
+  const cacheDirectives =
+    event.headers
+      .get("cache-control")
+      ?.split(/,\s+/)
+      .map((directive) => directive.toLowerCase().trim()) ?? [];
+
+  const shouldCache =
+    (method === "GET" || method === "HEAD") &&
+    !cacheDirectives.includes("no-store");
+  const shouldRefresh = cacheDirectives.includes("no-cache");
+
   if (!shouldCache) {
     return fetch(url, {
       method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "X-Requested-With": "Luonto",
-      },
+      headers: createRequestHeaderInit(token),
       body,
     });
   }
-
-  const shouldRefresh = event.headers
-    .get("cache-control")
-    ?.split(/,\s+/)
-    ?.some((directive) => directive === "no-cache" || directive === "no-store");
 
   const [response, blob] =
     (await cache.fetch(`${id}\0${method}\0${url}`, {
