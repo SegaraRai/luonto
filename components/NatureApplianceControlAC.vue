@@ -28,7 +28,7 @@
             />
           </div>
           <div
-            class="flex-none p-2 pt-4 text-center text-white/80"
+            class="flex-none p-2 pt-4 text-center text-white/95"
             :class="[MODE_BG_COLORS[currentMode], disabled && 'opacity-70']"
           >
             <span
