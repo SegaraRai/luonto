@@ -16,8 +16,13 @@
         </div>
       </div>
       <div
-        class="absolute inset-0 m-auto left-auto flex-none w-48 h-48 sm:w-64 sm:h-64 dark:text-gray-200/50 -z-10"
-        :class="natureIconToClass(appliance.image)"
+        class="absolute inset-0 m-auto left-auto flex-none w-48 h-48 sm:w-64 sm:h-64 -z-10 transition-colors"
+        :class="[
+          natureIconToClass(appliance.image),
+          applianceStatus.indicator?.type === 'ON'
+            ? 'dark:text-yellow-200/50'
+            : 'dark:text-gray-200/50',
+        ]"
       />
     </div>
     <hr class="w-full dark:border-gray-700" />
@@ -71,13 +76,30 @@ const { data, refresh } = await useFetch(
 
 const appliance = computed(() => data.value?.appliance);
 const device = computed(() => data.value?.device);
+
+const applianceStatus = useNatureApplianceStatus(appliance);
 const sensorItems = useNatureDeviceSensors(device);
 const detailItems = useNatureDeviceDetails(device);
 
+const onForceRefresh = (): Promise<void> => {
+  forceRefresh.value = true;
+  return refresh()
+    .then(
+      () => undefined,
+      () => undefined
+    )
+    .finally(() => {
+      forceRefresh.value = false;
+    });
+};
+
 const submitting = ref(false);
-const onSend = (promise: Promise<unknown>): void => {
+const onSend = (
+  promise: Promise<unknown>,
+  forceRefresh = false
+): Promise<void> => {
   submitting.value = true;
-  promise
+  return promise
     .then(
       (): void => {
         toast.add({
@@ -92,20 +114,9 @@ const onSend = (promise: Promise<unknown>): void => {
         });
       }
     )
+    .then(() => (forceRefresh ? onForceRefresh() : undefined))
     .finally((): void => {
       submitting.value = false;
-    });
-};
-
-const onForceRefresh = (): Promise<void> => {
-  forceRefresh.value = true;
-  return refresh()
-    .then(
-      () => undefined,
-      () => undefined
-    )
-    .finally(() => {
-      forceRefresh.value = false;
     });
 };
 

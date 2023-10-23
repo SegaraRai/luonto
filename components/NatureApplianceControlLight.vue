@@ -59,7 +59,10 @@ import type {
 const props = defineProps<{
   appliance: NatureApplianceLight;
   submitting: boolean;
-  onSend: (promise: Promise<unknown>) => void;
+  onSend: {
+    (promise: Promise<unknown>, forceRefresh?: false): void;
+    (promise: Promise<unknown>, forceRefresh: true): Promise<void>;
+  };
   onForceRefresh: () => Promise<void>;
 }>();
 
@@ -148,7 +151,8 @@ const send = (button: NatureApplianceLightButtonName): void => {
       body: {
         button,
       },
-    })
+    }),
+    true
   );
 };
 </script>

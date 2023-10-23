@@ -126,7 +126,10 @@ import type {
 const props = defineProps<{
   appliance: NatureApplianceAC;
   submitting: boolean;
-  onSend: (promise: Promise<unknown>) => void;
+  onSend: {
+    (promise: Promise<unknown>, forceRefresh?: false): void;
+    (promise: Promise<unknown>, forceRefresh: true): Promise<void>;
+  };
   onForceRefresh: () => Promise<void>;
 }>();
 
@@ -379,16 +382,14 @@ const sendSettings = (
   settings: NatureAPIPostApplianceACSettingsRequest
 ): void => {
   sendingSettings.value = settings;
-  const promise = $fetch(
-    `/api/nature/1/appliances/${props.appliance.id}/aircon_settings`,
-    {
-      method: "POST",
-      body: settings,
-    }
-  );
-  props.onSend(promise);
-  promise
-    .then(() => props.onForceRefresh())
+  props
+    .onSend(
+      $fetch(`/api/nature/1/appliances/${props.appliance.id}/aircon_settings`, {
+        method: "POST",
+        body: settings,
+      }),
+      true
+    )
     .finally(() => {
       sendingSettings.value = undefined;
     });
