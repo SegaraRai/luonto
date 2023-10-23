@@ -1,13 +1,13 @@
 // based on SWR options
 export interface RefreshCallerOptions {
-  revalidateOnFocus?: MaybeRef<boolean>;
-  revalidateOnReconnect?: MaybeRef<boolean>;
-  refreshInterval?: MaybeRef<number>;
-  refreshWhenHidden?: MaybeRef<boolean>;
-  refreshWhenOffline?: MaybeRef<boolean>;
-  dedupingInterval?: MaybeRef<number>;
-  focusThrottleInterval?: MaybeRef<number>;
-  disabled?: MaybeRef<boolean>;
+  revalidateOnFocus?: MaybeRefOrGetter<boolean>;
+  revalidateOnReconnect?: MaybeRefOrGetter<boolean>;
+  refreshInterval?: MaybeRefOrGetter<number>;
+  refreshWhenHidden?: MaybeRefOrGetter<boolean>;
+  refreshWhenOffline?: MaybeRefOrGetter<boolean>;
+  dedupingInterval?: MaybeRefOrGetter<number>;
+  focusThrottleInterval?: MaybeRefOrGetter<number>;
+  disabled?: MaybeRefOrGetter<boolean>;
 }
 
 export function useRefreshCaller(
@@ -30,7 +30,7 @@ export function useRefreshCaller(
   } = options;
 
   const debouncedCallback = useDebounceFn(() => {
-    if (unref(disabled)) {
+    if (toValue(disabled)) {
       return;
     }
 
@@ -48,7 +48,7 @@ export function useRefreshCaller(
     (): void =>
       void (
         document.visibilityState === "visible" &&
-        unref(revalidateOnFocus) &&
+        toValue(revalidateOnFocus) &&
         debouncedCallback()
       )
   );
@@ -56,17 +56,20 @@ export function useRefreshCaller(
   // reconnect revalidate
   useEventListener(
     "online",
-    (): void => void (unref(revalidateOnReconnect) && debouncedCallback())
+    (): void => void (toValue(revalidateOnReconnect) && debouncedCallback())
   );
 
   // polling revalidate
   useIntervalFn(
     (): void => {
-      if (!unref(refreshWhenHidden) && document.visibilityState === "hidden") {
+      if (
+        !toValue(refreshWhenHidden) &&
+        document.visibilityState === "hidden"
+      ) {
         return;
       }
 
-      if (!unref(refreshWhenOffline) && !navigator.onLine) {
+      if (!toValue(refreshWhenOffline) && !navigator.onLine) {
         return;
       }
 
