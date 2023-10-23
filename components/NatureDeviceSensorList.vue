@@ -20,7 +20,7 @@
       </template>
       <template v-else>
         <span
-          class="flex-1 text-right pl-[0.5em] pr-[0.25em] col-span-2 opacity-50"
+          class="flex-1 text-right pl-[0.5em] col-span-2 opacity-50"
         >
           N/A
         </span>
