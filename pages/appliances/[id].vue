@@ -1,22 +1,27 @@
 <template>
   <div
     v-if="appliance && device"
-    class="flex flex-col gap-8 py-4 w-full items-center"
+    class="flex flex-col py-4 w-full items-center"
   >
-    <div
-      class="relative h-32 sm:h-48 flex-none flex flex-row self-stretch justify-between items-center gap-2"
-    >
+    <div class="relative h-40 sm:h-56 pb-4 sm:pb-8 flex-none self-stretch">
       <div
-        class="flex-1 text-3xl max-sm:px-6 sm:text-center"
-        v-text="appliance.nickname"
-      />
+        class="h-full pt-2 sm:pt-8 max-sm:px-6 max-sm:-mb-8 flex-1 flex flex-col items-start sm:items-center justify-between"
+      >
+        <div
+          class="flex-none text-3xl sm:text-4xl line-clamp-2"
+          v-text="appliance.nickname"
+        />
+        <div class="flex-none">
+          <NatureApplianceDeviceInfo :device="device" />
+        </div>
+      </div>
       <div
         class="absolute inset-0 m-auto left-auto flex-none w-48 h-48 sm:w-64 sm:h-64 dark:text-gray-200/50 -z-10"
         :class="natureIconToClass(appliance.image)"
       />
     </div>
     <hr class="w-full dark:border-gray-700" />
-    <div class="max-w-xs px-4 w-full">
+    <div class="max-w-xs px-4 pt-8 w-full">
       <NatureApplianceControlAC
         v-if="appliance.type === 'AC'"
         :appliance="appliance"
