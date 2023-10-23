@@ -9,13 +9,22 @@
       </div>
       <NatureDeviceSensorList class="text-xl" :items="sensorItems" />
     </div>
-    <hr class="w-full dark:border-gray-700" />
     <dl class="grid grid-cols-2 gap-4">
       <template v-for="item in detailItems" :key="item.label">
         <dt class="text-right text-gray-500" v-text="item.label" />
         <dd v-text="item.value" />
       </template>
     </dl>
+    <template v-if="data?.appliances.length">
+      <hr class="w-full dark:border-gray-700" />
+      <div
+        class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-4"
+      >
+        <template v-for="appliance in data?.appliances" :key="appliance.id">
+          <NatureApplianceCard :appliance="appliance" />
+        </template>
+      </div>
+    </template>
   </div>
 </template>
 
