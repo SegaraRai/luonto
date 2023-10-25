@@ -1,20 +1,50 @@
 <template>
-  <div class="flex flex-col items-start">
-    <UForm ref="form" :schema="schema" :state="state" @submit="submit">
-      <UFormGroup label="トークン" name="token">
-        <UInput
-          v-model="state.token"
-          type="password"
-          placeholder="O-oooooooooo_AAAAE-A-A-I-A-U_JO-oooooooooooo_AAE-O-A-A-U-U-A-"
-          required
-        />
-      </UFormGroup>
-      <UButton type="submit">サインイン</UButton>
-    </UForm>
-    <ULink to="https://home.nature.global/" target="_blank">
-      トークンの発行
-    </ULink>
-    <ULink to="/about">このアプリについて</ULink>
+  <div
+    class="flex flex-col items-center justify-center fixed inset-0 w-full h-full"
+  >
+    <UCard class="w-full max-w-lg">
+      <div class="w-full flex flex-col items-stretch gap-4">
+        <UForm ref="form" :schema="schema" :state="state" @submit="submit">
+          <div class="flex flex-col items-stretch gap-2">
+            <UFormGroup label="トークン" name="token">
+              <UInput
+                v-model="state.token"
+                type="password"
+                placeholder="O-oooooooooo_AAAAE-A-A-I-A-U_JO-oooooooooooo_AAE-O-A-A-U-U-A-"
+                required
+              />
+            </UFormGroup>
+            <div class="text-center">
+              <UButton variant="solid" type="submit">サインイン</UButton>
+            </div>
+          </div>
+        </UForm>
+        <div class="flex flex-col items-start gap-2 text-sm">
+          <ULink
+            class="inline-flex items-center gap-1 text-emerald-400"
+            to="https://home.nature.global/"
+            target="_blank"
+          >
+            <span
+              class="i-mdi-text-box-plus-outline w-[1.25em] h-[1.25em] inline-block"
+            />
+            トークンの発行
+            <span
+              class="i-mdi-external-link w-[1.25em] h-[1.25em] inline-block text-gray-400"
+            />
+          </ULink>
+          <ULink
+            class="inline-flex items-center gap-1 text-sky-400"
+            to="/about"
+          >
+            <span
+              class="i-mdi-help-circle-outline w-[1.25em] h-[1.25em] inline-block"
+            />
+            このアプリについて
+          </ULink>
+        </div>
+      </div>
+    </UCard>
   </div>
 </template>
 
