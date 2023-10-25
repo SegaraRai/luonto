@@ -1,4 +1,3 @@
-import { type UseTimeAgoUnitNamesDefault, formatTimeAgo } from "@vueuse/core";
 import { type NatureDeviceWithEvents } from "./natureTypes";
 
 export interface NatureDeviceSensorItemBase {
@@ -77,25 +76,7 @@ export function getNatureDeviceSensors(
         available: true,
         value: object.val.toString(),
         timestamp: object.created_at,
-        ago: formatTimeAgo<UseTimeAgoUnitNamesDefault>(
-          new Date(object.created_at),
-          {
-            messages: {
-              year: (n: number) => `${n}年`,
-              month: (n: number) => `${n}ヶ月`,
-              week: (n: number) => `${n}週間`,
-              day: (n: number) => `${n}日`,
-              hour: (n: number) => `${n}時間`,
-              minute: (n: number) => `${n}分`,
-              second: (n: number) => `${n}秒`,
-              future: (v: string) => `${v}後に`,
-              past: (v: string) => `${v}前に`,
-              invalid: "無効な時刻に",
-              justNow: "たった今",
-            },
-          },
-          now
-        ),
+        ago: formatTimeAgoLocalized(new Date(object.created_at), undefined, now),
       };
     })
     .filter((v): v is NonNullable<typeof v> => !!v);

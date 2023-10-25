@@ -20,7 +20,10 @@
 <script setup lang="ts">
 definePageMeta({ layout: "app", middleware: "auth" });
 
-const { data, refresh } = await useFetch("/api/bff/home");
+const { data, error, refresh } = await useFetch("/api/bff/home");
+if (error.value) {
+  throw error.value;
+}
 
 useRefreshCaller(refresh, {
   refreshInterval: 30_000,

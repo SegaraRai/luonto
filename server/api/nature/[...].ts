@@ -1,4 +1,5 @@
 import { LRUCache } from "lru-cache";
+import { setRateLimitCache } from "~/server/utils/storage";
 
 function createRequestHeaderInit(token: string): HeadersInit {
   return {
@@ -9,8 +10,21 @@ function createRequestHeaderInit(token: string): HeadersInit {
   };
 }
 
-type CacheValue = readonly [res: Response, body: Blob, timestamp: number];
-type FetchContext = { readonly token: string };
+interface FetchContext {
+  readonly token: string;
+}
+
+interface CacheValueData {
+  readonly res: Response;
+  readonly body: Blob;
+  readonly timestamp: number;
+}
+
+interface CacheValue {
+  readonly data: CacheValueData | null;
+  readonly error: Response | Error | null;
+  readonly timestamp: number;
+}
 
 const cache = new LRUCache<string, CacheValue, FetchContext>({
   max: 100,
@@ -19,21 +33,45 @@ const cache = new LRUCache<string, CacheValue, FetchContext>({
   updateAgeOnHas: false,
   fetchMethod: async (
     key,
-    _staleValue,
+    staleValue,
     { signal, context: { token } }
   ): Promise<CacheValue> => {
-    const timestamp = Date.now();
-    const [, method, url] = key.split("\0");
-    const res = await fetch(url, {
-      method,
-      headers: createRequestHeaderInit(token),
-      signal,
-    });
-    if (!res.ok) {
-      console.error(method, url, res.status, res.statusText);
-      throw res;
+    try {
+      const timestamp = Date.now();
+      const [userId, method, url] = key.split("\0");
+      const res = await fetch(url, {
+        method,
+        headers: createRequestHeaderInit(token),
+        signal,
+      });
+
+      const rateLimitLimit = res.headers.get("x-rate-limit-limit");
+      const rateLimitRemaining = res.headers.get("x-rate-limit-remaining");
+      const rateLimitReset = res.headers.get("x-rate-limit-reset");
+      if (rateLimitLimit && rateLimitRemaining && rateLimitReset) {
+        setRateLimitCache(userId, {
+          limit: Number(rateLimitLimit),
+          remaining: Number(rateLimitRemaining),
+          reset: Number(rateLimitReset) * 1000,
+        });
+      }
+
+      if (!res.ok) {
+        console.error(method, url, res.status, res.statusText);
+        throw res;
+      }
+      return {
+        data: { res, body: await res.blob(), timestamp },
+        error: null,
+        timestamp,
+      };
+    } catch (error) {
+      return {
+        data: staleValue?.data ?? null,
+        error: error as Error,
+        timestamp: Date.now(),
+      };
     }
-    return [res, await res.blob(), timestamp];
   },
 });
 
@@ -83,19 +121,45 @@ export default defineSWEventHandler(async (event) => {
     });
   }
 
-  const [response, blob] =
+  const { data, error, timestamp } =
     (await cache.fetch(`${id}\0${method}\0${url}`, {
       allowStale: !shouldRefresh,
       allowStaleOnFetchRejection: !shouldRefresh,
       allowStaleOnFetchAbort: !shouldRefresh,
       forceRefresh: shouldRefresh,
       context: { token },
-    })) ?? [];
-  if (!response || !blob) {
-    throw createError({
-      statusCode: 502,
-      statusMessage: "Bad Gateway",
-    });
+    })) ?? {};
+
+  let res: Response;
+  if (data) {
+    res = new Response(data.body, data.res);
+
+    res.headers.set("luonto-stale", error ? "1" : "0");
+    res.headers.set("luonto-data-timestamp", String(data.timestamp));
+  } else {
+    const errorBody = JSON.stringify({ rateLimit: getRateLimitCache(id) });
+    if (error instanceof Response) {
+      res = new Response(errorBody, error);
+    } else if (error) {
+      res = new Response(errorBody, {
+        status: 500,
+        statusText: "Internal Server Error",
+      });
+    } else {
+      res = new Response(errorBody, {
+        status: 502,
+        statusText: "Bad Gateway",
+      });
+    }
+
+    res.headers.set("content-type", "application/json");
   }
-  return new Response(blob, response);
+
+  if (timestamp) {
+    res.headers.set("luonto-timestamp", String(timestamp));
+  }
+
+  res.headers.set("cache-control", "no-store");
+
+  return res;
 });

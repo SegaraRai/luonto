@@ -52,7 +52,8 @@ const forceRefresh = ref(false);
 
 const route = useRoute();
 const toast = useToast();
-const { data, refresh } = await useFetch(
+
+const { data, error, refresh } = await useFetch(
   `/api/bff/appliances/${route.params.id}`,
   {
     onRequest: (context): void => {
@@ -73,6 +74,9 @@ const { data, refresh } = await useFetch(
     },
   }
 );
+if (error.value) {
+  throw error.value;
+}
 
 const appliance = computed(() => data.value?.appliance);
 const device = computed(() => data.value?.device);
