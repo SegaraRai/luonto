@@ -32,7 +32,13 @@
 definePageMeta({ layout: "app", middleware: "auth" });
 
 const route = useRoute();
-const { data, refresh } = await useFetch(`/api/bff/devices/${route.params.id}`);
+
+const { data, error, refresh } = await useFetch(
+  `/api/bff/devices/${route.params.id}`
+);
+if (error.value) {
+  throw error.value;
+}
 
 const device = computed(() => data.value?.device);
 const sensorItems = useNatureDeviceSensors(device);
