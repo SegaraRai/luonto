@@ -25,21 +25,15 @@
             to="https://home.nature.global/"
             target="_blank"
           >
-            <span
-              class="i-mdi-text-box-plus-outline w-[1.25em] h-[1.25em] inline-block"
-            />
+            <UIcon class="text-lg" name="i-mdi-text-box-plus-outline" />
             トークンの発行
-            <span
-              class="i-mdi-external-link w-[1.25em] h-[1.25em] inline-block text-gray-400"
-            />
+            <UIcon class="text-gray-400 -mt-1" name="i-mdi-external-link" />
           </ULink>
           <ULink
             class="inline-flex items-center gap-1 text-sky-400"
             to="/about"
           >
-            <span
-              class="i-mdi-help-circle-outline w-[1.25em] h-[1.25em] inline-block"
-            />
+            <UIcon class="text-lg" name="i-mdi-help-circle-outline" />
             このアプリについて
           </ULink>
         </div>
