@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui/dist/runtime/types";
-import { string, object, minLength, Input } from "valibot";
+import { type Input, string, object, minLength } from "valibot";
 
 const { signIn } = useAuth();
 
