@@ -1,10 +1,5 @@
 import { LRUCache } from "lru-cache";
-
-export interface RateLimit {
-  readonly remaining: number;
-  readonly reset: number;
-  readonly limit: number;
-}
+import type { RateLimit } from "./rateLimit";
 
 const rateLimitCache = new LRUCache<string, RateLimit>({
   max: 100,

@@ -1,4 +1,5 @@
 import { LRUCache } from "lru-cache";
+import { createRateLimitFromHeaders } from "~/server/utils/rateLimit";
 import { setRateLimitCache } from "~/server/utils/storage";
 
 function createRequestHeaderInit(token: string): HeadersInit {
@@ -45,15 +46,9 @@ const cache = new LRUCache<string, CacheValue, FetchContext>({
         signal,
       });
 
-      const rateLimitLimit = res.headers.get("x-rate-limit-limit");
-      const rateLimitRemaining = res.headers.get("x-rate-limit-remaining");
-      const rateLimitReset = res.headers.get("x-rate-limit-reset");
-      if (rateLimitLimit && rateLimitRemaining && rateLimitReset) {
-        setRateLimitCache(userId, {
-          limit: Number(rateLimitLimit),
-          remaining: Number(rateLimitRemaining),
-          reset: Number(rateLimitReset) * 1000,
-        });
+      const rateLimit = createRateLimitFromHeaders(res.headers);
+      if (rateLimit) {
+        setRateLimitCache(userId, rateLimit);
       }
 
       if (!res.ok) {
@@ -66,11 +61,16 @@ const cache = new LRUCache<string, CacheValue, FetchContext>({
         timestamp,
       };
     } catch (error) {
-      return {
-        data: staleValue?.data ?? null,
-        error: error as Error,
-        timestamp: Date.now(),
-      };
+      const data = staleValue?.data;
+      if (data) {
+        return {
+          data,
+          error: error as Error,
+          timestamp: Date.now(),
+        };
+      } else {
+        throw error;
+      }
     }
   },
 });
@@ -114,11 +114,30 @@ export default defineSWEventHandler(async (event) => {
   const shouldRefresh = cacheDirectives.includes("no-cache");
 
   if (!shouldCache) {
-    return fetch(url, {
+    let res = await fetch(url, {
       method,
       headers: createRequestHeaderInit(token),
       body,
     });
+
+    const rateLimit = createRateLimitFromHeaders(res.headers);
+    if (rateLimit) {
+      setRateLimitCache(id, rateLimit);
+    }
+
+    res = new Response(res.body, res);
+    res.headers.set("luonto-cache", "0");
+    res.headers.set("luonto-timestamp", String(Date.now()));
+    res.headers.set("cache-control", "no-store");
+
+    if (res.ok) {
+      return res;
+    }
+
+    res.headers.set("content-type", "application/json");
+    res.headers.delete("content-length");
+
+    return new Response(JSON.stringify({ rateLimit }), res);
   }
 
   const { data, error, timestamp } =
@@ -135,7 +154,7 @@ export default defineSWEventHandler(async (event) => {
     res = new Response(data.body, data.res);
 
     res.headers.set("luonto-stale", error ? "1" : "0");
-    res.headers.set("luonto-data-timestamp", String(data.timestamp));
+    res.headers.set("luonto-content-timestamp", String(data.timestamp));
   } else {
     const errorBody = JSON.stringify({ rateLimit: getRateLimitCache(id) });
     if (error instanceof Response) {
@@ -159,6 +178,7 @@ export default defineSWEventHandler(async (event) => {
     res.headers.set("luonto-timestamp", String(timestamp));
   }
 
+  res.headers.set("luonto-cache", "1");
   res.headers.set("cache-control", "no-store");
 
   return res;
