@@ -1,4 +1,13 @@
+import { getRateLimitCache } from "../utils/storage";
+
 export default defineSWEventHandler(async (event) => {
-  const session = await getAuthSession(event);
-  return session?.user ?? null;
+  const user = await getAuthSessionUserData(event);
+  if (!user) {
+    return { user: null, rateLimit: null };
+  }
+
+  return {
+    user: { ...user, token: undefined },
+    rateLimit: getRateLimitCache(user.id),
+  };
 });
