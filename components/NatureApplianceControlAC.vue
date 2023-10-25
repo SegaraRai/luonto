@@ -126,10 +126,7 @@ import type {
 const props = defineProps<{
   appliance: NatureApplianceAC;
   submitting: boolean;
-  onSend: {
-    (promise: Promise<unknown>, forceRefresh?: false): void;
-    (promise: Promise<unknown>, forceRefresh: true): Promise<void>;
-  };
+  onSend: (promise: Promise<unknown>, forceRefresh?: boolean) => Promise<void>;
   onForceRefresh: () => Promise<void>;
 }>();
 
