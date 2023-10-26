@@ -2,7 +2,7 @@
   <div class="py-2 flex flex-col gap-4 items-start">
     <h2 class="text-4xl">{{ error.statusCode }} {{ error.statusMessage }}</h2>
     <p class="text-xl">{{ error.message }}</p>
-    <p v-if="rateLimit">
+    <p v-if="rateLimit && rateLimit.remaining === 0">
       <span>
         Nature API の呼び出しレート制限を超過しました ({{
           rateLimit.remaining
@@ -47,7 +47,10 @@ const now = useNow({
 });
 
 const isRateLimited = computed(
-  () => !!rateLimit.value && rateLimit.value.reset > now.value.getTime()
+  () =>
+    !!rateLimit.value &&
+    rateLimit.value.remaining === 0 &&
+    rateLimit.value.reset > now.value.getTime()
 );
 
 const rateLimitAgo = computed(
