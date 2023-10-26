@@ -84,8 +84,6 @@ const appliance = computed(() => data.value?.appliance);
 const device = computed(() => data.value?.device);
 
 const applianceStatus = useNatureApplianceStatus(appliance);
-const sensorItems = useNatureDeviceSensors(device);
-const detailItems = useNatureDeviceDetails(device);
 
 const onForceRefresh = (): Promise<void> => {
   forceRefresh.value = true;
