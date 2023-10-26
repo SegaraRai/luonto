@@ -51,7 +51,7 @@ const cache = new LRUCache<string, CacheValue, FetchContext>({
         setRateLimitCache(userId, rateLimit);
       }
 
-      if (!res.ok) {
+      if (!res.ok && res.status !== 404) {
         console.error(method, url, res.status, res.statusText);
         throw res;
       }
