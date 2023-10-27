@@ -4,10 +4,8 @@ import { setRateLimitCache } from "~/server/utils/storage";
 
 function createRequestHeaderInit(token: string): HeadersInit {
   return {
-    Accept: "application/json",
-    Authorization: `Bearer ${token}`,
-    "Cache-Control": "no-store",
-    "X-Requested-With": "Luonto",
+    authorization: `Bearer ${token}`,
+    "x-requested-with": "Luonto",
   };
 }
 
