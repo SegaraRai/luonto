@@ -69,7 +69,7 @@ function extendHeaders(): void {
   globalThis.__REQ_RES_TWEAKED__ = true;
 
   globalThis.Request = class Request extends globalThis.Request {
-    readonly headersOverride: Headers | undefined;
+    readonly #headersOverride: Headers | undefined;
 
     constructor(input: RequestInfo | URL, init: RequestInit | undefined) {
       const headers = init?.headers && new Headers(init.headers);
@@ -80,16 +80,16 @@ function extendHeaders(): void {
           headers,
         }
       );
-      this.headersOverride = headers;
+      this.#headersOverride = headers;
     }
 
     get headers(): Headers {
-      return this.headersOverride ?? super.headers;
+      return this.#headersOverride ?? super.headers;
     }
   };
 
   globalThis.Response = class Response extends globalThis.Response {
-    readonly headersOverride: Headers | undefined;
+    readonly #headersOverride: Headers | undefined;
 
     constructor(body?: BodyInit | null, init?: ResponseInit) {
       const headers = init?.headers && new Headers(init.headers);
@@ -100,11 +100,11 @@ function extendHeaders(): void {
           headers,
         }
       );
-      this.headersOverride = headers;
+      this.#headersOverride = headers;
     }
 
     get headers(): Headers {
-      return this.headersOverride ?? super.headers;
+      return this.#headersOverride ?? super.headers;
     }
   };
 }
