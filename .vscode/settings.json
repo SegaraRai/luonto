@@ -17,7 +17,9 @@
     ["/\\*ui\\*/\\s*{([^;]*)}", ":\\s*[\"'`]([^\"'`]*).*?[\"'`]"]
   ],
   "cSpell.words": [
-    "Nuxt"
+    "Nuxt",
+    "precache",
+    "precaching"
   ],
   "unocss.disable": true,
 }
