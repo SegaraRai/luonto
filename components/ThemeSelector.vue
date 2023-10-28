@@ -1,6 +1,9 @@
 <template>
   <ColorScheme placeholder="...">
-    <UPopover mode="hover" :popper="{ placement }">
+    <UPopover
+      :mode="hoverAvailable ? 'hover' : 'click'"
+      :popper="{ placement }"
+    >
       <UButton
         size="sm"
         square
@@ -33,6 +36,7 @@ defineProps<{
 }>();
 
 const colorMode = useColorMode();
+const hoverAvailable = useHoverAvailable();
 
 const items = computed(() => [
   {

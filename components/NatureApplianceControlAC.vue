@@ -75,7 +75,11 @@
         :key="key"
       >
         <div class="flex flex-col items-center gap-2">
-          <UDropdown mode="hover" :items="[items]" :disabled="disabled">
+          <UDropdown
+            :mode="hoverAvailable ? 'hover' : 'click'"
+            :items="[items]"
+            :disabled="disabled"
+          >
             <UButton
               :id="`ac-dropdown-${key}`"
               size="lg"
@@ -129,6 +133,8 @@ const props = defineProps<{
   onSend: (promise: Promise<unknown>, forceRefresh?: boolean) => Promise<void>;
   onForceRefresh: () => Promise<void>;
 }>();
+
+const hoverAvailable = useHoverAvailable();
 
 // constants
 
