@@ -115,3 +115,20 @@
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+useHead({
+  title: "Luonto について",
+  meta: [
+    ...getCommonMeta(),
+    {
+      name: "description",
+      content: "Luonto は、Nature Remo の非公式 Web アプリです",
+    },
+  ],
+  link: getCommonLink(),
+  htmlAttrs: {
+    lang: "ja",
+  },
+});
+</script>

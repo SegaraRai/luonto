@@ -80,6 +80,15 @@ if (error.value) {
   throw error.value;
 }
 
+useHead({
+  title: composeTitle(data.value?.appliance.nickname),
+  meta: getCommonMeta(),
+  link: getCommonLink(),
+  htmlAttrs: {
+    lang: "ja",
+  },
+});
+
 const appliance = computed(() => data.value?.appliance);
 const device = computed(() => data.value?.device);
 

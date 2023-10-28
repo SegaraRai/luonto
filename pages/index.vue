@@ -20,6 +20,15 @@
 <script setup lang="ts">
 definePageMeta({ layout: "app", middleware: "auth" });
 
+useHead({
+  title: composeTitle("ホーム"),
+  meta: getCommonMeta(),
+  link: getCommonLink(),
+  htmlAttrs: {
+    lang: "ja",
+  },
+});
+
 const { data, error, refresh } = await useFetch("/api/bff/home");
 if (error.value) {
   throw error.value;

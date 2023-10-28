@@ -40,6 +40,15 @@ if (error.value) {
   throw error.value;
 }
 
+useHead({
+  title: composeTitle(data.value?.device.name),
+  meta: getCommonMeta(),
+  link: getCommonLink(),
+  htmlAttrs: {
+    lang: "ja",
+  },
+});
+
 const device = computed(() => data.value?.device);
 const sensorItems = useNatureDeviceSensors(device);
 const detailItems = useNatureDeviceDetails(device);

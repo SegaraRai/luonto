@@ -12,4 +12,13 @@ import type { H3Error } from "h3";
 const props = defineProps<{ error: H3Error }>();
 
 const handleError = () => clearError({ redirect: "/" });
+
+useHead({
+  title: composeTitle("エラー"),
+  meta: getCommonMeta(),
+  link: getCommonLink(),
+  htmlAttrs: {
+    lang: "ja",
+  },
+});
 </script>

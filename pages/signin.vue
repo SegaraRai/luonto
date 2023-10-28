@@ -49,6 +49,15 @@
 import type { FormSubmitEvent } from "@nuxt/ui/dist/runtime/types";
 import { type Input, string, object, minLength } from "valibot";
 
+useHead({
+  title: composeTitle("サインイン"),
+  meta: getCommonMeta(),
+  link: getCommonLink(),
+  htmlAttrs: {
+    lang: "ja",
+  },
+});
+
 const { signIn } = useAuth();
 
 const schema = object({
