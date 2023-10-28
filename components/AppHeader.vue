@@ -7,12 +7,35 @@
       <div class="flex-1" />
       <template v-if="user">
         <ThemeSelector placement="left" />
-        <UTooltip :text="`${user.name} としてサインイン中`">
-          <UAvatar :alt="user.name ?? undefined" size="sm" />
-        </UTooltip>
-        <UButton variant="outline" @click="signOutHandler">
-          サインアウト
-        </UButton>
+        <UDropdown
+          v-if="user.name != null"
+          :items="items"
+          :ui="{ item: { disabled: 'cursor-text select-text opacity-100' } }"
+        >
+          <UAvatar
+            class="select-none"
+            :alt="user.name ?? undefined"
+            size="sm"
+          />
+          <template #account>
+            <div class="flex flex-col gap-2 text-start items-start">
+              <div class="text-sm font-bold text-gray-600 dark:text-gray-300">
+                {{ user.name }} としてサインイン中
+              </div>
+              <div
+                class="text-xs text-gray-400 dark:text-gray-500"
+                v-text="userId"
+              />
+            </div>
+          </template>
+          <template #item="{ item }">
+            <span class="truncate">{{ item.label }}</span>
+            <UIcon
+              :name="item.icon"
+              class="flex-shrink-0 h-4 w-4 text-gray-400 dark:text-gray-500 ms-auto"
+            />
+          </template>
+        </UDropdown>
       </template>
     </div>
   </div>
@@ -21,8 +44,42 @@
 <script setup lang="ts">
 const { signOut, user } = useAuth();
 
-const signOutHandler = async () => {
-  await signOut();
-  navigateTo("/");
+const toast = useToast();
+
+const signOutHandler = (): void => {
+  signOut().then(
+    (): void => {
+      toast.add({
+        color: "blue",
+        title: "サインアウトしました",
+      });
+      navigateTo("/");
+    },
+    (): void => {
+      toast.add({
+        color: "red",
+        title: "サインアウトできませんでした",
+      });
+    }
+  );
 };
+
+const items = computed(() => [
+  [
+    {
+      slot: "account",
+      disabled: true,
+      label: user.value?.name ?? "",
+    },
+  ],
+  [
+    {
+      label: "サインアウト",
+      icon: "i-ph-sign-out-bold",
+      onClick: signOutHandler,
+    },
+  ],
+]);
+
+const userId = computed(() => JSON.parse(user.value?.email || "{}").id);
 </script>
