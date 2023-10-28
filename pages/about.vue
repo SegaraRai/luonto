@@ -100,7 +100,7 @@
       </p>
     </div>
     <div
-      class="w-full flex items-center justify-center gap-4 text-2xl text-gray-400 pb-4"
+      class="w-full flex items-center justify-center gap-4 text-2xl text-gray-600 dark:text-gray-400 pb-4"
     >
       <ULink class="inline-block rounded-full" to="/">
         <UIcon name="i-mdi-home" aria-label="ホーム" />
