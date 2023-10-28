@@ -23,13 +23,12 @@ export default defineNuxtConfig({
   modules: ["@hebilicious/authjs-nuxt", "@nuxt/ui", "@vueuse/nuxt"],
   nitro,
   authJs: {
-    baseUrl: "http://localhost:3000",
     guestRedirectTo: "/signin",
   },
   runtimeConfig: {
     public: {
       authJs: {
-        baseUrl: "http://localhost:3000",
+        baseUrl: "https://service-worker",
       },
     },
   },

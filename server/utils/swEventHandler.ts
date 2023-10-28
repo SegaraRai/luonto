@@ -1,3 +1,5 @@
+/// <reference lib="webworker" />
+
 import type {
   EventHandler,
   EventHandlerRequest,
@@ -5,7 +7,6 @@ import type {
 } from "h3";
 
 declare global {
-  var ServiceWorkerGlobalScope: any;
   var __REQ_RES_TWEAKED__: boolean | undefined;
 }
 
@@ -32,6 +33,9 @@ export const defineSWEventHandler = !isSW
         {
           const srcHeaders = event.node.req.headers;
           srcHeaders.origin ??= location.origin;
+          if (event.path.startsWith("/api/auth/")) {
+            srcHeaders.origin = "https://service-worker";
+          }
           if (!srcHeaders.host?.includes(".")) {
             srcHeaders.host = location.host;
           }
