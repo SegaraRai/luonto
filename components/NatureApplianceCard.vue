@@ -26,8 +26,8 @@
           >
             <span v-text="status.settings.label" />
             <span
-              class="pl-[0.25em]"
               v-if="status.settings.unit"
+              class="pl-[0.25em]"
               v-text="status.settings.unit"
             />
           </div>

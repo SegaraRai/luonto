@@ -5,7 +5,7 @@
     <NuxtLink :to="`/devices/${device.id}`">{{ device.name }}</NuxtLink>
     <div v-if="sensorItems.length" class="flex items-center gap-6">
       <template v-for="item in sensorItems" :key="item.label">
-        <div class="flex items-center gap-2 text-sm" v-if="item.available">
+        <div v-if="item.available" class="flex items-center gap-2 text-sm">
           <span
             class="flex-none w-[1.25em] h-[1.25em]"
             :class="[item.class, item.icon]"

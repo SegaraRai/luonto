@@ -1,7 +1,7 @@
 <template>
   <NuxtLayout>
     <UContainer>
-      <ErrorContent :error="props.error" @handleError="handleError" />
+      <ErrorContent :error="props.error" @handle-error="handleError" />
     </UContainer>
   </NuxtLayout>
 </template>

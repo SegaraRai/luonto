@@ -148,7 +148,7 @@ loadServerStorage(RESPONSE_CACHE_STORAGE_KEY).then((data): void => {
 
   const parsed = JSON.parse(data) as [
     string,
-    LRUCache.Entry<SerializedCacheValue>
+    LRUCache.Entry<SerializedCacheValue>,
   ][];
   responseCache.load(
     parsed

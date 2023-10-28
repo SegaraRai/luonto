@@ -1,7 +1,5 @@
 <template>
-  <div>
-    Service Worker をインストールしています…
-  </div>
+  <div>Service Worker をインストールしています…</div>
 </template>
 
 <script setup lang="ts">

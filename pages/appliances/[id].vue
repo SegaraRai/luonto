@@ -32,14 +32,14 @@
         :appliance="appliance"
         :submitting="submitting"
         @send="onSend"
-        @forceRefresh="onForceRefresh"
+        @force-refresh="onForceRefresh"
       />
       <NatureApplianceControlLight
         v-if="appliance.type === 'LIGHT'"
         :appliance="appliance"
         :submitting="submitting"
         @send="onSend"
-        @forceRefresh="onForceRefresh"
+        @force-refresh="onForceRefresh"
       />
     </div>
   </div>
