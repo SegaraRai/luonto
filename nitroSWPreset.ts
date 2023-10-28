@@ -30,6 +30,10 @@ const minifyHTML = (src: string): string =>
 const scriptTemplate = (baseURL = "/") =>
   minifyJS(`
 if ("serviceWorker" in navigator) {
+  const onActivated = () => {
+    location.reload();
+  };
+
   const register = async () => {
     const registration = await navigator.serviceWorker.register("${joinURL(
       baseURL,
@@ -38,11 +42,15 @@ if ("serviceWorker" in navigator) {
 
     await navigator.serviceWorker.ready;
 
-    registration.active.addEventListener("statechange", (event) => {
-      if (event.target.state === "activated") {
-        location.reload();
-      }
-    });
+    if (registration.active.state === "activated") {
+      onActivated();
+    } else {
+      registration.active.addEventListener("statechange", (event) => {
+        if (event.target.state === "activated") {
+          onActivated();
+        }
+      });
+    }
   };
 
   if (location.hostname !== "localhost" && location.protocol === "http:") {
