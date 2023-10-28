@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="items.length"
-    class="flex-none self-start grid grid-cols-[max-content,1fr,max-content] items-center gap-y-4 dark:text-gray-300"
+    class="flex-none self-start grid grid-cols-[max-content,1fr,max-content] items-center gap-y-4 text-gray-700 dark:text-gray-300"
   >
     <template v-for="item in items" :key="item.label">
       <div
@@ -19,9 +19,7 @@
         <span class="flex-none text-center" v-text="item.unit" />
       </template>
       <template v-else>
-        <span
-          class="flex-1 text-right pl-[0.5em] col-span-2 opacity-50"
-        >
+        <span class="flex-1 text-right pl-[0.5em] col-span-2 opacity-50">
           N/A
         </span>
       </template>

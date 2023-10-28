@@ -2,7 +2,7 @@
   <div class="w-full max-w-[220px] flex flex-col gap-8 items-center mx-auto">
     <div class="relative w-full aspect-square">
       <div
-        class="absolute inset-0 w-full h-full -z-1 border-[40px] rounded-full dark:border-gray-800"
+        class="absolute inset-0 w-full h-full -z-1 border-[40px] rounded-full border-gray-50 dark:border-gray-800"
       />
       <template
         v-for="{

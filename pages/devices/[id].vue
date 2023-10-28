@@ -3,7 +3,7 @@
     <div class="flex flex-row items-start gap-16">
       <div class="flex-none flex flex-col items-center gap-2">
         <div
-          class="w-32 h-32 i-solar-notification-unread-outline dark:text-gray-200"
+          class="w-32 h-32 i-solar-notification-unread-outline text-gray-800 dark:text-gray-200"
         />
         <div class="text-2xl" v-text="device.name" />
       </div>
@@ -16,7 +16,7 @@
       </template>
     </dl>
     <template v-if="data?.appliances.length">
-      <hr class="w-full dark:border-gray-700" />
+      <hr class="w-full border-gray-200 dark:border-gray-700" />
       <div
         class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-4"
       >

@@ -3,7 +3,7 @@
     <div>
       <div
         ref="temperatureSwipeEl"
-        class="rounded-xl w-24 h-64 border border-gray-600 flex flex-col overflow-hidden touch-none select-none"
+        class="rounded-xl w-24 h-64 border border-gray-200 dark:border-gray-600 flex flex-col overflow-hidden touch-none select-none"
         :class="[
           disabled ? 'cursor-not-allowed' : 'cursor-ns-resize',
           !supportsTemperature && 'bg-gray-100 dark:bg-gray-900',

@@ -20,12 +20,12 @@
         :class="[
           natureIconToClass(appliance.image),
           applianceStatus.indicator?.type === 'ON'
-            ? 'dark:text-yellow-200/50'
-            : 'dark:text-gray-200/50',
+            ? 'text-yellow-300/50 dark:text-yellow-200/50'
+            : 'text-gray-300/50 dark:text-gray-200/50',
         ]"
       />
     </div>
-    <hr class="w-full dark:border-gray-700" />
+    <hr class="w-full border-gray-200 dark:border-gray-700" />
     <div class="max-w-xs px-4 pt-8 w-full">
       <NatureApplianceControlAC
         v-if="appliance.type === 'AC'"

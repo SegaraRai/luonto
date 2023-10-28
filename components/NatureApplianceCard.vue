@@ -4,7 +4,7 @@
       <div class="flex flex-row items-center gap-4">
         <div class="flex-1 flex flex-col items-center gap-4">
           <div
-            class="w-24 h-24 dark:text-gray-200"
+            class="w-24 h-24 text-gray-600 dark:text-gray-200"
             :class="natureIconToClass(appliance.image)"
           />
           <div v-text="appliance.nickname" />
