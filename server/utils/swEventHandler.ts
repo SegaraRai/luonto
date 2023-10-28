@@ -94,15 +94,8 @@ function extendHeaders(): void {
     readonly #headersOverride: Headers | undefined;
 
     constructor(input: RequestInfo | URL, init: RequestInit | undefined) {
-      const headers = init?.headers && new Headers(init.headers);
-      super(
-        input,
-        init && {
-          ...init,
-          headers,
-        }
-      );
-      this.#headersOverride = headers;
+      super(input, init);
+      this.#headersOverride = init?.headers && new Headers(init.headers);
     }
 
     get headers(): Headers {
@@ -114,15 +107,8 @@ function extendHeaders(): void {
     readonly #headersOverride: Headers | undefined;
 
     constructor(body?: BodyInit | null, init?: ResponseInit) {
-      const headers = init?.headers && new Headers(init.headers);
-      super(
-        body,
-        init && {
-          ...init,
-          headers,
-        }
-      );
-      this.#headersOverride = headers;
+      super(body, init);
+      this.#headersOverride = init?.headers && new Headers(init.headers);
     }
 
     get headers(): Headers {
