@@ -20,7 +20,7 @@ export default defineSWEventHandler(async (event) => {
   if (!appliance) {
     throw createError({
       statusCode: 404,
-      statusMessage: "Device Not Found",
+      statusMessage: "Appliance Not Found",
     });
   }
 
