@@ -5,17 +5,33 @@ import type {
   EventHandlerRequest,
   EventHandlerResponse,
 } from "h3";
+import { isSW } from "./isSW";
+import { loadServerStorage, storeServerStorage } from "./serverStorage";
 
 declare global {
   var __REQ_RES_TWEAKED__: boolean | undefined;
 }
 
-const isSW =
-  typeof globalThis !== "undefined" &&
-  globalThis.ServiceWorkerGlobalScope != null &&
-  globalThis instanceof globalThis.ServiceWorkerGlobalScope;
+const COOKIE_STORAGE_KEY = "cookie";
 
 const cookieMap = new Map<string, string>();
+
+loadServerStorage(COOKIE_STORAGE_KEY).then((data): void => {
+  if (!data) {
+    return;
+  }
+
+  for (const [key, value] of JSON.parse(data)) {
+    cookieMap.set(key, value);
+  }
+});
+
+async function persistCookieMap(): Promise<void> {
+  await storeServerStorage(
+    COOKIE_STORAGE_KEY,
+    JSON.stringify(Array.from(cookieMap.entries()))
+  );
+}
 
 export const defineSWEventHandler = !isSW
   ? defineEventHandler
@@ -58,6 +74,7 @@ export const defineSWEventHandler = !isSW
               /^(?<name>[^=]+)=(?<value>[^;]+)/.exec(cookie)?.groups ?? {};
             cookieMap.set(name, value);
           }
+          event.waitUntil(persistCookieMap());
         }
 
         return res;

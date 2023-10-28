@@ -1,4 +1,4 @@
-import { getRateLimitCache } from "../utils/storage";
+import { getRateLimitCache } from "../utils/rateLimitCache";
 
 export default defineSWEventHandler(async (event) => {
   const user = await getAuthSessionUserData(event);

@@ -17,6 +17,9 @@ async function handleEvent(url: URL, event: FetchEvent): Promise<Response> {
   }
 
   return nitroApp.localFetch(url.pathname + url.search, {
+    context: {
+      waitUntil: (promise: Promise<void>): void => event.waitUntil(promise),
+    },
     host: url.hostname,
     protocol: url.protocol,
     headers: event.request.headers,

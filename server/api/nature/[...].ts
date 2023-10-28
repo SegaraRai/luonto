@@ -1,6 +1,15 @@
 import { LRUCache } from "lru-cache";
 import { createRateLimitFromHeaders } from "~/server/utils/rateLimit";
-import { setRateLimitCache } from "~/server/utils/storage";
+import {
+  persistRateLimitCache,
+  setRateLimitCache,
+} from "~/server/utils/rateLimitCache";
+import {
+  loadServerStorage,
+  storeServerStorage,
+} from "~/server/utils/serverStorage";
+
+const RESPONSE_CACHE_STORAGE_KEY = "natureAPIResponse";
 
 function createRequestHeaderInit(token: string): HeadersInit {
   return {
@@ -11,6 +20,7 @@ function createRequestHeaderInit(token: string): HeadersInit {
 
 interface FetchContext {
   readonly token: string;
+  readonly waitUntil: (promise: Promise<void>) => void;
 }
 
 interface CacheValueData {
@@ -25,7 +35,56 @@ interface CacheValue {
   readonly timestamp: number;
 }
 
-const cache = new LRUCache<string, CacheValue, FetchContext>({
+interface SerializedCacheValue {
+  readonly status: number;
+  readonly statusText: string;
+  readonly headers: [string, string][];
+  readonly body: string;
+  readonly timestamp: number;
+}
+
+async function serializeCacheValue(
+  value: CacheValue
+): Promise<SerializedCacheValue | null> {
+  if (value.error || !value.data) {
+    return null;
+  }
+
+  try {
+    const { data } = value;
+    return {
+      status: data.res.status,
+      statusText: data.res.statusText,
+      headers: Array.from(data.res.headers.entries()),
+      body: await data.body.text(),
+      timestamp: data.timestamp,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function deserializeCacheValue(data: SerializedCacheValue): CacheValue | null {
+  try {
+    return {
+      data: {
+        res: new Response(null, {
+          status: data.status,
+          statusText: data.statusText,
+          headers: new Headers(data.headers),
+        }),
+        body: new Blob([new TextEncoder().encode(data.body)]),
+        timestamp: data.timestamp,
+      },
+      error: null,
+      timestamp: data.timestamp,
+    };
+  } catch {
+    return null;
+  }
+}
+
+const responseCache = new LRUCache<string, CacheValue, FetchContext>({
   max: 100,
   ttl: 20_000,
   updateAgeOnGet: false,
@@ -33,7 +92,7 @@ const cache = new LRUCache<string, CacheValue, FetchContext>({
   fetchMethod: async (
     key,
     staleValue,
-    { signal, context: { token } }
+    { signal, context: { token, waitUntil } }
   ): Promise<CacheValue> => {
     try {
       const timestamp = Date.now();
@@ -53,6 +112,15 @@ const cache = new LRUCache<string, CacheValue, FetchContext>({
         console.error(method, url, res.status, res.statusText);
         throw res;
       }
+
+      waitUntil(
+        (async (): Promise<void> => {
+          await new Promise((resolve) => setTimeout(resolve, 10));
+          await persistRateLimitCache();
+          await persistResponseCache();
+        })()
+      );
+
       return {
         data: { res, body: await res.blob(), timestamp },
         error: null,
@@ -73,7 +141,52 @@ const cache = new LRUCache<string, CacheValue, FetchContext>({
   },
 });
 
-export default defineSWEventHandler(async (event) => {
+loadServerStorage(RESPONSE_CACHE_STORAGE_KEY).then((data): void => {
+  if (!data) {
+    return;
+  }
+
+  const parsed = JSON.parse(data) as [
+    string,
+    LRUCache.Entry<SerializedCacheValue>
+  ][];
+  responseCache.load(
+    parsed
+      .map(([key, value]): [string, LRUCache.Entry<CacheValue | null>] => [
+        key,
+        { ...value, value: deserializeCacheValue(value.value) },
+      ])
+      .filter(
+        (item): item is [string, LRUCache.Entry<CacheValue>] => !!item[1].value
+      )
+  );
+});
+
+async function persistResponseCache(): Promise<void> {
+  const serialized = (
+    await Promise.all(
+      responseCache
+        .dump()
+        .map(
+          async ([key, value]): Promise<
+            [string, LRUCache.Entry<SerializedCacheValue | null>]
+          > => [
+            key,
+            { ...value, value: await serializeCacheValue(value.value) },
+          ]
+        )
+    )
+  ).filter(
+    (item): item is [string, LRUCache.Entry<SerializedCacheValue>] =>
+      !!item[1].value
+  );
+  await storeServerStorage(
+    RESPONSE_CACHE_STORAGE_KEY,
+    JSON.stringify(serialized)
+  );
+}
+
+export default defineSWEventHandler(async (event): Promise<Response> => {
   const user = await getAuthSessionUserData(event);
   if (!user) {
     throw createError({
@@ -121,6 +234,7 @@ export default defineSWEventHandler(async (event) => {
     const rateLimit = createRateLimitFromHeaders(res.headers);
     if (rateLimit) {
       setRateLimitCache(id, rateLimit);
+      event.waitUntil(persistRateLimitCache());
     }
 
     res = new Response(res.body, res);
@@ -139,12 +253,15 @@ export default defineSWEventHandler(async (event) => {
   }
 
   const { data, error, timestamp } =
-    (await cache.fetch(`${id}\0${method}\0${url}`, {
+    (await responseCache.fetch(`${id}\0${method}\0${url}`, {
       allowStale: !shouldRefresh,
       allowStaleOnFetchRejection: !shouldRefresh,
       allowStaleOnFetchAbort: !shouldRefresh,
       forceRefresh: shouldRefresh,
-      context: { token },
+      context: {
+        token,
+        waitUntil: (promise): void => event.waitUntil(promise),
+      },
     })) ?? {};
 
   let res: Response;
