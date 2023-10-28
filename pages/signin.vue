@@ -19,23 +19,26 @@
             </div>
           </div>
         </UForm>
-        <div class="flex flex-col items-start gap-2 text-sm">
-          <ULink
-            class="inline-flex items-center gap-1 text-emerald-400"
-            to="https://home.nature.global/"
-            target="_blank"
-          >
-            <UIcon class="text-lg" name="i-mdi-text-box-plus-outline" />
-            トークンの発行
-            <UIcon class="text-gray-400 -mt-1" name="i-mdi-external-link" />
-          </ULink>
-          <ULink
-            class="inline-flex items-center gap-1 text-sky-400"
-            to="/about"
-          >
-            <UIcon class="text-lg" name="i-mdi-help-circle-outline" />
-            このアプリについて
-          </ULink>
+        <div class="flex items-end justify-between gap-2">
+          <div class="flex flex-col items-start gap-2 text-sm">
+            <ULink
+              class="inline-flex items-center gap-1 text-emerald-400"
+              to="https://home.nature.global/"
+              target="_blank"
+            >
+              <UIcon class="text-lg" name="i-mdi-text-box-plus-outline" />
+              トークンの発行
+              <UIcon class="text-gray-400 -mt-1" name="i-mdi-external-link" />
+            </ULink>
+            <ULink
+              class="inline-flex items-center gap-1 text-sky-400"
+              to="/about"
+            >
+              <UIcon class="text-lg" name="i-mdi-help-circle-outline" />
+              このアプリについて
+            </ULink>
+          </div>
+          <ThemeSelector placement="left" />
         </div>
       </div>
     </UCard>
