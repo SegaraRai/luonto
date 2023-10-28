@@ -19,7 +19,7 @@ export function getCommonMeta(): Meta[] {
     },
     {
       "http-equiv": "content-security-policy",
-      content: "__CSP_DIRECTIVES__",
+      content: "__CSP_DIRECTIVES_META__",
     },
   ];
 }

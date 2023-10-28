@@ -8,7 +8,8 @@ import { type IText, Window } from "happy-dom";
 import type { NitroConfig } from "nitropack";
 import { joinURL } from "ufo";
 
-const CSP_PLACEHOLDER = "__CSP_DIRECTIVES__";
+const CSP_META_PLACEHOLDER = "__CSP_DIRECTIVES_META__";
+const CSP_HEADER_PLACEHOLDER = "__CSP_DIRECTIVES_HEADER__";
 const SERVER_JS_PLACEHOLDER = "__SERVER_JS__";
 
 const minifyJS = (src: string): string =>
@@ -121,7 +122,10 @@ const collectHashes = async (nitro: object, html: string): Promise<void> => {
       continue;
     }
 
-    if (match[2].includes(CSP_PLACEHOLDER)) {
+    if (
+      match[2].includes(CSP_META_PLACEHOLDER) ||
+      match[2].includes(CSP_HEADER_PLACEHOLDER)
+    ) {
       throw new Error("CSP_PLACEHOLDER found in inline script");
     }
 
@@ -136,7 +140,10 @@ const collectHashes = async (nitro: object, html: string): Promise<void> => {
       continue;
     }
 
-    if (match[2].includes(CSP_PLACEHOLDER)) {
+    if (
+      match[2].includes(CSP_META_PLACEHOLDER) ||
+      match[2].includes(CSP_HEADER_PLACEHOLDER)
+    ) {
       throw new Error("CSP_PLACEHOLDER found in inline style");
     }
 
@@ -147,7 +154,7 @@ const collectHashes = async (nitro: object, html: string): Promise<void> => {
   }
 };
 
-function createCSPDirectives(nitro: object): string {
+function createCSPDirectives(nitro: object, mode: "header" | "meta"): string {
   const hashes = cspHashesWeakMap.get(nitro);
   if (!hashes) {
     throw new Error("CSP hashes not collected");
@@ -158,7 +165,6 @@ function createCSPDirectives(nitro: object): string {
     "base-uri 'self'",
     "block-all-mixed-content",
     "connect-src 'self' cloudflareinsights.com api.nature.global",
-    "frame-ancestors 'none'",
     "img-src 'self' data:",
     "object-src 'none'",
     `script-src 'self' static.cloudflareinsights.com${Array.from(hashes.script)
@@ -166,6 +172,7 @@ function createCSPDirectives(nitro: object): string {
       .map((hash) => ` 'sha256-${hash}'`)
       .join("")}`,
     "style-src 'self' 'unsafe-inline'",
+    ...(mode === "header" ? ["frame-ancestors 'none'"] : []),
   ].join("; ");
 }
 
@@ -187,6 +194,13 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
     },
     output: {
       serverDir: "{{ output.dir }}/public/server",
+    },
+    routeRules: {
+      "/**": {
+        headers: {
+          "content-security-policy": CSP_HEADER_PLACEHOLDER,
+        },
+      },
     },
     hooks: {
       async "rollup:before"(nitro, rollupConfig) {
@@ -305,8 +319,10 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
         }
 
         // Post-process files
-        const csp = createCSPDirectives(nitro);
-        console.log("CSP:", csp);
+        const cspMeta = createCSPDirectives(nitro, "meta");
+        const cspHeader = createCSPDirectives(nitro, "header");
+        console.log("CSP (meta):", cspMeta);
+        console.log("CSP (header):", cspHeader);
 
         for (const file of (
           await fg("**", {
@@ -332,8 +348,13 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
           await fsp.writeFile(
             filepath,
             content
-              .replaceAll(`=${CSP_PLACEHOLDER}`, `"${csp}"`) // minified attribute values
-              .replaceAll(CSP_PLACEHOLDER, csp),
+              .replaceAll(`=${CSP_META_PLACEHOLDER}`, `"${cspMeta}"`) // minified attribute values
+              .replaceAll(`"${CSP_META_PLACEHOLDER}"`, `"${cspMeta}"`)
+              .replaceAll(`'${CSP_META_PLACEHOLDER}'`, `"${cspMeta}"`)
+              .replaceAll(CSP_META_PLACEHOLDER, cspMeta)
+              .replaceAll(`"${CSP_HEADER_PLACEHOLDER}"`, `"${cspHeader}"`)
+              .replaceAll(`'${CSP_HEADER_PLACEHOLDER}'`, `"${cspHeader}"`)
+              .replaceAll(CSP_HEADER_PLACEHOLDER, cspHeader),
             "utf-8"
           );
         }
