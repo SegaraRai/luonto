@@ -1,75 +1,61 @@
-# Nuxt 3 Minimal Starter
+# Luonto
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+[Luonto](https://luonto.null.lu/) は [Nature Remo](https://nature.global/) の非公式 Web アプリケーションです
 
-## Setup
+Nuxt 3 で作成しており、Service Worker 上で SSR を行います  
+PWA にも対応しているので、オフラインでも動作します (キャッシュされた情報が見れるだけですが…)
 
-Make sure to install the dependencies:
+使用にあたっては予め Nature の API アクセストークンを取得しておく必要があります  
+[こちら](https://home.nature.global/) から取得してください
+
+API への送信処理はすべてローカルで行われるため、アクセストークンが Nature の API サーバー以外に送信されることはありません  
+Luonto をホストしているサーバー (Cloudflare Pages) は静的アセットの配信にのみ使用しています  
+万が一アクセストークンが漏洩した場合は、Nature の API サーバーからアクセストークンを無効化してください
+
+## 開発方法
+
+以下が必要です
+
+- [Node.js](https://nodejs.org/) v20
+- [pnpm](https://pnpm.io/) v8
+
+[Bun](https://bun.sh/) が正式に Windows に対応したら pnpm から移行するかも
+
+### セットアップ
 
 ```bash
-# npm
-npm install
-
-# pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+### 開発サーバーの起動
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
 pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+`http://localhost:3000` で確認できます
 
-Build the application for production:
+### ビルド
 
 ```bash
-# npm
-npm run build
-
-# pnpm
 pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
+`.output/public` に静的アセットが出力されます
+
+### プロダクションビルドのプレビュー
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
 pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+`http://localhost:3000` でプレビューできます
+
+### デプロイ
+
+`.output/public` を配信すれば OK です (JavaScript の動作するサーバーは必要ありません)  
+Cloudflare Pages にデプロイする場合は以下のコマンドを実行してください
+
+```bash
+pnpm wrangler pages deploy .output/public
+```
