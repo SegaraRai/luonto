@@ -258,31 +258,36 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
 
         // workbox
         const workbox = await import("workbox-build");
-        const swSrc = path.resolve(
+        const serverSrc = path.resolve(
           nitro.options.output.publicDir,
           "server/index.mjs"
         );
-        const swDest = path.resolve(
+        const serverDest = path.resolve(
           nitro.options.output.publicDir,
           `server/index-injected.mjs`
         );
         await workbox.injectManifest({
           globDirectory: nitro.options.output.publicDir,
-          swSrc,
-          swDest,
+          swSrc: serverSrc,
+          swDest: serverDest,
         });
 
-        const swHash = Buffer.from(
-          await crypto.subtle.digest("SHA-256", await fsp.readFile(swDest))
+        const serverContent = Buffer.from(
+          minifyJS(await fsp.readFile(serverDest, "utf-8")),
+          "utf-8"
+        );
+
+        const serverHash = Buffer.from(
+          await crypto.subtle.digest("SHA-256", serverContent)
         )
           .toString("hex")
           .slice(0, 8);
-        const swBuildFilename = `server.${swHash}.js`;
+        const serverBuildFilename = `server.${serverHash}.js`;
 
         // Write server file
         await fsp.writeFile(
-          path.resolve(nitro.options.output.publicDir, swBuildFilename),
-          await fsp.readFile(swDest)
+          path.resolve(nitro.options.output.publicDir, serverBuildFilename),
+          serverContent
         );
 
         // cleanup server directory
@@ -291,10 +296,10 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
         // Write sw.js file
         await fsp.writeFile(
           path.resolve(nitro.options.output.publicDir, "sw.js"),
-          `self.importScripts('${joinURL(
+          `self.importScripts("${joinURL(
             nitro.options.baseURL,
-            swBuildFilename
-          )}');`,
+            serverBuildFilename
+          )}");`,
           "utf-8"
         );
 
@@ -320,7 +325,7 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
             filepath,
             html.replaceAll(
               SERVER_JS_PLACEHOLDER,
-              joinURL(nitro.options.baseURL, swBuildFilename)
+              joinURL(nitro.options.baseURL, serverBuildFilename)
             ),
             "utf-8"
           );
