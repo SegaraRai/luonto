@@ -3,7 +3,8 @@ https://:project.pages.dev/*
 
 /*
   Cache-Control: public, max-age=300, stale-while-revalidate=86400, stale-if-error=604800
-  Content-Security-Policy: default-src 'self';
+  Content-Security-Policy: __CSP_DIRECTIVES__
+  Permissions-Policy: microphone=(), camera=(), geolocation=(), interest-cohort=()
 
 /sw.js
   ! Cache-Control

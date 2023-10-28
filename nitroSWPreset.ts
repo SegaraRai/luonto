@@ -3,10 +3,12 @@ import fsp from "node:fs/promises";
 import path from "node:path";
 import { minify as minifyHTMLBuffer } from "@minify-html/node";
 import { transformSync } from "esbuild";
+import fg from "fast-glob";
 import { type IText, Window } from "happy-dom";
 import type { NitroConfig } from "nitropack";
 import { joinURL } from "ufo";
 
+const CSP_PLACEHOLDER = "__CSP_DIRECTIVES__";
 const SERVER_JS_PLACEHOLDER = "__SERVER_JS__";
 
 const minifyJS = (src: string): string =>
@@ -119,6 +121,10 @@ const collectHashes = async (nitro: object, html: string): Promise<void> => {
       continue;
     }
 
+    if (match[2].includes(CSP_PLACEHOLDER)) {
+      throw new Error("CSP_PLACEHOLDER found in inline script");
+    }
+
     const sha256 = Buffer.from(
       await crypto.subtle.digest("SHA-256", new TextEncoder().encode(match[2]))
     ).toString("base64");
@@ -130,12 +136,38 @@ const collectHashes = async (nitro: object, html: string): Promise<void> => {
       continue;
     }
 
+    if (match[2].includes(CSP_PLACEHOLDER)) {
+      throw new Error("CSP_PLACEHOLDER found in inline style");
+    }
+
     const sha256 = Buffer.from(
       await crypto.subtle.digest("SHA-256", new TextEncoder().encode(match[2]))
     ).toString("base64");
     hashes.style.add(sha256);
   }
 };
+
+function createCSPDirectives(nitro: object): string {
+  const hashes = cspHashesWeakMap.get(nitro);
+  if (!hashes) {
+    throw new Error("CSP hashes not collected");
+  }
+
+  return [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "block-all-mixed-content",
+    "connect-src 'self' cloudflareinsights.com",
+    "frame-ancestors 'none'",
+    "img-src 'self' data:",
+    "object-src 'none'",
+    `script-src 'self' static.cloudflareinsights.com${Array.from(hashes.script)
+      .sort()
+      .map((hash) => ` 'sha256-${hash}'`)
+      .join("")}`,
+    "style-src 'self' 'unsafe-inline'",
+  ].join("; ");
+}
 
 const prerenderingFlag = new WeakMap<object, boolean>();
 
@@ -268,6 +300,38 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
               SERVER_JS_PLACEHOLDER,
               joinURL(nitro.options.baseURL, swBuildFilename)
             ),
+            "utf-8"
+          );
+        }
+
+        // Post-process files
+        const csp = createCSPDirectives(nitro);
+        console.log("CSP:", csp);
+
+        for (const file of (
+          await fg("**", {
+            cwd: nitro.options.output.publicDir,
+          })
+        ).sort()) {
+          if (/\.gif$|\.jpe?g$|\.png$|\.web[pm]$/.test(file)) {
+            continue;
+          }
+
+          const filepath = path.resolve(nitro.options.output.publicDir, file);
+          if (!fs.existsSync(filepath)) {
+            continue;
+          }
+
+          let content = await fsp.readFile(filepath, "utf-8");
+          if (file.endsWith(".webmanifest")) {
+            content = JSON.stringify({
+              ...JSON.parse(content),
+              $schema: undefined,
+            });
+          }
+          await fsp.writeFile(
+            filepath,
+            content.replaceAll(CSP_PLACEHOLDER, csp),
             "utf-8"
           );
         }
