@@ -9,6 +9,7 @@ import { isSW } from "./isSW";
 import { loadServerStorage, storeServerStorage } from "./serverStorage";
 
 declare global {
+  // eslint-disable-next-line no-var
   var __REQ_RES_TWEAKED__: boolean | undefined;
 }
 
@@ -37,7 +38,7 @@ export const defineSWEventHandler = !isSW
   ? defineEventHandler
   : <
       T extends EventHandlerRequest = EventHandlerRequest,
-      D extends EventHandlerResponse = EventHandlerResponse
+      D extends EventHandlerResponse = EventHandlerResponse,
     >(
       handler: EventHandler<T, D>
     ): EventHandler<T, D> =>
