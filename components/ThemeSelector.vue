@@ -49,12 +49,12 @@ const items = computed(() => [
   {
     label: "Light",
     value: "light",
-    icon: colorMode.value === "dark" ? "i-ph-circle-fill" : "i-ph-circle",
+    icon: "i-ph-circle dark:ix-ph-circle-fill",
   },
   {
     label: "Dark",
     value: "dark",
-    icon: colorMode.value === "dark" ? "i-ph-circle-bold" : "i-ph-circle-fill",
+    icon: "i-ph-circle-fill dark:ix-ph-circle-bold",
   },
 ]);
 
