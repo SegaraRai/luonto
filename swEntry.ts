@@ -45,10 +45,18 @@ router.addCacheListener();
 // event handlers
 self.addEventListener("fetch", (event): void => {
   const url = new URL(event.request.url);
+  if (url.protocol !== "https:" && url.protocol !== "http:") {
+    // e.g. chrome-extension:
+    return;
+  }
+
+  // here we determine whether the resource at the specified URL **should be fetched from the remote or not**
+  // this is NOT about whether the asset should be retrieved from the cache
+  // all resources that are not handled here will be handled by Nuxt, so any assets being delivered must be processed here
   if (
     isPublicAssetURL(url.pathname) ||
-    url.pathname.includes("/_server/") ||
-    url.pathname.includes("/server/")
+    url.pathname === "/sw.js" ||
+    url.pathname.startsWith("/server.")
   ) {
     const res = router.handleRequest({ event, request: event.request });
     if (res) {
