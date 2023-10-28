@@ -8,6 +8,6 @@ export default defineSWEventHandler(async (event) => {
 
   return {
     user: { ...user, token: undefined },
-    rateLimit: getRateLimitCache(user.id),
+    rateLimit: await getRateLimitCache(user.id),
   };
 });

@@ -1,4 +1,5 @@
 import { LRUCache } from "lru-cache";
+import { createOnce } from "~/server/utils/once";
 import { createRateLimitFromHeaders } from "~/server/utils/rateLimit";
 import {
   persistRateLimitCache,
@@ -141,28 +142,37 @@ const responseCache = new LRUCache<string, CacheValue, FetchContext>({
   },
 });
 
-loadServerStorage(RESPONSE_CACHE_STORAGE_KEY).then((data): void => {
-  if (!data) {
-    return;
-  }
+const restore = createOnce(async (): Promise<void> => {
+  try {
+    const data = await loadServerStorage(RESPONSE_CACHE_STORAGE_KEY);
+    if (!data) {
+      return;
+    }
 
-  const parsed = JSON.parse(data) as [
-    string,
-    LRUCache.Entry<SerializedCacheValue>,
-  ][];
-  responseCache.load(
-    parsed
-      .map(([key, value]): [string, LRUCache.Entry<CacheValue | null>] => [
-        key,
-        { ...value, value: deserializeCacheValue(value.value) },
-      ])
-      .filter(
-        (item): item is [string, LRUCache.Entry<CacheValue>] => !!item[1].value
-      )
-  );
+    const parsed = JSON.parse(data) as [
+      string,
+      LRUCache.Entry<SerializedCacheValue>,
+    ][];
+    responseCache.load(
+      parsed
+        .map(([key, value]): [string, LRUCache.Entry<CacheValue | null>] => [
+          key,
+          { ...value, value: deserializeCacheValue(value.value) },
+        ])
+        .filter(
+          (item): item is [string, LRUCache.Entry<CacheValue>] =>
+            !!item[1].value
+        )
+    );
+
+    console.info("Restored response cache", responseCache.size);
+  } catch (error) {
+    console.error("Failed to restore response cache", error);
+  }
 });
 
 async function persistResponseCache(): Promise<void> {
+  await restore();
   const serialized = (
     await Promise.all(
       responseCache
@@ -252,6 +262,8 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
     return new Response(JSON.stringify({ rateLimit }), res);
   }
 
+  await restore();
+
   const { data, error, timestamp } =
     (await responseCache.fetch(`${id}\0${method}\0${url}`, {
       allowStale: !shouldRefresh,
@@ -271,7 +283,9 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
     res.headers.set("luonto-stale", error ? "1" : "0");
     res.headers.set("luonto-content-timestamp", String(data.timestamp));
   } else {
-    const errorBody = JSON.stringify({ rateLimit: getRateLimitCache(id) });
+    const errorBody = JSON.stringify({
+      rateLimit: await getRateLimitCache(id),
+    });
     if (error instanceof Response) {
       res = new Response(errorBody, error);
     } else if (error) {

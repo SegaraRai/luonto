@@ -6,6 +6,7 @@ import type {
   EventHandlerResponse,
 } from "h3";
 import { isSW } from "./isSW";
+import { createOnce } from "./once";
 import { loadServerStorage, storeServerStorage } from "./serverStorage";
 
 declare global {
@@ -17,17 +18,25 @@ const COOKIE_STORAGE_KEY = "cookie";
 
 const cookieMap = new Map<string, string>();
 
-loadServerStorage(COOKIE_STORAGE_KEY).then((data): void => {
-  if (!data) {
-    return;
-  }
+const restore = createOnce(async (): Promise<void> => {
+  try {
+    const data = await loadServerStorage(COOKIE_STORAGE_KEY);
+    if (!data) {
+      return;
+    }
 
-  for (const [key, value] of JSON.parse(data)) {
-    cookieMap.set(key, value);
+    for (const [key, value] of JSON.parse(data)) {
+      cookieMap.set(key, value);
+    }
+
+    console.info("Restored cookie cache", cookieMap.size);
+  } catch (error) {
+    console.error("Failed to restore cookie cache", error);
   }
 });
 
 async function persistCookieMap(): Promise<void> {
+  await restore();
   await storeServerStorage(
     COOKIE_STORAGE_KEY,
     JSON.stringify(Array.from(cookieMap.entries()))
@@ -43,6 +52,8 @@ export const defineSWEventHandler = !isSW
       handler: EventHandler<T, D>
     ): EventHandler<T, D> =>
       defineEventHandler<T>(async (event): Promise<D> => {
+        await restore();
+
         // modify certain request headers to make them compatible with the server:
         // - origin
         // - host
