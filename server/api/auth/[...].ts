@@ -24,10 +24,11 @@ export const authOptions: AuthConfig = {
           return null;
         }
 
+        // TODO: show rate limit info if 429 is returned
         const user = (await $fetch("https://api.nature.global/1/users/me", {
           headers: {
-            Authorization: `Bearer ${credentials.token}`,
-            "X-Requested-With": "Luonto",
+            authorization: `Bearer ${credentials.token}`,
+            "x-requested-with": "Luonto",
           },
         }).catch(() => null)) as { id: string; nickname: string } | null;
         if (!user) {
