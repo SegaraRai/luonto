@@ -87,7 +87,6 @@ export type NatureIconButton =
   | "ico_colortemp_up"
   | "ico_cross"
   | "ico_cs"
-  | "ico_d"
   | "ico_dark"
   | "ico_dash"
   | "ico_display"
