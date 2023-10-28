@@ -3,8 +3,9 @@
     <UPopover mode="hover" :popper="{ placement }">
       <UButton
         size="sm"
-        color="white"
         square
+        color="gray"
+        variant="ghost"
         :icon="current.icon"
         :aria-label="current.label"
       />
@@ -12,8 +13,8 @@
         <UButtonGroup size="sm" orientation="horizontal">
           <template v-for="item in items" :key="item.color">
             <UButton
-              color="white"
               square
+              color="white"
               :icon="item.icon"
               :aria-label="item.label"
               :disabled="colorMode.preference === item.value"
