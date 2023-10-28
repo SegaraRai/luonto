@@ -157,7 +157,7 @@ function createCSPDirectives(nitro: object): string {
     "default-src 'self'",
     "base-uri 'self'",
     "block-all-mixed-content",
-    "connect-src 'self' cloudflareinsights.com",
+    "connect-src 'self' cloudflareinsights.com api.nature.global",
     "frame-ancestors 'none'",
     "img-src 'self' data:",
     "object-src 'none'",
@@ -331,7 +331,9 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
           }
           await fsp.writeFile(
             filepath,
-            content.replaceAll(CSP_PLACEHOLDER, csp),
+            content
+              .replaceAll(`=${CSP_PLACEHOLDER}`, `"${csp}"`) // minified attribute values
+              .replaceAll(CSP_PLACEHOLDER, csp),
             "utf-8"
           );
         }
