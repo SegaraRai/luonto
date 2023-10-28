@@ -18,7 +18,7 @@ const COOKIE_STORAGE_KEY = "cookie";
 
 const cookieMap = new Map<string, string>();
 
-const restore = createOnce(async (): Promise<void> => {
+const restoreOnce = createOnce(async (): Promise<void> => {
   try {
     const data = await loadServerStorage(COOKIE_STORAGE_KEY);
     if (!data) {
@@ -40,7 +40,7 @@ const restore = createOnce(async (): Promise<void> => {
 });
 
 async function persistCookieMap(): Promise<void> {
-  await restore();
+  await restoreOnce();
   await storeServerStorage(
     COOKIE_STORAGE_KEY,
     JSON.stringify(Array.from(cookieMap.entries()))
@@ -56,7 +56,7 @@ export const defineSWEventHandler = !isSW
       handler: EventHandler<T, D>
     ): EventHandler<T, D> =>
       defineEventHandler<T>(async (event): Promise<D> => {
-        await restore();
+        await restoreOnce();
 
         // modify certain request headers to make them compatible with the server:
         // - origin
@@ -101,7 +101,7 @@ export const defineSWEventHandler = !isSW
       });
 
 function extendHeaders(): void {
-  if (globalThis.__REQ_RES_TWEAKED__) {
+  if (globalThis.__REQ_RES_TWEAKED__ || !isSW) {
     return;
   }
 

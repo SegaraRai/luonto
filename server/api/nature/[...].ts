@@ -142,7 +142,7 @@ const responseCache = new LRUCache<string, CacheValue, FetchContext>({
   },
 });
 
-const restore = createOnce(async (): Promise<void> => {
+const restoreOnce = createOnce(async (): Promise<void> => {
   try {
     const data = await loadServerStorage(RESPONSE_CACHE_STORAGE_KEY);
     if (!data) {
@@ -172,7 +172,7 @@ const restore = createOnce(async (): Promise<void> => {
 });
 
 async function persistResponseCache(): Promise<void> {
-  await restore();
+  await restoreOnce();
   const serialized = (
     await Promise.all(
       responseCache
@@ -262,7 +262,7 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
     return new Response(JSON.stringify({ rateLimit }), res);
   }
 
-  await restore();
+  await restoreOnce();
 
   const { data, error, timestamp } =
     (await responseCache.fetch(`${id}\0${method}\0${url}`, {

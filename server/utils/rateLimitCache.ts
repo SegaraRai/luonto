@@ -12,7 +12,7 @@ const rateLimitCache = new LRUCache<string, RateLimit>({
   updateAgeOnHas: false,
 });
 
-const restore = createOnce(async (): Promise<void> => {
+const restoreOnce = createOnce(async (): Promise<void> => {
   try {
     const data = await loadServerStorage(RATE_LIMIT_CACHE_STORAGE_KEY);
     if (!data) {
@@ -28,7 +28,7 @@ const restore = createOnce(async (): Promise<void> => {
 });
 
 export async function persistRateLimitCache(): Promise<void> {
-  await restore();
+  await restoreOnce();
   await storeServerStorage(
     RATE_LIMIT_CACHE_STORAGE_KEY,
     JSON.stringify(rateLimitCache.dump())
@@ -44,6 +44,6 @@ export function setRateLimitCache(userId: string, rateLimit: RateLimit): void {
 export async function getRateLimitCache(
   userId: string
 ): Promise<RateLimit | null> {
-  await restore();
+  await restoreOnce();
   return rateLimitCache.get(userId) ?? null;
 }
