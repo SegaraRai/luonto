@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -34,12 +37,10 @@ jobs:
         run: pnpm prettier -c .
 
       - name: Build
-        run: pnpm run build
+        run: pnpm build
 
       - name: Deploy
-        uses: cloudflare/wrangler-action@v3
-        with:
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          command: pages deploy --project-name=luonto
-          workingDirectory: .output/public
+        run: pnpm wrangler pages deploy --project-name=luonto .output/public
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
