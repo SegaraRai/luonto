@@ -1,4 +1,4 @@
-import { type NatureAppliance } from "./natureTypes";
+import type { NatureAppliance } from "./natureTypes";
 
 export type NatureApplianceStatusIndicatorType = "ON" | "OFF";
 

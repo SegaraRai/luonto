@@ -1,4 +1,4 @@
-import { type NatureDevice } from "./natureTypes";
+import type { NatureDevice } from "./natureTypes";
 
 export interface NatureDeviceDetailItem {
   readonly label: string;

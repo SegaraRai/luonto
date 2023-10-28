@@ -1,4 +1,4 @@
-import { type NatureDeviceWithEvents } from "./natureTypes";
+import type { NatureDeviceWithEvents } from "./natureTypes";
 
 export interface NatureDeviceSensorItemBase {
   readonly class: string;
@@ -76,7 +76,11 @@ export function getNatureDeviceSensors(
         available: true,
         value: object.val.toString(),
         timestamp: object.created_at,
-        ago: formatTimeAgoLocalized(new Date(object.created_at), undefined, now),
+        ago: formatTimeAgoLocalized(
+          new Date(object.created_at),
+          undefined,
+          now
+        ),
       };
     })
     .filter((v): v is NonNullable<typeof v> => !!v);
