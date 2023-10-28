@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: ["@nuxt/eslint-config", "@vue/eslint-config-prettier"],
+  extends: ["@nuxt", "prettier"],
   parserOptions: {
     parser: {
       mts: "@typescript-eslint/parser",
