@@ -1,10 +1,11 @@
 import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path from "node:path";
-import { joinURL } from "ufo";
 import { minify as minifyHTMLBuffer } from "@minify-html/node";
 import { transformSync } from "esbuild";
 import { type IText, Window } from "happy-dom";
+import type { NitroConfig } from "nitropack";
+import { joinURL } from "ufo";
 
 const SERVER_JS_PLACEHOLDER = "__SERVER_JS__";
 
@@ -145,7 +146,7 @@ export interface SWPresetConfig {
   readonly fallbackFiles: readonly string[];
 }
 
-export function createNitroSWPreset(config: SWPresetConfig) {
+export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
   return {
     preset: "base-worker",
     entry: config.swEntry,
