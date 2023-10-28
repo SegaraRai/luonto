@@ -55,7 +55,7 @@
       />
     </div>
     <UButtonGroup class="w-full" size="lg" orientation="horizontal">
-      <template v-for="{ mode, label, iconClass } in modes" v-key="mode">
+      <template v-for="{ mode, label, iconClass } in modes" :key="mode">
         <UButton
           class="flex-1 flex-col gap-2 text-xs"
           :color="mode === displayMode ? 'white' : 'gray'"
@@ -72,7 +72,7 @@
     <div class="w-full flex flex-wrap gap-6 items-center justify-center">
       <template
         v-for="{ key, label, iconClass, items } in dropdowns"
-        v-key="key"
+        :key="key"
       >
         <div class="flex flex-col items-center gap-2">
           <UDropdown mode="hover" :items="[items]" :disabled="disabled">
@@ -90,7 +90,7 @@
       </template>
       <template
         v-for="{ button, label, iconClass } in fixedButtons"
-        v-key="button"
+        :key="button"
       >
         <div class="flex flex-col items-center gap-2">
           <UButton

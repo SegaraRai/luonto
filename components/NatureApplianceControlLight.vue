@@ -13,7 +13,7 @@
           label,
           image,
         } in circleButtons"
-        v-key="name"
+        :key="name"
       >
         <div
           v-if="allButtonNames.includes(name)"
@@ -34,7 +34,7 @@
       </template>
     </div>
     <div class="w-full grid grid-flow-col auto-cols-min gap-4">
-      <template v-for="{ name, image, label } in otherButtons" v-key="name">
+      <template v-for="{ name, image, label } in otherButtons" :key="name">
         <UButton
           class="rounded-full"
           size="lg"
