@@ -26,6 +26,10 @@ const restore = createOnce(async (): Promise<void> => {
     }
 
     for (const [key, value] of JSON.parse(data)) {
+      if (!key || !value) {
+        continue;
+      }
+
       cookieMap.set(key, value);
     }
 
@@ -84,6 +88,10 @@ export const defineSWEventHandler = !isSW
           for (const cookie of setCookies) {
             const { name, value } =
               /^(?<name>[^=]+)=(?<value>[^;]+)/.exec(cookie)?.groups ?? {};
+            if (!name || !value) {
+              continue;
+            }
+
             cookieMap.set(name, value);
           }
           event.waitUntil(persistCookieMap());
