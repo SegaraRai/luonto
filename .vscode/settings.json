@@ -17,6 +17,7 @@
     ["/\\*ui\\*/\\s*{([^;]*)}", ":\\s*[\"'`]([^\"'`]*).*?[\"'`]"]
   ],
   "cSpell.words": [
+    "Luonto",
     "Nuxt",
     "precache",
     "precaching"
