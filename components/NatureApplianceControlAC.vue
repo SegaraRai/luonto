@@ -19,7 +19,7 @@
           >
             <div
               class="absolute inset-0 top-auto flex flex-col items-center"
-              :class="MODE_BG_COLORS[currentMode]"
+              :class="AC_MODE_CONFIG_MAP[currentMode].bgColor"
               :style="{ height: `${currentTemperatureRatio * 100}%` }"
             />
             <div
@@ -29,7 +29,10 @@
           </div>
           <div
             class="flex-none p-2 pt-4 text-center text-white/95"
-            :class="[MODE_BG_COLORS[currentMode], disabled && 'opacity-70']"
+            :class="[
+              AC_MODE_CONFIG_MAP[currentMode].bgColor,
+              disabled && 'opacity-70',
+            ]"
           >
             <span
               v-if="displayTemperature"
@@ -55,7 +58,7 @@
       />
     </div>
     <UButtonGroup class="w-full" size="lg" orientation="horizontal">
-      <template v-for="{ mode, label, iconClass } in modes" :key="mode">
+      <template v-for="{ mode, label, icon, fgColor } in modes" :key="mode">
         <UButton
           class="flex-1 flex-col gap-2 text-xs"
           :color="mode === displayMode ? 'white' : 'gray'"
@@ -64,16 +67,13 @@
           :disabled="disabled"
           @click="sendSettings({ operation_mode: mode })"
         >
-          <div class="w-5 h-5" :class="iconClass" />
+          <div class="w-5 h-5" :class="[icon, fgColor]" />
           <div v-text="label" />
         </UButton>
       </template>
     </UButtonGroup>
     <div class="w-full flex flex-wrap gap-6 items-center justify-center">
-      <template
-        v-for="{ key, label, iconClass, items } in dropdowns"
-        :key="key"
-      >
+      <template v-for="{ key, label, icon, items } in dropdowns" :key="key">
         <div class="flex flex-col items-center gap-2">
           <UDropdown
             :mode="hoverAvailable ? 'hover' : 'click'"
@@ -85,17 +85,14 @@
               size="lg"
               color="gray"
               variant="solid"
-              :icon="iconClass"
+              :icon="icon"
               :disabled="disabled"
             />
           </UDropdown>
           <label class="text-xs" :for="`ac-dropdown-${key}`" v-text="label" />
         </div>
       </template>
-      <template
-        v-for="{ button, label, iconClass } in fixedButtons"
-        :key="button"
-      >
+      <template v-for="{ button, label, icon } in fixedButtons" :key="button">
         <div class="flex flex-col items-center gap-2">
           <UButton
             :id="`ac-button-${button}`"
@@ -103,7 +100,7 @@
             size="lg"
             color="gray"
             variant="solid"
-            :icon="iconClass"
+            :icon="icon"
             :disabled="disabled"
             @click="sendSettings({ button })"
           />
@@ -119,7 +116,6 @@ import type { DropdownItem } from "@nuxt/ui/dist/runtime/types";
 import type {
   NatureAPIPostApplianceACSettingsRequest,
   NatureApplianceAC,
-  NatureApplianceACButton,
   NatureApplianceACDir,
   NatureApplianceACDirH,
   NatureApplianceACMode,
@@ -136,110 +132,17 @@ const props = defineProps<{
 
 const hoverAvailable = useHoverAvailable();
 
-// constants
+const modes = computed(() =>
+  AC_MODE_CONFIG_LIST.filter(
+    ({ mode }) => mode in props.appliance.aircon.range.modes
+  )
+);
 
-const MODE_BG_COLORS: Record<NatureApplianceACMode, string> = {
-  auto: "bg-gray-400/90",
-  blow: "bg-gray-400/90",
-  cool: "bg-sky-400/90",
-  dry: "bg-blue-400/90",
-  warm: "bg-orange-400/90",
-};
-
-const getVolIconClass = (
-  value: NatureApplianceACVol | "" | null | undefined
-): string => {
-  return {
-    auto: "i-mdi-fan-auto",
-    "1": "i-mdi-fan-speed-1",
-    "2": "i-mdi-fan-speed-2",
-    "3": "i-mdi-fan-speed-3",
-    "4": "i-luonto-mdi-fan-4",
-    "5": "i-luonto-mdi-fan-5",
-  }[value || "auto"];
-};
-
-const getDirIconClass = (
-  value: NatureApplianceACDir | "" | null | undefined
-): string => {
-  return {
-    auto: "i-luonto-mdi-angle-a",
-    swing: "i-luonto-mdi-angle-sync",
-    "1": "i-luonto-mdi-angle-1",
-    "2": "i-luonto-mdi-angle-2",
-    "3": "i-luonto-mdi-angle-3",
-    "4": "i-luonto-mdi-angle-4",
-    "5": "i-luonto-mdi-angle-5",
-  }[value || "auto"];
-};
-
-const getDirHIconClass = (
-  value: NatureApplianceACDirH | "" | null | undefined
-): string => {
-  return getDirIconClass(value);
-};
-
-// supported air-con features
-
-const modes = computed(() => {
-  const supportedModes = Object.keys(
-    props.appliance.aircon.range.modes
-  ) as readonly NatureApplianceACMode[];
-  const items: {
-    readonly mode: NatureApplianceACMode;
-    readonly label: string;
-    readonly iconClass: string;
-  }[] = [
-    {
-      mode: "auto",
-      label: "自動",
-      iconClass: "i-material-symbols-motion-photos-auto-outline",
-    },
-    {
-      mode: "blow",
-      label: "送風",
-      iconClass: "i-mdi-fan text-gray-400",
-    },
-    {
-      mode: "cool",
-      label: "冷房",
-      iconClass: "i-mdi-snowflake text-sky-400",
-    },
-    {
-      mode: "dry",
-      label: "除湿",
-      iconClass: "i-mdi-water text-blue-400",
-    },
-    {
-      mode: "warm",
-      label: "暖房",
-      iconClass: "i-mdi-fire text-orange-400",
-    },
-  ];
-  return items.filter((item) => supportedModes.includes(item.mode));
-});
-
-const fixedButtons = computed(() => {
-  const items: {
-    readonly button: NatureApplianceACButton;
-    readonly label: string;
-    readonly iconClass: string;
-  }[] = [
-    {
-      button: "airdir-swing",
-      label: "スイング",
-      iconClass: "i-luonto-mdi-angle-sync",
-    },
-    {
-      button: "airdir-tilt",
-      label: "固定",
-      iconClass: "i-luonto-mdi-angle-lock",
-    },
-  ];
-  return items.filter((item) =>
-    props.appliance.aircon.range.fixedButtons.includes(item.button)
-  );
-});
+const fixedButtons = computed(() =>
+  AC_FIXED_BUTTONS.filter(({ button }) =>
+    props.appliance.aircon.range.fixedButtons.includes(button)
+  )
+);
 
 // air-con settings for current mode
 
@@ -260,79 +163,44 @@ const supportsDirH = computed(
   () => !!currentRange.value?.dirh?.some((v) => !!v)
 );
 
-const volItems = computed(() => {
-  const items: {
-    readonly value: NatureApplianceACVol;
-    readonly label: string;
-  }[] = [
-    { value: "auto", label: "自動" },
-    { value: "1", label: "1" },
-    { value: "2", label: "2" },
-    { value: "3", label: "3" },
-    { value: "4", label: "4" },
-    { value: "5", label: "5" },
-  ];
-  return items
-    .filter((item) => currentRange.value?.vol?.includes(item.value))
-    .map(
-      ({ label, value }): DropdownItem => ({
-        label,
-        icon: getVolIconClass(value),
-        click: (): void => sendSettings({ air_volume: value }),
-        active: displayVol.value === value,
-      })
-    );
-});
+const dirItems = computed(() =>
+  AC_DIR_OPTIONS.filter(
+    ({ value }) => currentRange.value?.dir?.includes(value)
+  ).map(
+    ({ icon, label, value }): DropdownItem => ({
+      label,
+      icon,
+      click: (): void => sendSettings({ air_direction: value }),
+      active: displayDir.value === value,
+    })
+  )
+);
 
-const dirItems = computed(() => {
-  const items: {
-    readonly value: NatureApplianceACDir;
-    readonly label: string;
-  }[] = [
-    { value: "auto", label: "自動" },
-    { value: "swing", label: "スイング" },
-    { value: "1", label: "1（上端）" },
-    { value: "2", label: "2" },
-    { value: "3", label: "3" },
-    { value: "4", label: "4" },
-    { value: "5", label: "5（下端）" },
-  ];
-  return items
-    .filter((item) => currentRange.value?.dir?.includes(item.value))
-    .map(
-      ({ label, value }): DropdownItem => ({
-        label,
-        icon: getDirIconClass(value),
-        click: (): void => sendSettings({ air_direction: value }),
-        active: displayDir.value === value,
-      })
-    );
-});
+const dirHItems = computed(() =>
+  AC_DIR_H_OPTIONS.filter(
+    ({ value }) => currentRange.value?.dirh?.includes(value)
+  ).map(
+    ({ icon, label, value }): DropdownItem => ({
+      label,
+      icon,
+      click: (): void => sendSettings({ air_direction_h: value }),
+      active: displayDirH.value === value,
+    })
+  )
+);
 
-const dirHItems = computed(() => {
-  const items: {
-    readonly value: NatureApplianceACDirH;
-    readonly label: string;
-  }[] = [
-    { value: "auto", label: "自動" },
-    { value: "swing", label: "スイング" },
-    { value: "1", label: "1" },
-    { value: "2", label: "2" },
-    { value: "3", label: "3" },
-    { value: "4", label: "4" },
-    { value: "5", label: "5" },
-  ];
-  return items
-    .filter((item) => currentRange.value?.dirh?.includes(item.value))
-    .map(
-      ({ label, value }): DropdownItem => ({
-        label,
-        icon: getDirHIconClass(value),
-        click: (): void => sendSettings({ air_direction_h: value }),
-        active: displayDirH.value === value,
-      })
-    );
-});
+const volItems = computed(() =>
+  AC_VOL_OPTIONS.filter(
+    ({ value }) => currentRange.value?.vol?.includes(value)
+  ).map(
+    ({ icon, label, value }): DropdownItem => ({
+      label,
+      icon,
+      click: (): void => sendSettings({ air_volume: value }),
+      active: displayVol.value === value,
+    })
+  )
+);
 
 const dropdowns = computed(() =>
   [
@@ -340,19 +208,19 @@ const dropdowns = computed(() =>
       key: "vol",
       label: "風量変更",
       items: volItems.value,
-      iconClass: getVolIconClass(displayVol.value),
+      icon: AC_VOL_OPTION_MAP[displayVol.value || "auto"].icon,
     },
     supportsDir.value && {
       key: "dir",
       label: "風向変更",
       items: dirItems.value,
-      iconClass: getDirIconClass(displayDir.value),
+      icon: AC_DIR_OPTION_MAP[displayDir.value || "auto"].icon,
     },
     supportsDirH.value && {
       key: "dir-h",
       label: "左右風向変更",
       items: dirHItems.value,
-      iconClass: getDirHIconClass(displayDirH.value),
+      icon: AC_DIR_H_OPTION_MAP[displayDirH.value || "auto"].icon,
     },
   ].filter((v): v is Exclude<typeof v, false> => !!v)
 );
