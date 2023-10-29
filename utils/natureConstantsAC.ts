@@ -43,7 +43,7 @@ export const AC_MODE_CONFIG_LIST: readonly ACModeConfig[] = [
     label: "送風",
     bgColor: "bg-gray-400/90",
     fgColor: "text-gray-400",
-    icon: "i-mdi-fan",
+    icon: "i-mdi-weather-windy",
   },
   {
     mode: "cool",
@@ -57,7 +57,7 @@ export const AC_MODE_CONFIG_LIST: readonly ACModeConfig[] = [
     label: "除湿",
     bgColor: "bg-blue-400/90",
     fgColor: "text-blue-400",
-    icon: "i-mdi-water",
+    icon: "i-material-symbols-cool-to-dry",
   },
   {
     mode: "warm",
