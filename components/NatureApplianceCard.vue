@@ -28,7 +28,7 @@
             <span
               v-if="status.settings.icon && status.settings.iconLabel"
               role="img"
-              class="flex-none rounded-full w-4 h-4"
+              class="flex-none w-4 h-4"
               :class="status.settings.icon"
               :aria-label="status.settings.iconLabel"
             />
