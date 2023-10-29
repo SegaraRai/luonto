@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <AppHeader />
-    <slot />
-  </div>
+  <AppHeader />
+  <slot />
+  <ClientOnly>
+    <OfflineStatusBar />
+  </ClientOnly>
 </template>
