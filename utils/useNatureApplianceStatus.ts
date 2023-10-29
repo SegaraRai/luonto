@@ -10,8 +10,10 @@ export interface NatureApplianceStatusIndicator {
 
 export interface NatureApplianceStatusSettings {
   readonly class: string;
-  readonly label: string;
+  readonly label: string | null;
   readonly unit: string | null;
+  readonly icon: string | null;
+  readonly iconLabel: string | null;
 }
 
 export interface NatureApplianceStatus {
@@ -50,24 +52,16 @@ export function getNatureApplianceStatus(
   switch (appliance?.type) {
     case "AC": {
       const acSettings = appliance.settings;
-      if (acSettings && indicator?.type === "ON") {
-        const colorClass =
-          acSettings.mode === "warm"
-            ? "text-orange-400"
-            : acSettings.mode === "cool"
-            ? "text-blue-400"
-            : "";
-        const label = colorClass
-          ? acSettings.temp
-          : { auto: "自動", dry: "除湿", blow: "送風", cool: "", warm: "" }[
-              acSettings.mode
-            ];
-        const unit = colorClass
+      if (acSettings?.mode && indicator?.type === "ON") {
+        const config = AC_MODE_CONFIG_MAP[acSettings.mode];
+        const unit = acSettings.temp
           ? `\u00BA${acSettings.temp_unit.toUpperCase()}`
           : null;
         settings = {
-          class: colorClass,
-          label,
+          icon: config.icon,
+          iconLabel: config.label,
+          class: config.fgColor,
+          label: unit ? acSettings.temp : config.label,
           unit,
         };
       }

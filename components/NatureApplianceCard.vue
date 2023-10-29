@@ -22,15 +22,26 @@
           <div class="flex-1" />
           <div
             v-if="status.settings"
-            class="flex-none text-sm font-bold"
+            class="flex-none text-sm font-bold flex items-center gap-1"
             :class="status.settings.class"
           >
-            <span v-text="status.settings.label" />
             <span
-              v-if="status.settings.unit"
-              class="pl-[0.25em]"
-              v-text="status.settings.unit"
+              v-if="status.settings.icon && status.settings.iconLabel"
+              role="img"
+              class="flex-none rounded-full w-4 h-4"
+              :class="status.settings.icon"
+              :aria-label="status.settings.iconLabel"
             />
+            <span
+              v-if="status.settings.label || status.settings.unit"
+              class="flex-none flex items-center gap-0.5"
+            >
+              <span
+                v-if="status.settings.label"
+                v-text="status.settings.label"
+              />
+              <span v-if="status.settings.unit" v-text="status.settings.unit" />
+            </span>
           </div>
         </div>
       </div>
