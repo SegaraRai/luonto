@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 import type { FormSubmitEvent } from "@nuxt/ui/dist/runtime/types";
-import { type Input, string, object, minLength } from "valibot";
+import { type Input, minLength, object, string } from "valibot";
 
 useHead({
   title: composeTitle("サインイン"),

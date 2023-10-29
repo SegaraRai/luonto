@@ -1,5 +1,5 @@
+import { getIconCollections, iconsPlugin } from "@egoist/tailwindcss-icons";
 import type { Config } from "tailwindcss";
-import { iconsPlugin, getIconCollections } from "@egoist/tailwindcss-icons";
 import luontoIcons from "./luonto-icons.json";
 
 const iconCollections = {

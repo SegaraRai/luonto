@@ -1,11 +1,12 @@
 /// <reference lib="webworker" />
 
 import "#internal/nitro/virtual/polyfill";
-import { isPublicAssetURL } from "#internal/nitro/virtual/public-assets";
-import { nitroApp } from "#internal/nitro/app";
+
 import { PrecacheController, PrecacheRoute } from "workbox-precaching";
 import { Router } from "workbox-routing";
 import { NetworkFirst } from "workbox-strategies";
+import { nitroApp } from "#internal/nitro/app";
+import { isPublicAssetURL } from "#internal/nitro/virtual/public-assets";
 
 declare const self: globalThis.ServiceWorkerGlobalScope;
 
