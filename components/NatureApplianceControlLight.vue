@@ -84,7 +84,7 @@ const circleButtons = computed(() => {
         label: "明るくする",
         variant: "link",
         color: "gray",
-        placeClass: "bottom-auto",
+        placeClass: "bottom-auto", // top
       },
       {
         name: "bright-down",
@@ -92,23 +92,23 @@ const circleButtons = computed(() => {
         label: "暗くする",
         variant: "link",
         color: "gray",
-        placeClass: "top-auto",
-      },
-      {
-        name: "colortemp-down",
-        image: "ico_colortemp_down",
-        label: "色温度を下げる",
-        variant: "link",
-        color: "blue",
-        placeClass: "right-auto",
+        placeClass: "top-auto", // bottom
       },
       {
         name: "colortemp-up",
         image: "ico_colortemp_up",
-        label: "色温度を上げる",
+        label: "白色",
+        variant: "link",
+        color: "sky",
+        placeClass: "right-auto", // left
+      },
+      {
+        name: "colortemp-down",
+        image: "ico_colortemp_down",
+        label: "暖色",
         variant: "link",
         color: "orange",
-        placeClass: "left-auto",
+        placeClass: "left-auto", // right
       },
     ] as const
   ).filter((b) => allButtonNames.value.includes(b.name));
