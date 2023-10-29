@@ -14,7 +14,7 @@
         <br />
         セキュリティ上の問題を発見した場合は、お手数ですが下記フォームまでご連絡ください。<br />
         <ULink
-          class="text-sky-400"
+          class="text-sky-500 dark:text-sky-400"
           to="https://forms.gle/f87TXVBXUyf3Sx347"
           target="_blank"
         >
@@ -24,7 +24,7 @@
       <p>
         セキュリティ以外に関する要望や Pull Request は
         <ULink
-          class="text-sky-400"
+          class="text-sky-500 dark:text-sky-400"
           to="https://github.com/SegaraRai/luonto"
           target="_blank"
         >
