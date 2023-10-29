@@ -14,6 +14,7 @@
         >
           <div
             v-if="status.indicator"
+            role="img"
             class="flex-none rounded-full w-2 h-2"
             :class="status.indicator.class"
             :aria-label="status.indicator.label"

@@ -114,15 +114,16 @@
     <div
       class="w-full flex items-center justify-center gap-4 text-2xl text-gray-600 dark:text-gray-400 pb-4"
     >
-      <ULink class="inline-block rounded-full" to="/">
-        <UIcon name="i-mdi-home" aria-label="ホーム" />
+      <ULink class="inline-block rounded-full" to="/" aria-label="ホーム">
+        <UIcon name="i-mdi-home" />
       </ULink>
       <ULink
         class="inline-block rounded-full"
         to="https://github.com/SegaraRai/luonto"
         target="_blank"
+        aria-label="GitHub リポジトリ"
       >
-        <UIcon name="i-mdi-github" aria-label="GitHub リポジトリ" />
+        <UIcon name="i-mdi-github" />
       </ULink>
     </div>
   </div>

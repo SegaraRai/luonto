@@ -5,6 +5,7 @@
   >
     <template v-for="item in items" :key="item.label">
       <div
+        role="img"
         class="flex-none w-[1.25em] h-[1.25em]"
         :class="[item.class, item.icon, !item.available && 'opacity-50']"
         :aria-label="item.label"

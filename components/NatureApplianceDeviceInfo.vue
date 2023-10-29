@@ -7,6 +7,7 @@
       <template v-for="item in sensorItems" :key="item.label">
         <div v-if="item.available" class="flex items-center gap-2 text-sm">
           <span
+            role="img"
             class="flex-none w-[1.25em] h-[1.25em]"
             :class="[item.class, item.icon]"
             :aria-label="item.label"
