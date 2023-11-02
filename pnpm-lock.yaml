@@ -36,8 +36,8 @@ devDependencies:
     specifier: ^0.2.0
     version: 0.2.0(eslint@8.52.0)
   '@nuxt/ui':
-    specifier: ^2.9.0
-    version: 2.9.0(idb-keyval@6.2.1)(rollup@2.79.1)(vue@3.3.7)(webpack@5.89.0)
+    specifier: ^2.10.0
+    version: 2.10.0(idb-keyval@6.2.1)(rollup@2.79.1)(vue@3.3.7)(webpack@5.89.0)
   '@nuxtjs/pwa':
     specifier: ^3.3.5
     version: 3.3.5
@@ -87,8 +87,8 @@ devDependencies:
     specifier: ^5.2.2
     version: 5.2.2
   valibot:
-    specifier: ^0.19.0
-    version: 0.19.0
+    specifier: ^0.20.0
+    version: 0.20.0
   vue:
     specifier: ^3.3.7
     version: 3.3.7(typescript@5.2.2)
@@ -2742,8 +2742,8 @@ packages:
     resolution: {integrity: sha512-5gc02Pu1HycOVUWJ8aYsWeeXcSTPe8iX8+KIrhyEtEoOSkY0eMBuo0ssljB8wALuEmepv31DlYe5gpiRwkjESA==}
     dev: true
 
-  /@nuxt/ui@2.9.0(idb-keyval@6.2.1)(rollup@2.79.1)(vue@3.3.7)(webpack@5.89.0):
-    resolution: {integrity: sha512-e7Xo7xq9C71zdkLFO/IRMAxsX0ms3wMWxQq2kKUuh/ZiLD7/NjxeDle/XAwEAfzn5vdXCkygIK3w0R5UO9I5Pg==}
+  /@nuxt/ui@2.10.0(idb-keyval@6.2.1)(rollup@2.79.1)(vue@3.3.7)(webpack@5.89.0):
+    resolution: {integrity: sha512-pMv0BWWkeUOAJ+YkXr6xirbg2iHXKerIk9hYS7blp0aBehBTBq1gxHdtl+iA2hq9+LFahO6WyA7SJnw3h0thvQ==}
     engines: {node: '>=v16.20.2'}
     dependencies:
       '@egoist/tailwindcss-icons': 1.4.0(tailwindcss@3.3.5)
@@ -10516,8 +10516,8 @@ packages:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: true
 
-  /valibot@0.19.0:
-    resolution: {integrity: sha512-vzeuctzVirzoiDN9BTc4GludHaSgFYoy6AnbHOjfBUbX0DibqKuNCr2Ti4ox8eLdBdDSEZSZ3LwXZgjL6aE4RQ==}
+  /valibot@0.20.0:
+    resolution: {integrity: sha512-a2Vy4oPIHvrwfPZF0Cl83yBn17Zgekp6IQ0PzdUFTPWtlwWFCJNHtOm/nypzv5o/6llKBsIEErswWHbvjNGzNw==}
     dev: true
 
   /validate-npm-package-license@3.0.4:
