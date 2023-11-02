@@ -3,11 +3,24 @@
     <div>
       <div
         ref="temperatureSwipeEl"
-        class="rounded-xl w-24 h-64 border border-gray-200 dark:border-gray-600 flex flex-col overflow-hidden touch-none select-none"
+        role="slider"
+        aria-label="設定温度"
+        :aria-disabled="disabled || !supportsTemperature"
+        :aria-valuemin="currentRange?.temp?.[0] || undefined"
+        :aria-valuemax="
+          currentRange?.temp?.[currentRange.temp.length - 1] || undefined
+        "
+        :aria-valuenow="displayTemperature || undefined"
+        tabindex="0"
+        class="rounded-xl w-24 h-64 border border-gray-300 dark:border-gray-600 flex flex-col overflow-hidden touch-none select-none"
         :class="[
-          disabled ? 'cursor-not-allowed' : 'cursor-ns-resize',
+          disabled || !supportsTemperature
+            ? 'cursor-not-allowed'
+            : 'cursor-ns-resize',
           !supportsTemperature && 'bg-gray-100 dark:bg-gray-900',
         ]"
+        @keydown.arrow-up.prevent="swipeBy(1)"
+        @keydown.arrow-down.prevent="swipeBy(-1)"
       >
         <template
           v-if="appliance.settings && currentMode && supportsTemperature"
@@ -328,6 +341,27 @@ const currentTemperatureRatio = computed((): number => {
     : -1;
   return index >= 0 ? index / (availableTemperatures.length - 1) : 0;
 });
+
+const swipeBy = (offset: -1 | 1): void => {
+  if (!supportsTemperature.value || sendingSettings.value) {
+    return;
+  }
+
+  const availableTemperatures = currentRange.value?.temp ?? [];
+  const currentTemperature = props.appliance.settings?.temp;
+  const currentIndex = currentTemperature
+    ? availableTemperatures.indexOf(currentTemperature)
+    : -1;
+  if (currentIndex < 0) {
+    return;
+  }
+
+  const index = Math.min(
+    Math.max(currentIndex + offset, 0),
+    availableTemperatures.length - 1
+  );
+  sendSettings({ temperature: availableTemperatures[index] });
+};
 
 // send settings on swipe end
 watch(swipingTemperature, (value, prevValue): void => {
