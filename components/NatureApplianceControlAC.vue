@@ -79,6 +79,7 @@
     <UButtonGroup class="w-full" size="lg" orientation="horizontal">
       <template v-for="{ mode, label, icon, fgColor } in modes" :key="mode">
         <UButton
+          :aria-pressed="String(mode === displayMode)"
           class="flex-1 flex-col gap-2 text-xs"
           :color="mode === displayMode ? 'white' : 'gray'"
           variant="solid"
