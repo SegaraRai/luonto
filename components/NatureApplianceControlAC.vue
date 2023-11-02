@@ -5,12 +5,18 @@
         ref="temperatureSwipeEl"
         role="slider"
         aria-label="設定温度"
+        aria-orientation="vertical"
         :aria-disabled="disabled || !supportsTemperature"
         :aria-valuemin="currentRange?.temp?.[0] || undefined"
         :aria-valuemax="
           currentRange?.temp?.[currentRange.temp.length - 1] || undefined
         "
         :aria-valuenow="displayTemperature || undefined"
+        :aria-valuetext="
+          displayTemperature && appliance.settings?.temp_unit
+            ? `${displayTemperature} \u00BA${appliance.settings.temp_unit.toUpperCase()}`
+            : undefined
+        "
         tabindex="0"
         class="rounded-xl w-24 h-64 border border-gray-300 dark:border-gray-600 flex flex-col overflow-hidden touch-none select-none"
         :class="[
