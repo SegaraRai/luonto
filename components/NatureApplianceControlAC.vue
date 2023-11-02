@@ -309,7 +309,7 @@ const swipingTemperature = computed((): NatureApplianceACTemperature | null => {
 });
 
 const displayTemperature = computed(
-  (): NatureApplianceACTemperature | undefined =>
+  (): NatureApplianceACTemperature | "" | undefined =>
     sendingSettings.value?.temperature ??
     swipingTemperature.value ??
     props.appliance.settings?.temp
