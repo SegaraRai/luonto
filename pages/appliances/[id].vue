@@ -25,7 +25,7 @@
         ]"
       />
     </div>
-    <hr class="w-full border-gray-200 dark:border-gray-700" />
+    <UDivider />
     <div class="max-w-xs px-4 pt-8 w-full">
       <NatureApplianceControlAC
         v-if="appliance.type === 'AC'"

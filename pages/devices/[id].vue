@@ -16,9 +16,9 @@
       </template>
     </dl>
     <template v-if="data?.appliances.length">
-      <hr class="w-full border-gray-200 dark:border-gray-700" />
+      <UDivider />
       <div
-        class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-4"
+        class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-4"
       >
         <template v-for="appliance in data?.appliances" :key="appliance.id">
           <NatureApplianceCard :appliance="appliance" />
