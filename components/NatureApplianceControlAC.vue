@@ -113,6 +113,7 @@
 
 <script setup lang="ts">
 import type { DropdownItem } from "@nuxt/ui/dist/runtime/types";
+import type { InvalidateTarget } from "~/utils/invalidateTarget";
 import type {
   NatureAPIPostApplianceACSettingsRequest,
   NatureApplianceAC,
@@ -126,8 +127,11 @@ import type {
 const props = defineProps<{
   appliance: NatureApplianceAC;
   submitting: boolean;
-  onSend: (promise: Promise<unknown>, forceRefresh?: boolean) => Promise<void>;
-  onForceRefresh: () => Promise<void>;
+  onSend: (
+    promise: Promise<unknown>,
+    forceRefreshTargets?: readonly InvalidateTarget[]
+  ) => Promise<void>;
+  onForceRefresh: (targets: readonly InvalidateTarget[]) => Promise<void>;
 }>();
 
 const hoverAvailable = useHoverAvailable();
@@ -259,7 +263,7 @@ const sendSettings = (
         method: "POST",
         body: settings,
       }),
-      true
+      ["appliances"]
     )
     .finally(() => {
       sendingSettings.value = undefined;

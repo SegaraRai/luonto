@@ -47,10 +47,11 @@
 
 <script setup lang="ts">
 import type { RateLimit } from "~/server/utils/rateLimit";
+import type { InvalidateTarget } from "~/utils/invalidateTarget";
 
 definePageMeta({ layout: "app", middleware: "auth" });
 
-const forceRefresh = ref(false);
+const forceRefreshTargets = ref<InvalidateTarget[]>([]);
 
 const route = useRoute();
 const toast = useToast();
@@ -59,16 +60,17 @@ const { data, error, refresh } = await useFetch(
   `/api/bff/appliances/${route.params.id}`,
   {
     onRequest: (context): void => {
-      if (!forceRefresh.value) {
+      if (!forceRefreshTargets.value.length) {
         return;
       }
 
-      forceRefresh.value = false;
+      const invalidateTargets = forceRefreshTargets.value.join(", ");
+      forceRefreshTargets.value = [];
 
       const headers = new Headers(
         context.request instanceof Request ? context.request.headers : undefined
       );
-      headers.set("cache-control", "no-cache");
+      headers.set("luonto-invalidate-cache", invalidateTargets);
       context.request = new Request(context.request, {
         cache: "reload",
         headers,
@@ -94,22 +96,29 @@ const device = computed(() => data.value?.device);
 
 const applianceStatus = useNatureApplianceStatus(appliance);
 
-const onForceRefresh = (): Promise<void> => {
-  forceRefresh.value = true;
+const onForceRefresh = (
+  targets: readonly InvalidateTarget[]
+): Promise<void> => {
+  if (!targets.length) {
+    console.warn("onForceRefresh: targets is empty");
+    return Promise.resolve();
+  }
+
+  forceRefreshTargets.value = targets.slice();
   return refresh()
     .then(
       () => undefined,
       () => undefined
     )
     .finally(() => {
-      forceRefresh.value = false;
+      forceRefreshTargets.value = [];
     });
 };
 
 const submitting = ref(false);
 const onSend = (
   promise: Promise<unknown>,
-  forceRefresh = false
+  forceRefreshTargets: readonly InvalidateTarget[] = []
 ): Promise<void> => {
   submitting.value = true;
   return promise
@@ -144,7 +153,11 @@ const onSend = (
         });
       }
     )
-    .then(() => (forceRefresh ? onForceRefresh() : undefined))
+    .then(() =>
+      forceRefreshTargets.length
+        ? onForceRefresh(forceRefreshTargets)
+        : undefined
+    )
     .finally((): void => {
       submitting.value = false;
     });
@@ -152,6 +165,6 @@ const onSend = (
 
 useRefreshCaller(refresh, {
   refreshInterval: 30_000,
-  disabled: forceRefresh,
+  disabled: !!forceRefreshTargets.value.length,
 });
 </script>

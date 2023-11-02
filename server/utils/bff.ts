@@ -1,9 +1,28 @@
 import type { H3Event } from "h3";
 
-export function getBFFForwardedHeaders(event: H3Event): Record<string, string> {
-  return Object.fromEntries(
-    Array.from(event.headers.entries()).filter(([key]) =>
-      /^(cookie|cache-control)$/i.test(key)
-    )
+export type EndpointType = "appliances" | "devices";
+
+export function getBFFForwardedHeaders(
+  event: H3Event,
+  endpointType: EndpointType
+): Record<string, string> {
+  const headers = Object.fromEntries(
+    Array.from(event.headers.entries())
+      .map(([key, value]) => [key.toLowerCase(), value])
+      .filter(([key]) => key === "cookie")
   );
+
+  const luontoInvalidateTargets =
+    event.headers
+      .get("luonto-invalidate-cache")
+      ?.split(",")
+      .map((item) => item.trim()) ?? [];
+  if (
+    luontoInvalidateTargets.includes("all") ||
+    luontoInvalidateTargets.includes(endpointType)
+  ) {
+    headers["cache-control"] = "no-cache";
+  }
+
+  return headers;
 }

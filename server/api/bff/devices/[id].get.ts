@@ -4,15 +4,14 @@ import type {
 } from "~/utils/natureTypes";
 
 export default defineSWEventHandler(async (event) => {
-  const headers = getBFFForwardedHeaders(event);
   const id = getRouterParam(event, "id");
 
-  const [devices, allAppliances] = await Promise.all([
-    $fetch<NatureAPIGetDevicesResponse>("/api/nature/1/devices", {
-      headers,
-    }),
+  const [allAppliances, devices] = await Promise.all([
     $fetch<NatureAPIGetAppliancesResponse>("/api/nature/1/appliances", {
-      headers,
+      headers: getBFFForwardedHeaders(event, "appliances"),
+    }),
+    $fetch<NatureAPIGetDevicesResponse>("/api/nature/1/devices", {
+      headers: getBFFForwardedHeaders(event, "devices"),
     }),
   ]);
 

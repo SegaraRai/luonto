@@ -51,6 +51,7 @@
 </template>
 
 <script setup lang="ts">
+import type { InvalidateTarget } from "~/utils/invalidateTarget";
 import type {
   NatureApplianceLight,
   NatureApplianceLightButtonName,
@@ -59,8 +60,11 @@ import type {
 const props = defineProps<{
   appliance: NatureApplianceLight;
   submitting: boolean;
-  onSend: (promise: Promise<unknown>, forceRefresh?: boolean) => Promise<void>;
-  onForceRefresh: () => Promise<void>;
+  onSend: (
+    promise: Promise<unknown>,
+    forceRefreshTargets?: readonly InvalidateTarget[]
+  ) => Promise<void>;
+  onForceRefresh: (targets: readonly InvalidateTarget[]) => Promise<void>;
 }>();
 
 const allButtonNames = computed(() =>
@@ -149,7 +153,7 @@ const send = (button: NatureApplianceLightButtonName): void => {
         button,
       },
     }),
-    true
+    ["appliances"]
   );
 };
 </script>
