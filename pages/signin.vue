@@ -3,10 +3,14 @@
     class="flex flex-col items-center justify-center fixed inset-0 w-full h-full"
   >
     <UCard class="w-full max-w-lg">
-      <div class="w-full flex flex-col items-stretch gap-4">
+      <div class="w-full flex flex-col items-stretch gap-6">
         <UForm ref="form" :schema="schema" :state="state" @submit="submit">
-          <div class="flex flex-col items-stretch gap-2">
-            <UFormGroup label="トークン" name="token">
+          <div class="flex flex-col items-stretch gap-3">
+            <UFormGroup
+              label="アクセストークン"
+              name="nature_access_token"
+              description="アクセストークンはローカルで処理され、Nature の API サーバーに直接送信されます（それ以外には送信されません）"
+            >
               <UInput
                 v-model="state.token"
                 type="password"
@@ -14,9 +18,14 @@
                 required
               />
             </UFormGroup>
-            <div class="text-center">
-              <UButton variant="solid" type="submit">サインイン</UButton>
-            </div>
+            <UButton
+              class="justify-center"
+              type="submit"
+              variant="solid"
+              :disabled="!state.token"
+            >
+              サインイン
+            </UButton>
           </div>
         </UForm>
         <div class="flex items-end justify-between gap-2">
@@ -26,9 +35,9 @@
               to="https://home.nature.global/"
               target="_blank"
             >
-              <UIcon class="text-lg" name="i-mdi-text-box-plus-outline" />
-              トークンの発行
-              <UIcon class="text-gray-400 -mt-1" name="i-mdi-external-link" />
+              <UIcon class="text-lg" name="i-mdi-key-chain" />
+              アクセストークンの発行
+              <UIcon class="text-gray-400 -mt-0.5" name="i-mdi-external-link" />
             </ULink>
             <ULink
               class="inline-flex items-center gap-1 text-sky-400"
