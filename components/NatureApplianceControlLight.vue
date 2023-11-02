@@ -5,20 +5,13 @@
         class="absolute inset-0 w-full h-full -z-1 border-[40px] rounded-full border-gray-50 dark:border-gray-800"
       />
       <template
-        v-for="{
-          name,
-          placeClass,
-          color,
-          variant,
-          label,
-          image,
-        } in circleButtons"
+        v-for="{ name, place, color, variant, label, image } in circleButtons"
         :key="name"
       >
         <div
           v-if="allButtonNames.includes(name)"
           class="absolute m-auto inset-0 flex items-center justify-center"
-          :class="placeClass"
+          :class="place"
         >
           <UButton
             class="rounded-full"
@@ -72,77 +65,15 @@ const allButtonNames = computed(() =>
 );
 
 const circleButtons = computed(() => {
-  return (
-    [
-      {
-        name: "on",
-        image: "ico_on",
-        label: "ON",
-        variant: "solid",
-        color: "gray",
-        placeClass: "",
-      },
-      {
-        name: "bright-up",
-        image: "ico_lightup",
-        label: "明るくする",
-        variant: "link",
-        color: "gray",
-        placeClass: "bottom-auto", // top
-      },
-      {
-        name: "bright-down",
-        image: "ico_lightdown",
-        label: "暗くする",
-        variant: "link",
-        color: "gray",
-        placeClass: "top-auto", // bottom
-      },
-      {
-        name: "colortemp-up",
-        image: "ico_colortemp_up",
-        label: "白色",
-        variant: "link",
-        color: "sky",
-        placeClass: "right-auto", // left
-      },
-      {
-        name: "colortemp-down",
-        image: "ico_colortemp_down",
-        label: "暖色",
-        variant: "link",
-        color: "orange",
-        placeClass: "left-auto", // right
-      },
-    ] as const
-  ).filter((b) => allButtonNames.value.includes(b.name));
+  return LIGHT_CIRCLE_BUTTONS.filter((b) =>
+    allButtonNames.value.includes(b.name)
+  );
 });
 
 const otherButtons = computed(() => {
-  return (
-    [
-      {
-        name: "off",
-        image: "ico_off",
-        label: "OFF",
-      },
-      {
-        name: "on-100",
-        image: "ico_light_all",
-        label: "全灯",
-      },
-      {
-        name: "on-favorite",
-        image: "ico_light_favorite",
-        label: "お気に入り",
-      },
-      {
-        name: "colortemp-down",
-        image: "ico_light_night",
-        label: "常夜灯",
-      },
-    ] as const
-  ).filter((b) => allButtonNames.value.includes(b.name));
+  return LIGHT_OTHER_BUTTONS.filter((b) =>
+    allButtonNames.value.includes(b.name)
+  );
 });
 
 const send = (button: NatureApplianceLightButtonName): void => {
