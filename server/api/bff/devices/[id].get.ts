@@ -7,16 +7,13 @@ export default defineSWEventHandler(async (event) => {
   const headers = getBFFForwardedHeaders(event);
   const id = getRouterParam(event, "id");
 
-  const [devices, appliances] = await Promise.all([
+  const [devices, allAppliances] = await Promise.all([
     $fetch<NatureAPIGetDevicesResponse>("/api/nature/1/devices", {
       headers,
     }),
-    $fetch<NatureAPIGetAppliancesResponse>(
-      `/api/nature/1/devices/${id}/appliances`,
-      {
-        headers,
-      }
-    ),
+    $fetch<NatureAPIGetAppliancesResponse>("/api/nature/1/appliances", {
+      headers,
+    }),
   ]);
 
   const device = devices.find((device) => device.id === id);
@@ -26,6 +23,10 @@ export default defineSWEventHandler(async (event) => {
       statusMessage: "Device Not Found",
     });
   }
+
+  const appliances = allAppliances.filter(
+    (appliance) => appliance.device.id === id
+  );
 
   return {
     device,
