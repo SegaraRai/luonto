@@ -17,10 +17,18 @@
     ["/\\*ui\\*/\\s*{([^;]*)}", ":\\s*[\"'`]([^\"'`]*).*?[\"'`]"]
   ],
   "cSpell.words": [
+    "aircon",
+    "colortemp",
+    "dirh",
+    "lightdown",
+    "lightup",
     "Luonto",
     "Nuxt",
     "precache",
-    "precaching"
+    "precaching",
+    "Remo",
+    "unhead",
+    "valibot"
   ],
   "unocss.disable": true,
 }
