@@ -11,6 +11,8 @@
         variant="ghost"
         :icon="current.icon"
         :aria-label="current.label"
+        @keydown.space.prevent="toggle"
+        @keydown.enter.prevent="toggle"
       />
       <template #panel>
         <UButtonGroup size="sm" orientation="horizontal">
@@ -63,4 +65,12 @@ const current = computed(
     items.value.find((item) => item.value === colorMode.preference) ??
     items.value[0]
 );
+
+const toggle = (): void => {
+  const currentIndex = items.value.findIndex(
+    (item) => item.value === colorMode.preference
+  );
+  colorMode.preference =
+    items.value[(currentIndex + 1) % items.value.length].value;
+};
 </script>
