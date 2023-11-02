@@ -278,6 +278,7 @@ const { isSwiping, distanceY } = usePointerSwipe(temperatureSwipeEl, {
   threshold: 1,
 });
 
+/** user swiping temperature (temperature to send) */
 const swipingTemperature = computed((): NatureApplianceACTemperature | null => {
   if (
     !isSwiping.value ||
@@ -308,6 +309,10 @@ const swipingTemperature = computed((): NatureApplianceACTemperature | null => {
   return availableTemperatures[index];
 });
 
+/**
+ * temperature to display \
+ * sending > swiping > current
+ */
 const displayTemperature = computed(
   (): NatureApplianceACTemperature | "" | undefined =>
     sendingSettings.value?.temperature ??
@@ -315,17 +320,19 @@ const displayTemperature = computed(
     props.appliance.settings?.temp
 );
 
+/** temperature slider offset (0 is bottom, 1 is top) */
 const currentTemperatureRatio = computed((): number => {
   const availableTemperatures = currentRange.value?.temp ?? [];
   const index = displayTemperature.value
     ? availableTemperatures.indexOf(displayTemperature.value)
     : -1;
-  const ratio = index >= 0 ? index / (availableTemperatures.length - 1) : 0;
-  return ratio;
+  return index >= 0 ? index / (availableTemperatures.length - 1) : 0;
 });
 
+// send settings on swipe end
 watch(swipingTemperature, (value, prevValue): void => {
   if (value == null && prevValue != null) {
+    // swipe end
     sendSettings({
       temperature: prevValue,
       temperature_unit: props.appliance.settings?.temp_unit,

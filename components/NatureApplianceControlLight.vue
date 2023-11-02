@@ -159,6 +159,7 @@ const send = (button: NatureApplianceLightButtonName): void => {
 </script>
 
 <style>
+/* tailwind should have this but it doesn't */
 .aspect-square {
   aspect-ratio: 1;
 }
