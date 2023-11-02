@@ -7,8 +7,8 @@
   "name": "Luonto",
   "short_name": "Luonto",
   "description": "Nature Remo の非公式 Web アプリ",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#3fe6ae",
+  "theme_color": "#3fe6ae",
   "icons": [
     {
       "src": "pwa-maskable-512.png",

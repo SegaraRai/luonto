@@ -15,7 +15,7 @@ export function getCommonMeta(): Meta[] {
     },
     {
       name: "theme-color",
-      content: "#ffffff",
+      content: "#3fe6ae",
     },
     {
       "http-equiv": "content-security-policy",
