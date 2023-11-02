@@ -275,6 +275,7 @@ export interface NatureApplianceACSettings {
 }
 
 export interface NatureApplianceACModeConfig {
+  /** ascending order (low to high) */
   readonly temp: readonly NatureApplianceACTemperature[];
   readonly dir: readonly NatureApplianceACDir[];
   readonly dirh: readonly NatureApplianceACDirH[];
