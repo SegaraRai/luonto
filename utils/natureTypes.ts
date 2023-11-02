@@ -264,7 +264,7 @@ export type NatureApplianceACButton =
   | "power-on";
 
 export interface NatureApplianceACSettings {
-  readonly temp: NatureApplianceACTemperature;
+  readonly temp: NatureApplianceACTemperature | "";
   readonly temp_unit: NatureTemperatureUnit;
   readonly mode: NatureApplianceACMode;
   readonly vol: NatureApplianceACVol | "";
