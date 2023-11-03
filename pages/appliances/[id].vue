@@ -11,7 +11,10 @@
           class="flex-none text-3xl sm:text-4xl line-clamp-2"
           v-text="appliance.nickname"
         />
-        <NatureApplianceDeviceInfo class="flex-none max-w-full" :device="device" />
+        <NatureApplianceDeviceInfo
+          class="flex-none max-w-full"
+          :device="device"
+        />
       </div>
       <div
         class="absolute inset-0 m-auto left-auto flex-none w-48 h-48 sm:w-64 sm:h-64 -z-10 transition-colors"
