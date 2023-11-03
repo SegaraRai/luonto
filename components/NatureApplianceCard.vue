@@ -2,12 +2,12 @@
   <ULink :to="`/appliances/${appliance.id}`">
     <UCard>
       <div class="flex flex-row items-center gap-4">
-        <div class="flex-1 flex flex-col items-center gap-4">
+        <div class="flex-1 flex flex-col items-center gap-4 overflow-hidden">
           <div
             class="w-24 h-24 text-gray-800 dark:text-gray-200"
             :class="natureIconToClass(appliance.image)"
           />
-          <div v-text="appliance.nickname" />
+          <div class="max-w-full truncate" v-text="appliance.nickname" />
         </div>
         <div
           class="flex-none w-20 flex flex-col items-end justify-between self-stretch"

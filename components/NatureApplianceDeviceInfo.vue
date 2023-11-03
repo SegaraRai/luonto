@@ -1,8 +1,10 @@
 <template>
   <div
-    class="flex-1 flex flex-col items-start sm:items-center gap-1 sm:gap-2 opacity-80"
+    class="flex flex-col items-start sm:items-center gap-1 sm:gap-2 opacity-80 overflow-hidden"
   >
-    <NuxtLink :to="`/devices/${device.id}`">{{ device.name }}</NuxtLink>
+    <NuxtLink class="max-w-full truncate" :to="`/devices/${device.id}`">
+      {{ device.name }}
+    </NuxtLink>
     <div v-if="sensorItems.length" class="flex items-center gap-6">
       <template v-for="item in sensorItems" :key="item.label">
         <div v-if="item.available" class="flex items-center gap-2 text-sm">
