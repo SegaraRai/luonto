@@ -7,6 +7,7 @@ useHead({
   title: composeTitle(),
   meta: getCommonMeta(),
   link: getCommonLink(),
+  script: getCommonScript(),
   htmlAttrs: {
     lang: "ja",
   },

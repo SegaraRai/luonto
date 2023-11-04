@@ -62,6 +62,7 @@ useHead({
   title: composeTitle("サインイン"),
   meta: getCommonMeta(),
   link: getCommonLink(),
+  script: getCommonScript(),
   htmlAttrs: {
     lang: "ja",
   },

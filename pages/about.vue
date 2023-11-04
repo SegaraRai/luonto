@@ -148,6 +148,7 @@ useHead({
     },
   ],
   link: getCommonLink(),
+  script: getCommonScript(),
   htmlAttrs: {
     lang: "ja",
   },

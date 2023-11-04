@@ -1,4 +1,4 @@
-import type { Link, Meta } from "@unhead/schema";
+import type { Link, Meta, Script } from "@unhead/schema";
 
 export function composeTitle(title?: string): string {
   if (!title) {
@@ -38,6 +38,17 @@ export function getCommonLink(): Link[] {
     {
       rel: "manifest",
       href: "/manifest.webmanifest",
+    },
+  ];
+}
+
+export function getCommonScript(): Script[] {
+  return [
+    {
+      key: "cloudflare-web-analytics",
+      src: "https://static.cloudflareinsights.com/beacon.min.js?token=df8f7f632be64a348ead49ebce1b609e",
+      defer: true,
+      tagPosition: "bodyClose",
     },
   ];
 }

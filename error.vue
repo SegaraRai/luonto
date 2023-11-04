@@ -17,6 +17,7 @@ useHead({
   title: composeTitle("エラー"),
   meta: getCommonMeta(),
   link: getCommonLink(),
+  script: getCommonScript(),
   htmlAttrs: {
     lang: "ja",
   },

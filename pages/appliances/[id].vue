@@ -87,6 +87,7 @@ useHead({
   title: composeTitle(data.value?.appliance.nickname),
   meta: getCommonMeta(),
   link: getCommonLink(),
+  script: getCommonScript(),
   htmlAttrs: {
     lang: "ja",
   },

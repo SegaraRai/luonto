@@ -46,6 +46,7 @@ useHead({
   title: composeTitle(data.value?.device.name),
   meta: getCommonMeta(),
   link: getCommonLink(),
+  script: getCommonScript(),
   htmlAttrs: {
     lang: "ja",
   },
