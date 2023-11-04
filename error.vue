@@ -14,7 +14,9 @@ const props = defineProps<{ error: H3Error }>();
 const handleError = () => clearError({ redirect: "/" });
 
 useHead({
-  title: composeTitle("エラー"),
+  title: "エラー",
+  titleTemplate: UNHEAD_TITLE_TEMPLATE,
+  templateParams: getCommonTemplateParams(),
   meta: getCommonMeta(),
   link: getCommonLink(),
   script: getCommonScript(),

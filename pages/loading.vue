@@ -4,7 +4,9 @@
 
 <script setup lang="ts">
 useHead({
-  title: composeTitle(),
+  title: "",
+  titleTemplate: UNHEAD_TITLE_TEMPLATE,
+  templateParams: getCommonTemplateParams(),
   meta: getCommonMeta(),
   link: getCommonLink(),
   script: getCommonScript(),

@@ -1,10 +1,11 @@
 import type { Link, Meta, Script } from "@unhead/schema";
 
-export function composeTitle(title?: string): string {
-  if (!title) {
-    return "Luonto";
-  }
-  return `${title} | Luonto`;
+export const UNHEAD_TITLE_TEMPLATE = "%s %separator Luonto";
+
+export function getCommonTemplateParams(): Record<string, string> {
+  return {
+    separator: "|",
+  };
 }
 
 export function getCommonMeta(): Meta[] {

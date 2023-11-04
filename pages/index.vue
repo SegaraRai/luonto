@@ -23,7 +23,9 @@
 definePageMeta({ layout: "app", middleware: "auth" });
 
 useHead({
-  title: composeTitle("ホーム"),
+  title: "ホーム",
+  titleTemplate: UNHEAD_TITLE_TEMPLATE,
+  templateParams: getCommonTemplateParams(),
   meta: getCommonMeta(),
   link: getCommonLink(),
   script: getCommonScript(),

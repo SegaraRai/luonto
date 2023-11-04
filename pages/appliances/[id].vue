@@ -84,7 +84,9 @@ if (error.value) {
 }
 
 useHead({
-  title: composeTitle(data.value?.appliance.nickname),
+  title: data.value?.appliance.nickname ?? "",
+  titleTemplate: UNHEAD_TITLE_TEMPLATE,
+  templateParams: getCommonTemplateParams(),
   meta: getCommonMeta(),
   link: getCommonLink(),
   script: getCommonScript(),

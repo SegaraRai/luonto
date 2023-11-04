@@ -59,7 +59,9 @@ import type { FormSubmitEvent } from "@nuxt/ui/dist/runtime/types";
 import { type Input, minLength, object, string } from "valibot";
 
 useHead({
-  title: composeTitle("サインイン"),
+  title: "サインイン",
+  titleTemplate: UNHEAD_TITLE_TEMPLATE,
+  templateParams: getCommonTemplateParams(),
   meta: getCommonMeta(),
   link: getCommonLink(),
   script: getCommonScript(),

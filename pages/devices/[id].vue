@@ -43,7 +43,9 @@ if (error.value) {
 }
 
 useHead({
-  title: composeTitle(data.value?.device.name),
+  title: data.value?.device.name ?? "",
+  titleTemplate: UNHEAD_TITLE_TEMPLATE,
+  templateParams: getCommonTemplateParams(),
   meta: getCommonMeta(),
   link: getCommonLink(),
   script: getCommonScript(),
