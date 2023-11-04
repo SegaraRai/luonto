@@ -1,5 +1,9 @@
 <template>
-  <div>Service Worker をインストールしています…</div>
+  <p>
+    Service Worker をインストールしています…
+    <br />
+    インストール後、アプリは自動的に起動します。しばらくお待ちください。
+  </p>
 </template>
 
 <script setup lang="ts">
