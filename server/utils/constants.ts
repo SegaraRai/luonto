@@ -1,6 +1,6 @@
 export const STORAGE_KEY_COOKIE = "cookie";
+export const STORAGE_KEY_NATURE_API_CACHE = "natureAPIResponse";
 export const STORAGE_KEY_RATE_LIMIT_CACHE = "rateLimit";
-export const STORAGE_KEY_RESPONSE_CACHE = "natureAPIResponse";
 
 export const CACHE_MAX_RATE_LIMIT_CACHE = 100;
 export const CACHE_TTL_RATE_LIMIT_CACHE = 30 * 60 * 1000;
