@@ -113,7 +113,13 @@ const responseCache = new LRUCache<string, CacheValue, FetchContext>({
       }
 
       if (!res.ok && res.status !== 404) {
-        console.error(method, url, res.status, res.statusText);
+        console.error(
+          "Nature API error",
+          method,
+          url,
+          res.status,
+          res.statusText
+        );
         throw res;
       }
 

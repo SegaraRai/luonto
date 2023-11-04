@@ -113,10 +113,12 @@ const onForceRefresh = (
   forceRefreshTargets.value = targets.slice();
   return refresh()
     .then(
-      () => undefined,
-      () => undefined
+      (): void => {},
+      (error: unknown): void => {
+        console.error("Failed to force refresh", targets, error);
+      }
     )
-    .finally(() => {
+    .finally((): void => {
       forceRefreshTargets.value = [];
     });
 };
