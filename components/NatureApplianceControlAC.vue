@@ -2,6 +2,7 @@
   <div class="flex flex-col gap-8 items-center">
     <div>
       <div
+        id="ac-temperature-slider"
         ref="temperatureSwipeEl"
         role="slider"
         aria-label="設定温度"
@@ -28,8 +29,10 @@
             : 'cursor-ns-resize',
           !supportsTemperature && 'bg-gray-100 dark:bg-gray-900',
         ]"
-        @keydown.arrow-up.prevent="swipeBy(1)"
-        @keydown.arrow-down.prevent="swipeBy(-1)"
+        @keydown.arrow-up.stop.prevent="swipeBy(1)"
+        @keydown.arrow-down.stop.prevent="swipeBy(-1)"
+        @keydown.arrow-right.stop.prevent="swipeBy(1)"
+        @keydown.arrow-left.stop.prevent="swipeBy(-1)"
       >
         <template
           v-if="appliance.settings && currentMode && supportsTemperature"
@@ -56,8 +59,9 @@
               disabled && 'opacity-70',
             ]"
           >
-            <span
+            <output
               v-if="displayTemperature"
+              for="ac-temperature-slider"
               class="whitespace-nowrap select-text font-bold"
               v-text="
                 formatTemperature(
@@ -76,7 +80,7 @@
         size="lg"
         :color="isON ? 'emerald' : 'gray'"
         variant="solid"
-        :aria-label="isON ? '消す' : 'つける'"
+        :aria-label="isON ? '電源を切る' : '電源をつける'"
         icon="i-mdi-power"
         :disabled="disabled"
         @click="sendSettings({ button: isON ? 'power-off' : 'power-on' })"
