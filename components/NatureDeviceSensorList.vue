@@ -7,7 +7,7 @@
       <div
         role="img"
         class="flex-none w-[1.25em] h-[1.25em]"
-        :class="[item.class, item.icon, !item.available && 'opacity-50']"
+        :class="[item.color, item.icon, !item.available && 'opacity-50']"
         :aria-label="item.label"
       />
       <template v-if="item.available">

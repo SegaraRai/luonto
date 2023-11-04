@@ -55,7 +55,7 @@ export function getNatureApplianceStatus(
       if (acSettings?.mode && indicator?.type === "ON") {
         const config = AC_MODE_CONFIG_MAP[acSettings.mode];
         const unit = acSettings.temp
-          ? `\u00BA${acSettings.temp_unit.toUpperCase()}`
+          ? humanizeTemperatureUnit(acSettings.temp_unit)
           : null;
         settings = {
           icon: config.icon,

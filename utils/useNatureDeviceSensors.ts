@@ -1,7 +1,7 @@
 import type { NatureDeviceWithEvents } from "./natureTypes";
 
 export interface NatureDeviceSensorItemBase {
-  readonly class: string;
+  readonly color: string;
   readonly icon: string;
   readonly label: string;
   readonly unit: string;
@@ -40,23 +40,25 @@ export function getNatureDeviceSensors(
   if (!events) {
     return [];
   }
+
   return [
     {
-      class: "text-orange-400",
+      color: "text-orange-400",
       icon: "i-mingcute-high-temperature-line",
       label: "室温",
-      unit: "\u00BAC",
+      // I think device's unit is always Celsius
+      unit: humanizeTemperatureUnit("c"),
       object: events.te,
     },
     {
-      class: "text-blue-400",
+      color: "text-blue-400",
       icon: "i-mingcute-drop-line",
       label: "湿度",
       unit: "%",
       object: events.hu,
     },
     {
-      class: "text-yellow-400",
+      color: "text-yellow-400",
       icon: "i-mingcute-light-line",
       label: "明るさ",
       unit: "lx",

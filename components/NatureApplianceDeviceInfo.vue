@@ -11,7 +11,7 @@
           <span
             role="img"
             class="flex-none w-[1.25em] h-[1.25em]"
-            :class="[item.class, item.icon]"
+            :class="[item.color, item.icon]"
             :aria-label="item.label"
           />
           <UTooltip :text="`${item.ago}更新`">

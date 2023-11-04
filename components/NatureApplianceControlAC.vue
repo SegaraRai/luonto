@@ -14,7 +14,10 @@
         :aria-valuenow="displayTemperature || undefined"
         :aria-valuetext="
           displayTemperature && appliance.settings?.temp_unit
-            ? `${displayTemperature} \u00BA${appliance.settings.temp_unit.toUpperCase()}`
+            ? formatTemperature(
+                displayTemperature,
+                appliance.settings.temp_unit
+              )
             : undefined
         "
         tabindex="0"
@@ -57,7 +60,10 @@
               v-if="displayTemperature"
               class="whitespace-nowrap select-text font-bold"
               v-text="
-                `${displayTemperature} \u00BA${appliance.settings.temp_unit.toUpperCase()}`
+                formatTemperature(
+                  displayTemperature,
+                  appliance.settings.temp_unit
+                )
               "
             />
           </div>
