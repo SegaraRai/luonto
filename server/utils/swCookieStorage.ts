@@ -1,5 +1,6 @@
 import { STORAGE_KEY_COOKIE } from "./constants";
 import { createOnce } from "./once";
+import { createSerial } from "./serial";
 import { loadServerStorage, storeServerStorage } from "./serverStorage";
 
 const cookieMap = new Map<string, string>();
@@ -25,7 +26,7 @@ const restoreOnce = createOnce(async (): Promise<void> => {
   }
 });
 
-async function persistCookieMap(): Promise<void> {
+const persistCookieMap = createSerial(async (): Promise<void> => {
   await restoreOnce();
   await storeServerStorage(
     STORAGE_KEY_COOKIE,
@@ -33,6 +34,11 @@ async function persistCookieMap(): Promise<void> {
       Array.from(cookieMap.entries()).sort((a, b) => a[0].localeCompare(b[0]))
     )
   );
+});
+
+export async function clearCookieStorage(): Promise<void> {
+  cookieMap.clear();
+  await persistCookieMap();
 }
 
 export async function createCookieForRequest(): Promise<string | undefined> {

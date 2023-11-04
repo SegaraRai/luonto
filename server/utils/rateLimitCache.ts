@@ -1,12 +1,13 @@
 import { LRUCache } from "lru-cache";
-import { createOnce } from "./once";
-import type { RateLimit } from "./rateLimit";
-import { loadServerStorage, storeServerStorage } from "./serverStorage";
 import {
   CACHE_MAX_RATE_LIMIT_CACHE,
   CACHE_TTL_RATE_LIMIT_CACHE,
   STORAGE_KEY_RATE_LIMIT_CACHE,
 } from "./constants";
+import { createOnce } from "./once";
+import type { RateLimit } from "./rateLimit";
+import { createSerial } from "./serial";
+import { loadServerStorage, storeServerStorage } from "./serverStorage";
 
 const rateLimitCache = new LRUCache<string, RateLimit>({
   max: CACHE_MAX_RATE_LIMIT_CACHE,
@@ -30,7 +31,7 @@ const restoreOnce = createOnce(async (): Promise<void> => {
   }
 });
 
-export async function persistRateLimitCache(): Promise<void> {
+const persistRateLimitCache = createSerial(async (): Promise<void> => {
   await restoreOnce();
   await storeServerStorage(
     STORAGE_KEY_RATE_LIMIT_CACHE,
@@ -38,12 +39,22 @@ export async function persistRateLimitCache(): Promise<void> {
       rateLimitCache.dump().sort((a, b) => a[0].localeCompare(b[0]))
     )
   );
+});
+
+export async function clearRateLimitCacheStorage(): Promise<void> {
+  rateLimitCache.clear();
+  await persistRateLimitCache();
 }
 
-export function setRateLimitCache(userId: string, rateLimit: RateLimit): void {
+export async function setRateLimitCache(
+  userId: string,
+  rateLimit: RateLimit
+): Promise<void> {
+  await restoreOnce();
   rateLimitCache.set(userId, rateLimit, {
     ttl: Math.max(rateLimit.reset * 1000 - Date.now(), 1),
   });
+  await persistRateLimitCache();
 }
 
 export async function getRateLimitCache(

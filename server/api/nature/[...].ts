@@ -6,10 +6,8 @@ import {
 } from "~/server/utils/constants";
 import { createOnce } from "~/server/utils/once";
 import { createRateLimitFromHeaders } from "~/server/utils/rateLimit";
-import {
-  persistRateLimitCache,
-  setRateLimitCache,
-} from "~/server/utils/rateLimitCache";
+import { setRateLimitCache } from "~/server/utils/rateLimitCache";
+import { createSerial } from "~/server/utils/serial";
 import {
   loadServerStorage,
   storeServerStorage,
@@ -109,7 +107,7 @@ const responseCache = new LRUCache<string, CacheValue, FetchContext>({
 
       const rateLimit = createRateLimitFromHeaders(res.headers);
       if (rateLimit) {
-        setRateLimitCache(userId, rateLimit);
+        waitUntil(setRateLimitCache(userId, rateLimit));
       }
 
       if (!res.ok && res.status !== 404) {
@@ -122,14 +120,6 @@ const responseCache = new LRUCache<string, CacheValue, FetchContext>({
         );
         throw res;
       }
-
-      waitUntil(
-        (async (): Promise<void> => {
-          await new Promise((resolve) => setTimeout(resolve, 10));
-          await persistRateLimitCache();
-          await persistResponseCache();
-        })()
-      );
 
       return {
         data: { res, body: await res.blob(), timestamp },
@@ -180,7 +170,7 @@ const restoreOnce = createOnce(async (): Promise<void> => {
   }
 });
 
-async function persistResponseCache(): Promise<void> {
+const persistResponseCache = createSerial(async (): Promise<void> => {
   await restoreOnce();
   const serialized = (
     await Promise.all(
@@ -204,7 +194,7 @@ async function persistResponseCache(): Promise<void> {
     STORAGE_KEY_RESPONSE_CACHE,
     JSON.stringify(serialized)
   );
-}
+});
 
 export default defineSWEventHandler(async (event): Promise<Response> => {
   const user = await getAuthSessionUserData(event);
@@ -255,8 +245,7 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
 
     const rateLimit = createRateLimitFromHeaders(res.headers);
     if (rateLimit) {
-      setRateLimitCache(id, rateLimit);
-      event.waitUntil(persistRateLimitCache());
+      event.waitUntil(setRateLimitCache(id, rateLimit));
     }
 
     res = new Response(res.body, res);
@@ -290,6 +279,10 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
         waitUntil: (promise): void => event.waitUntil(promise),
       },
     })) ?? {};
+
+  if (data?.timestamp === requestTimestamp) {
+    event.waitUntil(persistResponseCache());
+  }
 
   let res: Response;
   if (data) {
