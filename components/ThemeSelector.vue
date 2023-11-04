@@ -5,12 +5,12 @@
       :popper="{ placement }"
     >
       <UButton
+        aria-label="テーマ切り替え"
         size="sm"
         square
         color="gray"
         variant="ghost"
         :icon="current.icon"
-        :aria-label="current.label"
         @keydown.space.prevent="toggle"
         @keydown.enter.prevent="toggle"
       />
@@ -43,18 +43,18 @@ const hoverAvailable = useHoverAvailable();
 const items = computed(() => [
   {
     label: colorMode.unknown
-      ? "System"
-      : `System (${colorMode.value === "dark" ? "Dark" : "Light"})`,
+      ? "システムテーマ"
+      : `システムテーマ (${colorMode.value === "dark" ? "ダーク" : "ライト"})`,
     value: "system",
     icon: "i-ph-circle-half-tilt-fill",
   },
   {
-    label: "Light",
+    label: "ライトテーマ",
     value: "light",
     icon: "i-ph-circle dark:ix-ph-circle-fill",
   },
   {
-    label: "Dark",
+    label: "ダークテーマ",
     value: "dark",
     icon: "i-ph-circle-fill dark:ix-ph-circle-bold",
   },
