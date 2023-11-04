@@ -43,7 +43,7 @@ const rateLimit = computed(() => {
 });
 
 const now = useNow({
-  interval: 500,
+  interval: NOW_UPDATE_INTERVAL_ERROR_CONTENT,
 });
 
 const isRateLimited = computed(

@@ -37,6 +37,6 @@ if (error.value) {
 }
 
 useRefreshCaller(refresh, {
-  refreshInterval: 30_000,
+  refreshInterval: REFRESH_INTERVAL_HOME,
 });
 </script>

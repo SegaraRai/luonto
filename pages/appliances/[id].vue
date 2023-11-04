@@ -165,7 +165,7 @@ const onSend = (
 };
 
 useRefreshCaller(refresh, {
-  refreshInterval: 30_000,
+  refreshInterval: REFRESH_INTERVAL_APPLIANCE_PAGE,
   disabled: !!forceRefreshTargets.value.length,
 });
 </script>

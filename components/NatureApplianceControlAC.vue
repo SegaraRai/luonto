@@ -301,7 +301,7 @@ const sendSettings = (
 const temperatureSwipeEl = ref<HTMLDivElement | null>(null);
 const temperatureTrackEl = ref<HTMLDivElement | null>(null);
 const { isSwiping, distanceY } = usePointerSwipe(temperatureSwipeEl, {
-  threshold: 1,
+  threshold: SWIPE_THRESHOLD_DISTANCE_AC_TEMPERATURE,
 });
 
 /** user swiping temperature (temperature to send) */
