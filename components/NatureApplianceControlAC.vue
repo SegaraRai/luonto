@@ -22,7 +22,7 @@
             : undefined
         "
         tabindex="0"
-        class="rounded-xl w-24 h-64 border border-gray-300 dark:border-gray-600 flex flex-col overflow-hidden touch-none select-none"
+        class="rounded-xl w-24 h-64 ring-1 ring-gray-300 dark:ring-gray-600 flex flex-col overflow-hidden touch-none select-none"
         :class="[
           STYLE_FOCUS_VISIBLE_RING,
           disabled || !supportsTemperature
@@ -91,7 +91,7 @@
       <template v-for="{ mode, label, icon, fgColor } in modes" :key="mode">
         <UButton
           :aria-pressed="String(mode === displayMode)"
-          class="flex-1 flex-col gap-2 text-xs"
+          class="flex-1 flex-col gap-2 text-xs focus-visible:relative"
           :color="mode === displayMode ? 'white' : 'gray'"
           variant="solid"
           square
