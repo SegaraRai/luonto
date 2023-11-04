@@ -23,6 +23,7 @@ function createRequestHeaderInit(token: string): HeadersInit {
 }
 
 interface FetchContext {
+  readonly timestamp: number;
   readonly token: string;
   readonly waitUntil: (promise: Promise<void>) => void;
 }
@@ -96,10 +97,9 @@ const responseCache = new LRUCache<string, CacheValue, FetchContext>({
   fetchMethod: async (
     key,
     staleValue,
-    { signal, context: { token, waitUntil } }
+    { signal, context: { timestamp, token, waitUntil } }
   ): Promise<CacheValue> => {
     try {
-      const timestamp = Date.now();
       const [userId, method, url] = key.split("\0");
       const res = await fetch(url, {
         method,
@@ -244,6 +244,8 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
     !cacheDirectives.includes("no-store");
   const shouldRefresh = cacheDirectives.includes("no-cache");
 
+  const requestTimestamp = Date.now();
+
   if (!shouldCache) {
     let res = await fetch(url, {
       method,
@@ -258,8 +260,10 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
     }
 
     res = new Response(res.body, res);
-    res.headers.set("luonto-cache", "0");
-    res.headers.set("luonto-timestamp", String(Date.now()));
+    res.headers.set("luonto-cache-status", "bypass");
+    res.headers.set("luonto-content-timestamp", String(requestTimestamp));
+    res.headers.set("luonto-fetch-timestamp", String(requestTimestamp));
+    res.headers.set("luonto-response-timestamp", String(requestTimestamp));
     res.headers.set("cache-control", "no-store");
 
     if (res.ok) {
@@ -281,6 +285,7 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
       allowStaleOnFetchAbort: !shouldRefresh,
       forceRefresh: shouldRefresh,
       context: {
+        timestamp: requestTimestamp,
         token,
         waitUntil: (promise): void => event.waitUntil(promise),
       },
@@ -290,7 +295,14 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
   if (data) {
     res = new Response(data.body, data.res);
 
-    res.headers.set("luonto-stale", error ? "1" : "0");
+    res.headers.set(
+      "luonto-cache-status",
+      error
+        ? "stale-while-error"
+        : data.timestamp === requestTimestamp
+        ? "revalidated"
+        : "hit"
+    );
     res.headers.set("luonto-content-timestamp", String(data.timestamp));
   } else {
     const errorBody = JSON.stringify({
@@ -311,13 +323,14 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
     }
 
     res.headers.set("content-type", "application/json");
+    res.headers.set("luonto-cache-status", "miss");
   }
 
   if (timestamp) {
-    res.headers.set("luonto-timestamp", String(timestamp));
+    res.headers.set("luonto-fetch-timestamp", String(timestamp));
   }
 
-  res.headers.set("luonto-cache", "1");
+  res.headers.set("luonto-response-timestamp", String(requestTimestamp));
   res.headers.set("cache-control", "no-store");
 
   return res;
