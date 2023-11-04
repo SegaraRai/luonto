@@ -12,11 +12,13 @@
           :items="items"
           :ui="{ item: { disabled: 'cursor-text select-text opacity-100' } }"
         >
-          <UAvatar
-            class="select-none"
-            :alt="user.name ?? undefined"
-            size="sm"
-          />
+          <div role="img" aria-label="アカウント">
+            <UAvatar
+              class="select-none"
+              :alt="user.name ?? undefined"
+              size="sm"
+            />
+          </div>
           <template #account>
             <div class="flex flex-col gap-2 text-start items-start">
               <div class="text-sm font-bold text-gray-600 dark:text-gray-300">
