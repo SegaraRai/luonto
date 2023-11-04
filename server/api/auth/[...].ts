@@ -4,7 +4,7 @@ import { NuxtAuthHandler } from "#auth";
 import type { SessionUserData } from "~/server/utils/session";
 import { clearCookieStorage } from "~/server/utils/swCookieStorage";
 import { clearRateLimitCacheStorage } from "~/server/utils/rateLimitCache";
-import { clearResponseCacheStorage } from "../nature/[...]";
+import { clearNatureAPICacheStorage } from "~/server/utils/natureAPICache";
 
 const runtimeConfig = useRuntimeConfig();
 
@@ -59,7 +59,7 @@ export default defineSWEventHandler((event) => {
     // clear storage
     event.waitUntil(clearCookieStorage());
     event.waitUntil(clearRateLimitCacheStorage());
-    event.waitUntil(clearResponseCacheStorage());
+    event.waitUntil(clearNatureAPICacheStorage());
   }
 
   return baseHandler(event);
