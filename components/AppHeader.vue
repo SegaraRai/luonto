@@ -12,7 +12,7 @@
           :items="items"
           :ui="{ item: { disabled: 'cursor-text select-text opacity-100' } }"
         >
-          <div role="img" aria-label="アカウント">
+          <div role="button" aria-label="アカウント" tabindex="0">
             <UAvatar
               class="select-none"
               :alt="user.name ?? undefined"
