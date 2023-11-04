@@ -7,27 +7,45 @@ import { Router } from "workbox-routing";
 import { NetworkFirst } from "workbox-strategies";
 import { nitroApp } from "#internal/nitro/app";
 import { isPublicAssetURL } from "#internal/nitro/virtual/public-assets";
+import { extendHeaders } from "./server/utils/swExtendHeaders";
+import {
+  createCookieForRequest,
+  storeCookiesFromResponse,
+} from "./server/utils/swCookieStorage";
 
 declare const self: globalThis.ServiceWorkerGlobalScope;
 
 // nitro
 async function handleEvent(url: URL, event: FetchEvent): Promise<Response> {
-  let body;
+  let body: ArrayBuffer | undefined;
   if (event.request.body) {
     body = await event.request.arrayBuffer();
   }
 
-  return nitroApp.localFetch(url.pathname + url.search, {
+  const reqHeaders = new Headers(event.request.headers);
+  const cookie = await createCookieForRequest();
+  if (cookie) {
+    reqHeaders.set("cookie", cookie);
+  }
+
+  const res = await nitroApp.localFetch(url.pathname + url.search, {
     context: {
       waitUntil: (promise: Promise<void>): void => event.waitUntil(promise),
     },
     host: url.hostname,
     protocol: url.protocol,
-    headers: event.request.headers,
+    headers: reqHeaders,
     method: event.request.method,
     redirect: event.request.redirect,
     body,
   });
+
+  event.waitUntil(storeCookiesFromResponse(res.headers));
+
+  const resWithoutSetCookie = new Response(res.body, res);
+  resWithoutSetCookie.headers.delete("set-cookie");
+
+  return resWithoutSetCookie;
 }
 
 // workbox
@@ -78,3 +96,6 @@ self.addEventListener("activate", (event): void => {
   precacheController.activate(event);
   event.waitUntil(self.clients.claim());
 });
+
+// extend Request and Response classes
+extendHeaders();
