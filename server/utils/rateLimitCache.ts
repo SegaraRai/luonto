@@ -2,19 +2,22 @@ import { LRUCache } from "lru-cache";
 import { createOnce } from "./once";
 import type { RateLimit } from "./rateLimit";
 import { loadServerStorage, storeServerStorage } from "./serverStorage";
-
-const RATE_LIMIT_CACHE_STORAGE_KEY = "rateLimit";
+import {
+  CACHE_MAX_RATE_LIMIT_CACHE,
+  CACHE_TTL_RATE_LIMIT_CACHE,
+  STORAGE_KEY_RATE_LIMIT_CACHE,
+} from "./constants";
 
 const rateLimitCache = new LRUCache<string, RateLimit>({
-  max: 100,
-  ttl: 30 * 60 * 1000,
+  max: CACHE_MAX_RATE_LIMIT_CACHE,
+  ttl: CACHE_TTL_RATE_LIMIT_CACHE,
   updateAgeOnGet: false,
   updateAgeOnHas: false,
 });
 
 const restoreOnce = createOnce(async (): Promise<void> => {
   try {
-    const data = await loadServerStorage(RATE_LIMIT_CACHE_STORAGE_KEY);
+    const data = await loadServerStorage(STORAGE_KEY_RATE_LIMIT_CACHE);
     if (!data) {
       return;
     }
@@ -30,7 +33,7 @@ const restoreOnce = createOnce(async (): Promise<void> => {
 export async function persistRateLimitCache(): Promise<void> {
   await restoreOnce();
   await storeServerStorage(
-    RATE_LIMIT_CACHE_STORAGE_KEY,
+    STORAGE_KEY_RATE_LIMIT_CACHE,
     JSON.stringify(
       rateLimitCache.dump().sort((a, b) => a[0].localeCompare(b[0]))
     )

@@ -1,4 +1,9 @@
 import { LRUCache } from "lru-cache";
+import {
+  CACHE_MAX_RESPONSE_CACHE,
+  CACHE_TTL_RESPONSE_CACHE,
+  STORAGE_KEY_RESPONSE_CACHE,
+} from "~/server/utils/constants";
 import { createOnce } from "~/server/utils/once";
 import { createRateLimitFromHeaders } from "~/server/utils/rateLimit";
 import {
@@ -9,8 +14,6 @@ import {
   loadServerStorage,
   storeServerStorage,
 } from "~/server/utils/serverStorage";
-
-const RESPONSE_CACHE_STORAGE_KEY = "natureAPIResponse";
 
 function createRequestHeaderInit(token: string): HeadersInit {
   return {
@@ -86,8 +89,8 @@ function deserializeCacheValue(data: SerializedCacheValue): CacheValue | null {
 }
 
 const responseCache = new LRUCache<string, CacheValue, FetchContext>({
-  max: 100,
-  ttl: 20_000,
+  max: CACHE_MAX_RESPONSE_CACHE,
+  ttl: CACHE_TTL_RESPONSE_CACHE,
   updateAgeOnGet: false,
   updateAgeOnHas: false,
   fetchMethod: async (
@@ -144,7 +147,7 @@ const responseCache = new LRUCache<string, CacheValue, FetchContext>({
 
 const restoreOnce = createOnce(async (): Promise<void> => {
   try {
-    const data = await loadServerStorage(RESPONSE_CACHE_STORAGE_KEY);
+    const data = await loadServerStorage(STORAGE_KEY_RESPONSE_CACHE);
     if (!data) {
       return;
     }
@@ -192,7 +195,7 @@ async function persistResponseCache(): Promise<void> {
       !!item[1].value
   );
   await storeServerStorage(
-    RESPONSE_CACHE_STORAGE_KEY,
+    STORAGE_KEY_RESPONSE_CACHE,
     JSON.stringify(serialized)
   );
 }

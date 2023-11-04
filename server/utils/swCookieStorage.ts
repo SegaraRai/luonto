@@ -1,13 +1,12 @@
+import { STORAGE_KEY_COOKIE } from "./constants";
 import { createOnce } from "./once";
 import { loadServerStorage, storeServerStorage } from "./serverStorage";
-
-const COOKIE_STORAGE_KEY = "cookie";
 
 const cookieMap = new Map<string, string>();
 
 const restoreOnce = createOnce(async (): Promise<void> => {
   try {
-    const data = await loadServerStorage(COOKIE_STORAGE_KEY);
+    const data = await loadServerStorage(STORAGE_KEY_COOKIE);
     if (!data) {
       return;
     }
@@ -29,7 +28,7 @@ const restoreOnce = createOnce(async (): Promise<void> => {
 async function persistCookieMap(): Promise<void> {
   await restoreOnce();
   await storeServerStorage(
-    COOKIE_STORAGE_KEY,
+    STORAGE_KEY_COOKIE,
     JSON.stringify(
       Array.from(cookieMap.entries()).sort((a, b) => a[0].localeCompare(b[0]))
     )
