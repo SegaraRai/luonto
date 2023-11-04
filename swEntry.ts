@@ -87,13 +87,15 @@ self.addEventListener("fetch", (event): void => {
   event.respondWith(handleEvent(url, event));
 });
 
-self.addEventListener("install", (event): void => {
-  precacheController.install(event);
+self.addEventListener("install", (): void => {
+  // we don't have to call `precacheController.install()` here as it's handled by `precache()` call above
+  // https://github.com/GoogleChrome/workbox/blob/v7.0.0/packages/workbox-precaching/src/PrecacheController.ts#L111-L115
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event): void => {
-  precacheController.activate(event);
+  // we don't have to call `precacheController.activate()` here as it's handled by `precache()` call above
+  // https://github.com/GoogleChrome/workbox/blob/v7.0.0/packages/workbox-precaching/src/PrecacheController.ts#L111-L115
   event.waitUntil(self.clients.claim());
 });
 
