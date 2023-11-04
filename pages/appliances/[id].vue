@@ -69,7 +69,7 @@ const { data, error, refresh } = await useFetch(
       forceRefreshTargets.value = [];
 
       const headers = new Headers(
-        context.request instanceof Request ? context.request.headers : undefined
+        typeof context.request === "object" ? context.request.headers : {}
       );
       headers.set("luonto-invalidate-cache", invalidateTargets);
       context.request = new Request(context.request, {
@@ -169,6 +169,6 @@ const onSend = (
 
 useRefreshCaller(refresh, {
   refreshInterval: REFRESH_INTERVAL_APPLIANCE_PAGE,
-  disabled: !!forceRefreshTargets.value.length,
+  disabled: () => !!forceRefreshTargets.value.length,
 });
 </script>
