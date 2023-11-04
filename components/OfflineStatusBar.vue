@@ -3,6 +3,7 @@
     <div
       class="w-full h-6 fixed inset-0 top-auto z-80 overflow-hidden transform transition-transform"
       :class="isOnline && 'translate-y-full'"
+      :aria-hidden="isOnline"
     >
       <div
         class="w-full h-6 px-4 text-sm font-bold bg-emerald-600 text-white flex items-center whitespace-nowrap"
