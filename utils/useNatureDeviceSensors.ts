@@ -94,7 +94,7 @@ export function useNatureDeviceSensors(
   >,
   includesNA: MaybeRefOrGetter<boolean> = false,
   now: MaybeRefOrGetter<Date | number> = useNow({
-    interval: 30_000,
+    interval: NOW_UPDATE_INTERVAL_DEVICE_SENSORS,
   })
 ) {
   return computed<readonly NatureDeviceSensorItem[]>(() =>
