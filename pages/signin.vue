@@ -1,8 +1,6 @@
 <template>
-  <div
-    class="flex flex-col items-center justify-center fixed inset-0 w-full h-full"
-  >
-    <UCard class="w-full max-w-lg">
+  <div class="flex flex-col items-center justify-center w-full h-[100dvh]">
+    <UCard class="w-full sm:max-w-lg">
       <div class="w-full flex flex-col items-stretch gap-6">
         <UForm ref="form" :schema="schema" :state="state" @submit="submit">
           <div class="flex flex-col items-stretch gap-3">
@@ -95,8 +93,8 @@ const submit = async (event: FormSubmitEvent<Schema>): Promise<void> => {
   } catch (error) {
     form.value.setErrors([
       {
-        path: "token",
-        message: "Invalid token",
+        path: "nature_access_token",
+        message: "アクセストークンが無効か、レート制限中です",
       },
     ]);
     return;
