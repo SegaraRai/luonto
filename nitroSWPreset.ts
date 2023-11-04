@@ -320,7 +320,7 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
             continue;
           }
 
-          const html = await fsp.readFile(filepath, "utf8");
+          const html = await fsp.readFile(filepath, "utf-8");
           await fsp.writeFile(
             filepath,
             html.replaceAll(
