@@ -23,6 +23,7 @@
     "deduping",
     "dirh",
     "geolocation",
+    "keyval",
     "lightdown",
     "lightup",
     "Luonto",
@@ -34,7 +35,8 @@
     "Remo",
     "signout",
     "unhead",
-    "valibot"
+    "valibot",
+    "vueuse"
   ],
   "unocss.disable": true,
 }
