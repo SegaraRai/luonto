@@ -28,6 +28,8 @@
       </div>
     </template>
   </div>
+  <PageContentError v-else-if="error" :error="error" />
+  <PageContentLoading v-else />
 </template>
 
 <script setup lang="ts">
