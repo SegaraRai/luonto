@@ -37,6 +37,7 @@ const persistCookieMap = createSerial(async (): Promise<void> => {
 });
 
 export async function clearCookieStorage(): Promise<void> {
+  await restoreOnce();
   cookieMap.clear();
   await persistCookieMap();
 }

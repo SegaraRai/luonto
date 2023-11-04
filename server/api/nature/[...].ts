@@ -196,6 +196,12 @@ const persistResponseCache = createSerial(async (): Promise<void> => {
   );
 });
 
+export async function clearResponseCacheStorage(): Promise<void> {
+  await restoreOnce();
+  responseCache.clear();
+  await persistResponseCache();
+}
+
 export default defineSWEventHandler(async (event): Promise<Response> => {
   const user = await getAuthSessionUserData(event);
   if (!user) {

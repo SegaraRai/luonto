@@ -2,6 +2,9 @@ import Credentials from "@auth/core/providers/credentials";
 import type { AuthConfig, User } from "@auth/core/types";
 import { NuxtAuthHandler } from "#auth";
 import type { SessionUserData } from "~/server/utils/session";
+import { clearCookieStorage } from "~/server/utils/swCookieStorage";
+import { clearRateLimitCacheStorage } from "~/server/utils/rateLimitCache";
+import { clearResponseCacheStorage } from "../nature/[...]";
 
 const runtimeConfig = useRuntimeConfig();
 
@@ -49,6 +52,15 @@ export const authOptions: AuthConfig = {
   ],
 };
 
-export default defineSWEventHandler(
-  NuxtAuthHandler(authOptions, runtimeConfig)
-);
+const baseHandler = NuxtAuthHandler(authOptions, runtimeConfig);
+
+export default defineSWEventHandler((event) => {
+  if (event.path === "/api/auth/signout") {
+    // clear storage
+    event.waitUntil(clearCookieStorage());
+    event.waitUntil(clearRateLimitCacheStorage());
+    event.waitUntil(clearResponseCacheStorage());
+  }
+
+  return baseHandler(event);
+});

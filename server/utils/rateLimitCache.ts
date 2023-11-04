@@ -42,6 +42,7 @@ const persistRateLimitCache = createSerial(async (): Promise<void> => {
 });
 
 export async function clearRateLimitCacheStorage(): Promise<void> {
+  await restoreOnce();
   rateLimitCache.clear();
   await persistRateLimitCache();
 }
