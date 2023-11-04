@@ -30,7 +30,9 @@ async function persistCookieMap(): Promise<void> {
   await restoreOnce();
   await storeServerStorage(
     COOKIE_STORAGE_KEY,
-    JSON.stringify(Array.from(cookieMap.entries()))
+    JSON.stringify(
+      Array.from(cookieMap.entries()).sort((a, b) => a[0].localeCompare(b[0]))
+    )
   );
 }
 
@@ -60,5 +62,6 @@ export async function storeCookiesFromResponse(
 
     cookieMap.set(name, value);
   }
+
   await persistCookieMap();
 }

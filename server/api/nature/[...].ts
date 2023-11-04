@@ -177,6 +177,7 @@ async function persistResponseCache(): Promise<void> {
     await Promise.all(
       responseCache
         .dump()
+        .sort((a, b) => a[0].localeCompare(b[0]))
         .map(
           async ([key, value]): Promise<
             [string, LRUCache.Entry<SerializedCacheValue | null>]

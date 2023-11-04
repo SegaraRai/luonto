@@ -31,7 +31,9 @@ export async function persistRateLimitCache(): Promise<void> {
   await restoreOnce();
   await storeServerStorage(
     RATE_LIMIT_CACHE_STORAGE_KEY,
-    JSON.stringify(rateLimitCache.dump())
+    JSON.stringify(
+      rateLimitCache.dump().sort((a, b) => a[0].localeCompare(b[0]))
+    )
   );
 }
 
