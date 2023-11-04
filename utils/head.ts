@@ -44,6 +44,10 @@ export function getCommonLink(): Link[] {
 }
 
 export function getCommonScript(): Script[] {
+  if (process.env.NODE_ENV === "development") {
+    return [];
+  }
+
   return [
     {
       key: "cloudflare-web-analytics",
