@@ -14,7 +14,8 @@
         <br />
         セキュリティ上の問題を発見した場合は、お手数ですが下記フォームまでご連絡ください。<br />
         <ULink
-          class="text-sky-500 dark:text-sky-400"
+          class="text-sky-500 dark:text-sky-400 rounded"
+          :class="STYLE_FOCUS_VISIBLE_RING"
           to="https://forms.gle/f87TXVBXUyf3Sx347"
           target="_blank"
         >
@@ -24,7 +25,8 @@
       <p>
         セキュリティ以外に関する要望や Pull Request は
         <ULink
-          class="text-sky-500 dark:text-sky-400"
+          class="text-sky-500 dark:text-sky-400 rounded"
+          :class="STYLE_FOCUS_VISIBLE_RING"
           to="https://github.com/SegaraRai/luonto"
           target="_blank"
         >
@@ -114,11 +116,17 @@
     <div
       class="w-full flex items-center justify-center gap-4 text-2xl text-gray-600 dark:text-gray-400 pb-4"
     >
-      <ULink class="inline-block rounded-full" to="/" aria-label="ホーム">
+      <ULink
+        class="inline-block rounded"
+        :class="STYLE_FOCUS_VISIBLE_RING"
+        to="/"
+        aria-label="ホーム"
+      >
         <UIcon name="i-mdi-home" />
       </ULink>
       <ULink
-        class="inline-block rounded-full"
+        class="inline-block rounded"
+        :class="STYLE_FOCUS_VISIBLE_RING"
         to="https://github.com/SegaraRai/luonto"
         target="_blank"
         aria-label="GitHub リポジトリ"

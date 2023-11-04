@@ -35,4 +35,18 @@ export default defineNuxtConfig({
   alias: {
     cookie: path.resolve(__dirname, "node_modules/cookie"),
   },
+  ui: {
+    safelistColors: [
+      "primary",
+      // base colors
+      "black",
+      "gray",
+      "white",
+      // for light buttons
+      "orange",
+      "sky",
+      // for AC power button
+      "emerald",
+    ],
+  },
 });

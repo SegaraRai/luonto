@@ -10,6 +10,13 @@ const iconCollections = {
 };
 
 export default {
+  theme: {
+    extend: {
+      aspectRatio: {
+        square: "1 / 1",
+      },
+    },
+  },
   content: [],
   plugins: [
     iconsPlugin({

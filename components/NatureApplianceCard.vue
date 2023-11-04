@@ -1,6 +1,9 @@
 <template>
-  <ULink :to="`/appliances/${appliance.id}`">
-    <UCard>
+  <ULink
+    class="group focus:outline-none focus-visible:outline-0"
+    :to="`/appliances/${appliance.id}`"
+  >
+    <UCard :class="STYLE_FOCUS_VISIBLE_RING_GROUP">
       <div class="flex flex-row items-center gap-4">
         <div class="flex-1 flex flex-col items-center gap-4 overflow-hidden">
           <div

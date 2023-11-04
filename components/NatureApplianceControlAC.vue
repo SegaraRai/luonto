@@ -24,6 +24,7 @@
         tabindex="0"
         class="rounded-xl w-24 h-64 border border-gray-300 dark:border-gray-600 flex flex-col overflow-hidden touch-none select-none"
         :class="[
+          STYLE_FOCUS_VISIBLE_RING,
           disabled || !supportsTemperature
             ? 'cursor-not-allowed'
             : 'cursor-ns-resize',

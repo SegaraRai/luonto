@@ -29,7 +29,8 @@
         <div class="flex items-end justify-between gap-2">
           <div class="flex flex-col items-start gap-2 text-sm">
             <ULink
-              class="inline-flex items-center gap-1 text-emerald-400"
+              class="inline-flex items-center gap-1 text-emerald-400 rounded"
+              :class="STYLE_FOCUS_VISIBLE_RING"
               to="https://home.nature.global/"
               target="_blank"
             >
@@ -38,7 +39,8 @@
               <UIcon class="text-gray-400 -mt-0.5" name="i-mdi-external-link" />
             </ULink>
             <ULink
-              class="inline-flex items-center gap-1 text-sky-400"
+              class="inline-flex items-center gap-1 text-sky-400 rounded"
+              :class="STYLE_FOCUS_VISIBLE_RING"
               to="/about"
             >
               <UIcon class="text-lg" name="i-mdi-help-circle-outline" />
