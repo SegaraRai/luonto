@@ -73,6 +73,9 @@ self.addEventListener("fetch", (event): void => {
   // this is NOT about whether the asset should be retrieved from the cache
   // all resources that are not handled here will be handled by Nuxt, so any assets being delivered must be processed here
   if (
+    url.hostname === "api.nature.global" ||
+    url.hostname === "cloudflareinsights.com" ||
+    url.hostname === "static.cloudflareinsights.com" ||
     isPublicAssetURL(url.pathname) ||
     url.pathname === "/sw.js" ||
     url.pathname.startsWith("/server.")
