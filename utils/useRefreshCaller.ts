@@ -11,7 +11,7 @@ export interface RefreshCallerOptions {
 }
 
 export function useRefreshCaller(
-  callback: () => unknown | Promise<unknown>,
+  callback: () => void,
   options: RefreshCallerOptions = {}
 ): void {
   if (!process.client) {
@@ -29,34 +29,28 @@ export function useRefreshCaller(
     disabled = false,
   } = options;
 
-  const debouncedCallback = useDebounceFn(() => {
-    if (toValue(disabled)) {
-      return;
-    }
-
-    callback();
-  }, dedupingInterval);
+  const throttledCallback = useThrottleFn(
+    () => !toValue(disabled) && callback(),
+    dedupingInterval
+  );
 
   // focus revalidate
-  useEventListener(
-    "focus",
-    useThrottleFn(debouncedCallback, focusThrottleInterval)
+  const focusThrottledCallback = useThrottleFn(
+    throttledCallback,
+    focusThrottleInterval
   );
+  const onFocus = () => toValue(revalidateOnFocus) && focusThrottledCallback();
+  useEventListener("focus", onFocus);
   useEventListener(
     document,
     "visibilitychange",
-    (): void =>
-      void (
-        document.visibilityState === "visible" &&
-        toValue(revalidateOnFocus) &&
-        debouncedCallback()
-      )
+    () => document.visibilityState === "visible" && onFocus()
   );
 
   // reconnect revalidate
   useEventListener(
     "online",
-    (): void => void (toValue(revalidateOnReconnect) && debouncedCallback())
+    () => toValue(revalidateOnReconnect) && throttledCallback()
   );
 
   // polling revalidate
@@ -73,7 +67,7 @@ export function useRefreshCaller(
         return;
       }
 
-      debouncedCallback();
+      throttledCallback();
     },
     refreshInterval,
     { immediate: false }
