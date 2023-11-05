@@ -12,6 +12,7 @@ import { loadServerStorage, storeServerStorage } from "./serverStorage";
 const rateLimitCache = new LRUCache<string, RateLimit>({
   max: CACHE_MAX_RATE_LIMIT_CACHE,
   ttl: CACHE_TTL_RATE_LIMIT_CACHE,
+  ttlAutopurge: true,
   updateAgeOnGet: false,
   updateAgeOnHas: false,
 });
