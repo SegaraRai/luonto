@@ -54,22 +54,19 @@ export function useRefreshCaller(
   );
 
   // polling revalidate
-  useIntervalFn(
-    (): void => {
-      if (
-        !toValue(refreshWhenHidden) &&
-        document.visibilityState === "hidden"
-      ) {
-        return;
-      }
+  useIntervalFn((): void => {
+    if (toValue(refreshInterval) <= 0) {
+      return;
+    }
 
-      if (!toValue(refreshWhenOffline) && !navigator.onLine) {
-        return;
-      }
+    if (!toValue(refreshWhenHidden) && document.visibilityState === "hidden") {
+      return;
+    }
 
-      throttledCallback();
-    },
-    refreshInterval,
-    { immediate: false }
-  );
+    if (!toValue(refreshWhenOffline) && !navigator.onLine) {
+      return;
+    }
+
+    throttledCallback();
+  }, refreshInterval);
 }
