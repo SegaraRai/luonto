@@ -88,9 +88,12 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
     const staleValue = natureAPICache.peek(cacheKey, {
       allowStale: true,
     });
-    const maxSWRAge = staleValue?.error
-      ? CACHE_SWR_MAX_AGE_RESPONSE_CACHE_ERROR
-      : CACHE_SWR_MAX_AGE_RESPONSE_CACHE_SUCCESSFUL;
+    const maxSWRAge =
+      event.headers.get("luonto-no-stale-cache") === "?1"
+        ? natureAPICache.ttl
+        : staleValue?.error
+        ? CACHE_SWR_MAX_AGE_RESPONSE_CACHE_ERROR
+        : CACHE_SWR_MAX_AGE_RESPONSE_CACHE_SUCCESSFUL;
     if ((staleValue?.data?.timestamp ?? 0) + maxSWRAge < requestTimestamp) {
       shouldRefresh = true;
     }

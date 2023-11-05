@@ -54,32 +54,13 @@ import type { InvalidateTarget } from "~/utils/invalidateTarget";
 
 definePageMeta({ layout: "app", middleware: "auth" });
 
-const forceRefreshTargets = ref<InvalidateTarget[]>([]);
-
 const route = useRoute();
 const toast = useToast();
+const { forceRefreshTargets, onRequest } = useFetchCacheControlHelper();
 
 const { data, error, refresh } = await useFetch(
   `/api/bff/appliances/${route.params.id}`,
-  {
-    onRequest: (context): void => {
-      if (!forceRefreshTargets.value.length) {
-        return;
-      }
-
-      const invalidateTargets = forceRefreshTargets.value.join(", ");
-      forceRefreshTargets.value = [];
-
-      const headers = new Headers(
-        typeof context.request === "object" ? context.request.headers : {}
-      );
-      headers.set("luonto-invalidate-cache", invalidateTargets);
-      context.request = new Request(context.request, {
-        cache: "reload",
-        headers,
-      });
-    },
-  }
+  { onRequest }
 );
 if (error.value) {
   throw error.value;

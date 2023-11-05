@@ -30,6 +30,8 @@
 <script setup lang="ts">
 definePageMeta({ layout: "app", middleware: "auth" });
 
+const { onRequest } = useFetchCacheControlHelper();
+
 useHead({
   title: "ホーム",
   titleTemplate: UNHEAD_TITLE_TEMPLATE,
@@ -42,7 +44,7 @@ useHead({
   },
 });
 
-const { data, error, refresh } = await useFetch("/api/bff/home");
+const { data, error, refresh } = await useFetch("/api/bff/home", { onRequest });
 if (error.value) {
   throw error.value;
 }

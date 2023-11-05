@@ -9,7 +9,7 @@ export function getBFFForwardedHeaders(
   const headers = Object.fromEntries(
     Array.from(event.headers.entries())
       .map(([key, value]) => [key.toLowerCase(), value])
-      .filter(([key]) => key === "cookie")
+      .filter(([key]) => key === "cookie" || key === "luonto-no-stale-cache")
   );
 
   const luontoInvalidateTargets =
