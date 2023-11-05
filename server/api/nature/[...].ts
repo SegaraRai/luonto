@@ -1,4 +1,8 @@
 import {
+  CACHE_SWR_MAX_AGE_RESPONSE_CACHE_ERROR,
+  CACHE_SWR_MAX_AGE_RESPONSE_CACHE_SUCCESSFUL,
+} from "~/server/utils/constants";
+import {
   createNatureAPIRequestHeaderInit,
   natureAPICache,
   persistNatureAPICache,
@@ -43,7 +47,7 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
   const shouldCache =
     (method === "GET" || method === "HEAD") &&
     !cacheDirectives.includes("no-store");
-  const shouldRefresh = cacheDirectives.includes("no-cache");
+  let shouldRefresh = cacheDirectives.includes("no-cache");
 
   const requestTimestamp = Date.now();
 
@@ -78,8 +82,20 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
 
   await restoreNatureAPICacheOnce();
 
+  const cacheKey = `${id}\0${method}\0${url}`;
+
+  if (!shouldRefresh) {
+    const staleValue = natureAPICache.peek(cacheKey);
+    const maxSWRAge = staleValue?.error
+      ? CACHE_SWR_MAX_AGE_RESPONSE_CACHE_ERROR
+      : CACHE_SWR_MAX_AGE_RESPONSE_CACHE_SUCCESSFUL;
+    if ((staleValue?.data?.timestamp ?? 0) + maxSWRAge < requestTimestamp) {
+      shouldRefresh = true;
+    }
+  }
+
   const { data, error, timestamp } =
-    (await natureAPICache.fetch(`${id}\0${method}\0${url}`, {
+    (await natureAPICache.fetch(cacheKey, {
       allowStale: !shouldRefresh,
       allowStaleOnFetchRejection: !shouldRefresh,
       allowStaleOnFetchAbort: !shouldRefresh,
