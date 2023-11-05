@@ -85,7 +85,9 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
   const cacheKey = `${id}\0${method}\0${url}`;
 
   if (!shouldRefresh) {
-    const staleValue = natureAPICache.peek(cacheKey);
+    const staleValue = natureAPICache.peek(cacheKey, {
+      allowStale: true,
+    });
     const maxSWRAge = staleValue?.error
       ? CACHE_SWR_MAX_AGE_RESPONSE_CACHE_ERROR
       : CACHE_SWR_MAX_AGE_RESPONSE_CACHE_SUCCESSFUL;
