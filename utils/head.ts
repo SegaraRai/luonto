@@ -25,7 +25,7 @@ export function getCommonMeta(): Meta[] {
   ];
 }
 
-export function getCommonLink(): Link[] {
+export function getCommonLink(noAPI = false): Link[] {
   return [
     {
       rel: "icon",
@@ -40,6 +40,23 @@ export function getCommonLink(): Link[] {
       rel: "manifest",
       href: "/manifest.webmanifest",
     },
+    ...(noAPI
+      ? []
+      : [
+          {
+            rel: "dns-prefetch",
+            href: "https://api.nature.global/",
+          },
+        ]),
+    {
+      rel: "dns-prefetch",
+      href: "https://cloudflareinsights.com/",
+    },
+    {
+      rel: "preconnect",
+      href: "https://static.cloudflareinsights.com/",
+      crossorigin: "anonymous",
+    },
   ];
 }
 
@@ -52,6 +69,7 @@ export function getCommonScript(): Script[] {
     {
       key: "cloudflare-web-analytics",
       src: "https://static.cloudflareinsights.com/beacon.min.js?token=df8f7f632be64a348ead49ebce1b609e",
+      crossorigin: "anonymous",
       defer: true,
       tagPosition: "bodyClose",
     },

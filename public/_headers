@@ -4,20 +4,35 @@ https://:project.pages.dev/*
 /*
   Cache-Control: public, max-age=300, stale-while-revalidate=86400, stale-if-error=604800
   Content-Security-Policy: __CSP_DIRECTIVES_HEADER__
-  Permissions-Policy: microphone=(), camera=(), geolocation=(), interest-cohort=()
+  Permissions-Policy: camera=(), document-domain=(), geolocation=(), interest-cohort=(), microphone=()
+  # https://api.nature.global/ is omitted for default Link header, as it may differ by page
+  Link: <https://cloudflareinsights.com/>; rel="dns-prefetch", <https://static.cloudflareinsights.com/>; rel="preconnect"; crossorigin="anonymous"
 
 /sw.js
   ! Cache-Control
+  ! Link
   Cache-Control: public, max-age=30
 
 /server.*
   ! Cache-Control
+  ! Link
   Cache-Control: public, immutable, max-age=31536000
 
 /_nuxt/*
   ! Cache-Control
+  ! Link
   Cache-Control: public, immutable, max-age=31536000
 
 /_nuxt/builds/latest.json
   ! Cache-Control
+  ! Link
   Cache-Control: public, max-age=30
+
+/favicon.*
+  ! Link
+
+/*.png
+  ! Link
+
+/*.webmanifest
+  ! Link

@@ -12,7 +12,7 @@ useHead({
   titleTemplate: UNHEAD_TITLE_TEMPLATE,
   templateParams: getCommonTemplateParams(),
   meta: getCommonMeta(),
-  link: getCommonLink(),
+  link: getCommonLink(true),
   script: getCommonScript(),
   htmlAttrs: {
     lang: "ja",

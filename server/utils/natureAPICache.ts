@@ -102,6 +102,8 @@ export const natureAPICache = new LRUCache<string, CacheValue, FetchContext>({
       const res = await fetch(url, {
         method,
         headers: createNatureAPIRequestHeaderInit(token),
+        mode: "cors",
+        credentials: "omit",
         signal,
       });
 

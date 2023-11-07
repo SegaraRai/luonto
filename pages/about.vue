@@ -148,7 +148,7 @@ useHead({
       content: "Luonto は、Nature Remo の非公式 Web アプリです",
     },
   ],
-  link: getCommonLink(),
+  link: getCommonLink(true),
   script: getCommonScript(),
   htmlAttrs: {
     lang: "ja",

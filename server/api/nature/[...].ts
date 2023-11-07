@@ -56,6 +56,8 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
       method,
       headers: createNatureAPIRequestHeaderInit(token),
       body,
+      mode: "cors",
+      credentials: "omit",
     });
 
     const rateLimit = createRateLimitFromHeaders(res.headers);
