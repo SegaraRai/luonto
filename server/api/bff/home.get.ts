@@ -1,20 +1,15 @@
-import type {
-  NatureAPIGetAppliancesResponse,
-  NatureAPIGetDevicesResponse,
-} from "~/utils/natureTypes";
+import { fetchNatureAPIs } from "~/server/utils/fetchNatureAPIs";
 
 export default defineSWEventHandler(async (event) => {
-  const [appliances, devices] = await Promise.all([
-    $fetch<NatureAPIGetAppliancesResponse>("/api/nature/1/appliances", {
-      headers: getBFFForwardedHeaders(event, "appliances"),
-    }),
-    $fetch<NatureAPIGetDevicesResponse>("/api/nature/1/devices", {
-      headers: getBFFForwardedHeaders(event, "devices"),
-    }),
+  const { appliances, devices, $cacheStatus } = await fetchNatureAPIs(event, [
+    "appliances",
+    "devices",
   ]);
+
   return {
     appliances,
     devices,
+    cacheStatus: $cacheStatus,
     timestamp: Date.now(),
   };
 });

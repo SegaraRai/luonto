@@ -84,7 +84,9 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
 
   const cacheKey = `${id}\0${method}\0${url}`;
 
-  if (!shouldRefresh) {
+  const hit = natureAPICache.has(cacheKey);
+
+  if (!shouldRefresh && !hit) {
     const staleValue = natureAPICache.peek(cacheKey, {
       allowStale: true,
     });
@@ -126,7 +128,9 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
         ? "stale-while-error"
         : data.timestamp === requestTimestamp
         ? "revalidated"
-        : "hit"
+        : hit
+        ? "hit"
+        : "stale"
     );
     res.headers.set("luonto-content-timestamp", String(data.timestamp));
   } else {

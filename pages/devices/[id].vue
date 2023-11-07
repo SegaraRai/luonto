@@ -36,9 +36,11 @@
 definePageMeta({ layout: "app", middleware: "auth" });
 
 const route = useRoute();
+const { onRequest } = useFetchCacheControlHelper();
 
 const { data, error, refresh } = await useFetch(
-  `/api/bff/devices/${route.params.id}`
+  `/api/bff/devices/${route.params.id}`,
+  { onRequest }
 );
 if (error.value) {
   throw error.value;
@@ -62,5 +64,15 @@ const detailItems = useNatureDeviceDetails(device);
 
 useRefreshCaller(refresh, {
   refreshInterval: REFRESH_INTERVAL_DEVICE_PAGE,
+});
+
+onMounted((): void => {
+  // refresh immediately if stale cache has been used on page load
+  if (data.value?.cacheStatus !== "fresh") {
+    // without `setTimeout`, `refresh` doesn't work. why?
+    setTimeout((): void => {
+      refresh();
+    }, 0);
+  }
 });
 </script>

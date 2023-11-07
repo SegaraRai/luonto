@@ -156,4 +156,14 @@ useRefreshCaller(refresh, {
   refreshInterval: REFRESH_INTERVAL_APPLIANCE_PAGE,
   disabled: () => !!forceRefreshTargets.value.length,
 });
+
+onMounted((): void => {
+  // refresh immediately if stale cache has been used on page load
+  if (data.value?.cacheStatus !== "fresh") {
+    // without `setTimeout`, `refresh` doesn't work. why?
+    setTimeout((): void => {
+      refresh();
+    }, 0);
+  }
+});
 </script>

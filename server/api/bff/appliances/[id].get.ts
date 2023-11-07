@@ -1,19 +1,13 @@
-import type {
-  NatureAPIGetAppliancesResponse,
-  NatureAPIGetDevicesResponse,
-} from "~/utils/natureTypes";
+import { fetchNatureAPIs } from "~/server/utils/fetchNatureAPIs";
 
 export default defineSWEventHandler(async (event) => {
   const id = getRouterParam(event, "id");
 
-  const [appliances, devices] = await Promise.all([
-    $fetch<NatureAPIGetAppliancesResponse>("/api/nature/1/appliances", {
-      headers: getBFFForwardedHeaders(event, "appliances"),
-    }),
-    $fetch<NatureAPIGetDevicesResponse>("/api/nature/1/devices", {
-      headers: getBFFForwardedHeaders(event, "devices"),
-    }),
-  ]);
+  const {
+    appliances,
+    devices,
+    $cacheStatus,
+  } = await fetchNatureAPIs(event, ["appliances", "devices"]);
 
   const appliance = appliances.find((appliance) => appliance.id === id);
   if (!appliance) {
@@ -30,6 +24,7 @@ export default defineSWEventHandler(async (event) => {
   return {
     appliance,
     device,
+    cacheStatus: $cacheStatus,
     timestamp: Date.now(),
   };
 });

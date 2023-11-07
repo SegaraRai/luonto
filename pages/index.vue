@@ -52,4 +52,14 @@ if (error.value) {
 useRefreshCaller(refresh, {
   refreshInterval: REFRESH_INTERVAL_HOME,
 });
+
+onMounted((): void => {
+  // refresh immediately if stale cache has been used on page load
+  if (data.value?.cacheStatus !== "fresh") {
+    // without `setTimeout`, `refresh` doesn't work. why?
+    setTimeout((): void => {
+      refresh();
+    }, 0);
+  }
+});
 </script>

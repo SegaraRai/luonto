@@ -13,9 +13,9 @@ export interface RefreshCallerOptions {
 export function useRefreshCaller(
   callback: () => void,
   options: RefreshCallerOptions = {}
-): void {
+) {
   if (!process.client) {
-    return;
+    return {};
   }
 
   const {
@@ -69,4 +69,8 @@ export function useRefreshCaller(
 
     throttledCallback();
   }, refreshInterval);
+
+  return {
+    throttledRefresh: throttledCallback,
+  };
 }
