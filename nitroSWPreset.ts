@@ -85,8 +85,9 @@ function createFallbackHTML(baseHTML: string): string {
   const window = new Window();
   const dom = new window.DOMParser().parseFromString(baseHTML, "text/html");
   for (const element of dom.querySelectorAll(
-    "link[crossorigin], script[src], script#__NUXT_DATA__"
+    "link[href*=api.nature.global], link[crossorigin]:not([href*=cloudflareinsights.com]), script[src]:not([src*=cloudflareinsights.com]), script#__NUXT_DATA__"
   )) {
+    console.log("Removing element from fallback html", element.outerHTML);
     element.remove();
   }
 
