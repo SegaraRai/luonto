@@ -3,11 +3,10 @@ import { fetchNatureAPIs } from "~/server/utils/fetchNatureAPIs";
 export default defineSWEventHandler(async (event) => {
   const id = getRouterParam(event, "id");
 
-  const {
-    appliances,
-    devices,
-    $cacheStatus,
-  } = await fetchNatureAPIs(event, ["appliances", "devices"]);
+  const { appliances, devices, $cacheStatus } = await fetchNatureAPIs(event, [
+    "appliances",
+    "devices",
+  ]);
 
   const appliance = appliances.find((appliance) => appliance.id === id);
   if (!appliance) {
