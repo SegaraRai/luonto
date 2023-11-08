@@ -77,11 +77,12 @@
     </div>
     <div>
       <UButton
+        aria-label="電源"
+        :aria-pressed="String(isON)"
         class="rounded-full"
         size="lg"
         :color="isON ? 'emerald' : 'gray'"
         variant="solid"
-        :aria-label="isON ? '電源を切る' : '電源をつける'"
         icon="i-mdi-power"
         :disabled="disabled"
         @click="sendSettings({ button: isON ? 'power-off' : 'power-on' })"
