@@ -18,7 +18,10 @@
             :class="[item.color, item.icon]"
             :aria-label="item.label"
           />
-          <UTooltip :text="`${item.ago}更新`">
+          <UTooltip
+            :aria-label="item.valueLabelForSR"
+            :text="`${item.ago}更新`"
+          >
             <span class="flex-1 text-right pr-[0.25em]" v-text="item.value" />
             <span class="flex-none text-center" v-text="item.unit" />
           </UTooltip>
