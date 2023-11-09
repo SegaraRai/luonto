@@ -12,6 +12,7 @@ export interface NatureApplianceStatusSettings {
   readonly class: string;
   readonly label: string | null;
   readonly unit: string | null;
+  readonly labelForSR: string | null;
   readonly icon: string | null;
   readonly iconLabel: string | null;
 }
@@ -57,12 +58,16 @@ export function getNatureApplianceStatus(
         const unit = acSettings.temp
           ? humanizeTemperatureUnit(acSettings.temp_unit)
           : null;
+        const labelForSR = acSettings.temp
+          ? formatTemperatureForSR(acSettings.temp, acSettings.temp_unit)
+          : config.label;
         settings = {
           icon: config.icon,
           iconLabel: config.label,
           class: config.fgColor,
           label: unit ? acSettings.temp : config.label,
           unit,
+          labelForSR,
         };
       }
       break;

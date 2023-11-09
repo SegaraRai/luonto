@@ -15,12 +15,14 @@
         :aria-valuenow="displayTemperature || undefined"
         :aria-valuetext="
           displayTemperature && appliance.settings?.temp_unit
-            ? formatTemperature(
+            ? formatTemperatureForSR(
                 displayTemperature,
                 appliance.settings.temp_unit
               )
             : undefined
         "
+        :aria-busy="swipingTemperature != null"
+        aria-atomic="true"
         tabindex="0"
         class="rounded-xl w-24 h-64 ring-1 ring-gray-300 dark:ring-gray-600 flex flex-col overflow-hidden touch-none select-none"
         :class="[
@@ -62,6 +64,12 @@
           >
             <output
               v-if="displayTemperature"
+              :aria-label="
+                formatTemperatureForSR(
+                  displayTemperature,
+                  appliance.settings.temp_unit
+                )
+              "
               for="ac-temperature-slider"
               class="whitespace-nowrap select-text font-bold"
               v-text="

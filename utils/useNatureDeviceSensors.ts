@@ -6,6 +6,7 @@ export interface NatureDeviceSensorItemBase {
   readonly label: string;
   readonly unit: string;
   readonly available: boolean;
+  readonly valueLabelForSR?: string;
   readonly value?: string;
   readonly timestamp?: string;
   readonly ago?: string;
@@ -48,6 +49,9 @@ export function getNatureDeviceSensors(
       label: "室温",
       // I think device's unit is always Celsius
       unit: humanizeTemperatureUnit("c"),
+      valueLabelForSR: events.te
+        ? formatTemperatureForSR(events.te.val, "c")
+        : undefined,
       object: events.te,
     },
     {
@@ -55,6 +59,7 @@ export function getNatureDeviceSensors(
       icon: "i-mingcute-drop-line",
       label: "湿度",
       unit: "%",
+      valueLabelForSR: events.hu ? `${events.hu.val} %` : undefined,
       object: events.hu,
     },
     {
@@ -62,6 +67,7 @@ export function getNatureDeviceSensors(
       icon: "i-mingcute-light-line",
       label: "明るさ",
       unit: "lx",
+      valueLabelForSR: events.hu ? `${events.hu.val} lux` : undefined,
       object: events.il,
     },
   ]
