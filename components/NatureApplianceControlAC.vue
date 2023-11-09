@@ -2,7 +2,6 @@
   <div class="flex flex-col gap-8 items-center">
     <div>
       <div
-        id="ac-temperature-slider"
         ref="temperatureSwipeEl"
         role="slider"
         aria-label="設定温度"
@@ -82,8 +81,9 @@
               disabled && 'opacity-70',
             ]"
           >
-            <output
+            <div
               v-if="displayTemperature"
+              aria-live="off"
               :aria-label="
                 formatTemperatureForSR(
                   displayTemperature,
@@ -91,7 +91,6 @@
                   allTemperatures
                 )
               "
-              for="ac-temperature-slider"
               class="whitespace-nowrap select-text font-bold"
               v-text="
                 formatTemperature(
