@@ -229,9 +229,10 @@ export interface NatureApplianceLight extends NatureApplianceBase {
   readonly light: NatureApplianceLightLight;
 }
 
-export type NatureApplianceACTemperature = `${"1" | "2" | "3"}${Digit}${
-  | ""
-  | ".5"}`;
+export type NatureApplianceACTemperature =
+  | `${"1" | "2" | "3"}${Digit}${"" | ".5"}`
+  | `${"-" | ""}${Digit}${"" | ".5"}`
+  | "0";
 
 export type NatureTemperatureUnit = "c" | "f" | "";
 
