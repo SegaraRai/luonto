@@ -55,17 +55,26 @@ export function getNatureApplianceStatus(
       const acSettings = appliance.settings;
       if (acSettings?.mode && indicator?.type === "ON") {
         const config = AC_MODE_CONFIG_MAP[acSettings.mode];
+        const allTemperatures =
+          appliance.aircon.range.modes[acSettings.mode].temp;
         const unit = acSettings.temp
           ? humanizeTemperatureUnit(acSettings.temp_unit)
           : null;
         const labelForSR = acSettings.temp
-          ? formatTemperatureForSR(acSettings.temp, acSettings.temp_unit)
+          ? formatTemperatureForSR(
+              acSettings.temp,
+              acSettings.temp_unit,
+              allTemperatures
+            )
           : config.label;
         settings = {
           icon: config.icon,
           iconLabel: config.label,
           class: config.fgColor,
-          label: unit ? acSettings.temp : config.label,
+          label:
+            unit && acSettings.temp
+              ? formatTemperatureValue(acSettings.temp, allTemperatures)
+              : config.label,
           unit,
           labelForSR,
         };

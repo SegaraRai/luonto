@@ -8,16 +8,36 @@
         aria-label="設定温度"
         aria-orientation="vertical"
         :aria-disabled="disabled || !supportsTemperature"
-        :aria-valuemin="currentRange?.temp?.[0] || undefined"
-        :aria-valuemax="
-          currentRange?.temp?.[currentRange.temp.length - 1] || undefined
+        :aria-valuemin="
+          minTemperature
+            ? formatTemperatureValueForAttribute(
+                minTemperature,
+                allTemperatures
+              )
+            : undefined
         "
-        :aria-valuenow="displayTemperature || undefined"
+        :aria-valuemax="
+          maxTemperature
+            ? formatTemperatureValueForAttribute(
+                maxTemperature,
+                allTemperatures
+              )
+            : undefined
+        "
+        :aria-valuenow="
+          displayTemperature
+            ? formatTemperatureValueForAttribute(
+                displayTemperature,
+                allTemperatures
+              )
+            : undefined
+        "
         :aria-valuetext="
-          displayTemperature && appliance.settings?.temp_unit
+          displayTemperature && appliance.settings?.temp_unit && currentMode
             ? formatTemperatureForSR(
                 displayTemperature,
-                appliance.settings.temp_unit
+                appliance.settings.temp_unit,
+                allTemperatures
               )
             : undefined
         "
@@ -67,7 +87,8 @@
               :aria-label="
                 formatTemperatureForSR(
                   displayTemperature,
-                  appliance.settings.temp_unit
+                  appliance.settings.temp_unit,
+                  allTemperatures
                 )
               "
               for="ac-temperature-slider"
@@ -75,7 +96,8 @@
               v-text="
                 formatTemperature(
                   displayTemperature,
-                  appliance.settings.temp_unit
+                  appliance.settings.temp_unit,
+                  allTemperatures
                 )
               "
             />
@@ -205,6 +227,15 @@ const supportsVol = computed(() => !!currentRange.value?.vol?.some((v) => !!v));
 const supportsDir = computed(() => !!currentRange.value?.dir?.some((v) => !!v));
 const supportsDirH = computed(
   () => !!currentRange.value?.dirh?.some((v) => !!v)
+);
+
+const allTemperatures = computed(() => currentRange.value?.temp ?? []);
+const minTemperature = computed(
+  (): NatureApplianceACTemperature | undefined => allTemperatures.value[0]
+);
+const maxTemperature = computed(
+  (): NatureApplianceACTemperature | undefined =>
+    allTemperatures.value[allTemperatures.value.length - 1]
 );
 
 const dirItems = computed(() =>

@@ -1,4 +1,8 @@
-import type { NatureDeviceWithEvents } from "./natureTypes";
+import type {
+  NatureApplianceACTemperature,
+  NatureDevice,
+  NatureDeviceWithEvents,
+} from "./natureTypes";
 
 export interface NatureDeviceSensorItemBase {
   readonly color: string;
@@ -37,7 +41,7 @@ export function getNatureDeviceSensors(
   now: Date | number,
   includesNA = false
 ): readonly NatureDeviceSensorItem[] {
-  const events = device?.newest_events;
+  const events = (device as NatureDeviceWithEvents | undefined)?.newest_events;
   if (!events) {
     return [];
   }
@@ -49,8 +53,12 @@ export function getNatureDeviceSensors(
       label: "室温",
       // I think device's unit is always Celsius
       unit: humanizeTemperatureUnit("c"),
-      valueLabelForSR: events.te
-        ? formatTemperatureForSR(events.te.val, "c")
+      valueLabelForSR: events.te?.val
+        ? formatTemperatureForSR(
+            String(events.te.val) as NatureApplianceACTemperature,
+            "c",
+            ["23.5"]
+          ) // dummy temperatures
         : undefined,
       object: events.te,
     },
@@ -59,7 +67,7 @@ export function getNatureDeviceSensors(
       icon: "i-mingcute-drop-line",
       label: "湿度",
       unit: "%",
-      valueLabelForSR: events.hu ? `${events.hu.val} %` : undefined,
+      valueLabelForSR: events.hu?.val ? `${events.hu.val} %` : undefined,
       object: events.hu,
     },
     {
@@ -67,7 +75,7 @@ export function getNatureDeviceSensors(
       icon: "i-mingcute-light-line",
       label: "明るさ",
       unit: "lx",
-      valueLabelForSR: events.hu ? `${events.hu.val} lux` : undefined,
+      valueLabelForSR: events.il?.val ? `${events.il.val} lux` : undefined,
       object: events.il,
     },
   ]
