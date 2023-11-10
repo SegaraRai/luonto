@@ -47,7 +47,7 @@ if (error.value) {
 }
 
 useHead({
-  title: data.value?.device.name ?? "",
+  title: computed(() => data.value?.device.name ?? ""),
   titleTemplate: UNHEAD_TITLE_TEMPLATE,
   templateParams: getCommonTemplateParams(),
   meta: getCommonMeta(),

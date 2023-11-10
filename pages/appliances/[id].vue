@@ -67,7 +67,7 @@ if (error.value) {
 }
 
 useHead({
-  title: data.value?.appliance.nickname ?? "",
+  title: computed(() => data.value?.appliance.nickname ?? ""),
   titleTemplate: UNHEAD_TITLE_TEMPLATE,
   templateParams: getCommonTemplateParams(),
   meta: getCommonMeta(),
