@@ -19,6 +19,7 @@
             :aria-label="item.label"
           />
           <UTooltip
+            class="lining-nums tabular-nums"
             :aria-label="item.valueLabelForSR"
             :text="`${item.ago}更新`"
           >

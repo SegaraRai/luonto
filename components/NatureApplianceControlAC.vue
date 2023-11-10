@@ -91,7 +91,7 @@
                   allTemperatures
                 )
               "
-              class="whitespace-nowrap select-text font-bold"
+              class="whitespace-nowrap select-text font-bold lining-nums tabular-nums"
               v-text="
                 formatTemperature(
                   displayTemperature,

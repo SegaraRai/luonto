@@ -38,7 +38,7 @@
             <span
               v-if="status.settings.label || status.settings.unit"
               :aria-label="status.settings.labelForSR || undefined"
-              class="flex-none flex items-center gap-0.5"
+              class="flex-none flex items-center gap-0.5 lining-nums tabular-nums"
             >
               <span
                 v-if="status.settings.label"

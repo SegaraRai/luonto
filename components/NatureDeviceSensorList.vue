@@ -13,7 +13,7 @@
         />
         <template v-if="item.available">
           <UTooltip
-            class="flex-1 items-center"
+            class="flex-1 items-center lining-nums tabular-nums"
             :aria-label="item.valueLabelForSR"
             :text="`${item.ago}更新`"
           >
