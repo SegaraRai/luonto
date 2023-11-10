@@ -1,15 +1,16 @@
 <template>
   <div v-if="device" class="flex flex-col gap-8 py-4 w-full items-center">
-    <div class="flex flex-row items-start gap-16">
-      <div
-        class="w-full flex-none flex flex-col items-center gap-2 overflow-hidden"
-      >
+    <div class="relative flex flex-row items-start gap-16">
+      <div class="flex-none flex flex-col items-center gap-2 overflow-hidden">
         <div
           class="w-32 h-32 i-solar-notification-unread-outline text-gray-800 dark:text-gray-200"
         />
         <div class="max-w-full text-2xl line-clamp-2" v-text="device.name" />
       </div>
-      <NatureDeviceSensorList class="text-xl" :items="sensorItems" />
+      <NatureDeviceSensorList
+        class="text-xl sm:absolute sm:inset-0 sm:bottom-auto sm:ml-56 pt-4"
+        :items="sensorItems"
+      />
     </div>
     <dl class="grid grid-cols-2 gap-4">
       <template v-for="item in detailItems" :key="item.label">
