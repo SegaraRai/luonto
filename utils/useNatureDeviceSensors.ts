@@ -1,8 +1,12 @@
-import type {
-  NatureApplianceACTemperature,
-  NatureDevice,
-  NatureDeviceWithEvents,
-} from "./natureTypes";
+import {
+  formatDeviceHumidityForSR,
+  formatDeviceHumidityValue,
+  formatDeviceIlluminanceForSR,
+  formatDeviceIlluminanceValue,
+  formatDeviceTemperatureForSR,
+  formatDeviceTemperatureValue,
+} from "./deviceSensorItem";
+import type { NatureDevice, NatureDeviceWithEvents } from "./natureTypes";
 
 export interface NatureDeviceSensorItemBase {
   readonly color: string;
@@ -10,7 +14,7 @@ export interface NatureDeviceSensorItemBase {
   readonly label: string;
   readonly unit: string;
   readonly available: boolean;
-  readonly valueLabelForSR?: string;
+  readonly textForSR?: string;
   readonly value?: string;
   readonly timestamp?: string;
   readonly ago?: string;
@@ -19,6 +23,7 @@ export interface NatureDeviceSensorItemBase {
 export interface NatureDeviceSensorItemAvailable
   extends NatureDeviceSensorItemBase {
   readonly available: true;
+  readonly textForSR: string;
   readonly value: string;
   readonly timestamp: string;
   readonly ago: string;
@@ -27,6 +32,7 @@ export interface NatureDeviceSensorItemAvailable
 export interface NatureDeviceSensorItemNotAvailable
   extends NatureDeviceSensorItemBase {
   readonly available: false;
+  readonly textForSR?: undefined;
   readonly value?: undefined;
   readonly timestamp?: undefined;
   readonly ago?: undefined;
@@ -52,36 +58,39 @@ export function getNatureDeviceSensors(
       icon: "i-mingcute-high-temperature-line",
       label: "室温",
       // I think device's unit is always Celsius
-      unit: humanizeTemperatureUnit("c"),
-      valueLabelForSR: events.te?.val
-        ? formatTemperatureForSR(
-            String(events.te.val) as NatureApplianceACTemperature,
-            "c",
-            ["23.5"]
-          ) // dummy temperatures
-        : undefined,
-      object: events.te,
+      unit: "\u00BAC",
+      data: events.te && {
+        raw: events.te,
+        valueText: formatDeviceTemperatureValue(events.te.val),
+        textForSR: formatDeviceTemperatureForSR(events.te.val),
+      },
     },
     {
       color: "text-blue-400",
       icon: "i-mingcute-drop-line",
       label: "湿度",
       unit: "%",
-      valueLabelForSR: events.hu?.val ? `${events.hu.val} %` : undefined,
-      object: events.hu,
+      data: events.hu && {
+        raw: events.hu,
+        valueText: formatDeviceHumidityValue(events.hu.val),
+        textForSR: formatDeviceHumidityForSR(events.hu.val),
+      },
     },
     {
       color: "text-yellow-400",
       icon: "i-mingcute-light-line",
       label: "明るさ",
       unit: "lx",
-      valueLabelForSR: events.il?.val ? `${events.il.val} lux` : undefined,
-      object: events.il,
+      data: events.il && {
+        raw: events.il,
+        valueText: formatDeviceIlluminanceValue(events.il.val),
+        textForSR: formatDeviceIlluminanceForSR(events.il.val),
+      },
     },
   ]
     .map((item): NatureDeviceSensorItem | undefined => {
-      const { object, ...rest } = item;
-      if (!object) {
+      const { data, ...rest } = item;
+      if (!data) {
         if (includesNA) {
           return { ...rest, available: false };
         }
@@ -90,10 +99,11 @@ export function getNatureDeviceSensors(
       return {
         ...rest,
         available: true,
-        value: object.val.toString(),
-        timestamp: object.created_at,
+        value: data.valueText,
+        textForSR: data.textForSR,
+        timestamp: data.raw.created_at,
         ago: formatTimeAgoLocalized(
-          new Date(object.created_at),
+          new Date(data.raw.created_at),
           undefined,
           now
         ),

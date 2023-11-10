@@ -46,7 +46,7 @@ export function formatTemperatureValueForAttribute(
     return `${temperature}.0`;
   }
 
-  return `${temperature}`;
+  return temperature;
 }
 
 export function formatTemperature(

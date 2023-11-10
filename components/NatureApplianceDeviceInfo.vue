@@ -20,7 +20,7 @@
           />
           <UTooltip
             class="lining-nums tabular-nums"
-            :aria-label="item.valueLabelForSR"
+            :aria-label="item.textForSR"
             :text="`${item.ago}更新`"
           >
             <span class="flex-1 text-right pr-[0.25em]" v-text="item.value" />
