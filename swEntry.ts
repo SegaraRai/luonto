@@ -98,19 +98,16 @@ self.addEventListener("fetch", (event): void => {
       request = (async () =>
         new Request(request, {
           ...request,
-          body: await anonymizeData(await request.text()),
+          body: await anonymizeData(await request.text(), (from, to): void => {
+            console.info(`Anonymized "${from}" to "${to}"`);
+          }),
         }))().catch(() => orgRequest);
     }
 
     // fetch using workbox
-    let response =
-      request instanceof Promise
-        ? request.then(
-            (request) =>
-              router.handleRequest({ event, request }) ??
-              new Response(null, { status: 404 })
-          )
-        : router.handleRequest({ event, request });
+    let response = Promise.resolve(request).then(
+      (request) => router.handleRequest({ event, request }) ?? fetch(request)
+    );
 
     // collect anonymize detail data
     if (
@@ -118,10 +115,6 @@ self.addEventListener("fetch", (event): void => {
       url.hostname === "api.nature.global" &&
       (url.pathname === "/1/appliances" || url.pathname === "/1/devices")
     ) {
-      if (!response) {
-        response = Promise.resolve(request).then((request) => fetch(request));
-      }
-
       response = response.then((response) => {
         if (response.ok) {
           const cloned = response.clone();

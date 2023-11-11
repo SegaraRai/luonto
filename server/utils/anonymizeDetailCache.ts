@@ -55,14 +55,19 @@ export async function clearAnonymizeDetailStorage(): Promise<void> {
   await persistAnonymizeDetailMap();
 }
 
-export async function anonymizeData(src: string): Promise<string> {
+export async function anonymizeData(
+  src: string,
+  callback?: (from: string, to: string) => void
+): Promise<string> {
   await restoreOnce();
 
-  return src.replace(
-    createAnonymizeTargetRegExp(),
-    (target, type) =>
-      `[REDACTED].${anonymizeDetailMap.get(`${type}/${target}`) ?? "NO-DETAIL"}`
-  );
+  return src.replace(createAnonymizeTargetRegExp(), (target, type): string => {
+    const replacement = `[REDACTED].${
+      anonymizeDetailMap.get(`${type}/${target}`) ?? "NO-DETAIL"
+    }`;
+    callback?.(target, replacement);
+    return replacement;
+  });
 }
 
 export async function storeAnonymizeDetailData(
