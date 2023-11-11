@@ -1,3 +1,7 @@
+import type {
+  NatureAPIGetAppliancesResponse,
+  NatureAPIGetDevicesResponse,
+} from "~/utils/natureTypes";
 import {
   STORAGE_KEY_ANONYMIZE_DETAIL_CACHE,
   createAnonymizeTargetRegExp,
@@ -6,9 +10,9 @@ import { createOnce } from "./once";
 import { createSerial } from "./serial";
 import { loadServerStorage, storeServerStorage } from "./serverStorage";
 
-export type AnonymizeDetailType = "appliances" | "devices";
+type AnonymizeDetailType = "appliances" | "devices";
 
-export interface AnonymizeDetailRecord {
+interface AnonymizeDetailRecord {
   readonly type: AnonymizeDetailType;
   readonly id: string;
   readonly value: string;
@@ -70,7 +74,7 @@ export async function anonymizeData(
   });
 }
 
-export async function storeAnonymizeDetailData(
+async function storeAnonymizeDetailData(
   items: readonly AnonymizeDetailRecord[]
 ): Promise<void> {
   for (const { type, id, value } of items) {
@@ -85,4 +89,53 @@ export async function storeAnonymizeDetailData(
   }
 
   await persistAnonymizeDetailMap();
+}
+
+export async function collectAnonymizeDetailDataFromResponse(
+  method: string,
+  url: string,
+  response: Response
+): Promise<void> {
+  const parsedURL = new URL(url);
+  if (
+    method !== "GET" ||
+    parsedURL.hostname !== "api.nature.global" ||
+    (parsedURL.pathname !== "/1/appliances" &&
+      parsedURL.pathname !== "/1/devices") ||
+    !response.ok
+  ) {
+    return;
+  }
+
+  const data: NatureAPIGetAppliancesResponse | NatureAPIGetDevicesResponse =
+    await response.clone().json();
+
+  const collectedItems: AnonymizeDetailRecord[] = [];
+  for (const item of data) {
+    if ("firmware_version" in item) {
+      collectedItems.push({
+        type: "devices",
+        id: item.id,
+        value: item.firmware_version,
+      });
+    }
+
+    if ("type" in item) {
+      collectedItems.push({
+        type: "appliances",
+        id: item.id,
+        value: item.type,
+      });
+    }
+
+    if ("device" in item) {
+      collectedItems.push({
+        type: "devices",
+        id: item.device.id,
+        value: item.device.firmware_version,
+      });
+    }
+  }
+
+  await storeAnonymizeDetailData(collectedItems);
 }

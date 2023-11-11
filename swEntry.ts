@@ -7,20 +7,12 @@ import { Router } from "workbox-routing";
 import { NetworkFirst } from "workbox-strategies";
 import { nitroApp } from "#internal/nitro/app";
 import { isPublicAssetURL } from "#internal/nitro/virtual/public-assets";
-import {
-  type AnonymizeDetailRecord,
-  anonymizeData,
-  storeAnonymizeDetailData,
-} from "./server/utils/anonymizeDetailCache";
+import { anonymizeData } from "./server/utils/anonymizeDetailCache";
 import { extendHeaders } from "./server/utils/swExtendHeaders";
 import {
   createCookieForRequest,
   storeCookiesFromResponse,
 } from "./server/utils/swCookieStorage";
-import type {
-  NatureAPIGetAppliancesResponse,
-  NatureAPIGetDevicesResponse,
-} from "./utils/natureTypes";
 
 declare const self: globalThis.ServiceWorkerGlobalScope;
 
@@ -105,7 +97,7 @@ self.addEventListener("fetch", (event): void => {
     }
 
     // fetch using workbox
-    let response =
+    const response =
       request instanceof Promise
         ? request.then(
             (request) =>
@@ -119,56 +111,7 @@ self.addEventListener("fetch", (event): void => {
       return;
     }
 
-    // collect anonymize detail data
-    if (
-      method === "GET" &&
-      url.hostname === "api.nature.global" &&
-      (url.pathname === "/1/appliances" || url.pathname === "/1/devices")
-    ) {
-      response = response.then((response) => {
-        if (response.ok) {
-          const cloned = response.clone();
-          event.waitUntil(
-            (async (): Promise<void> => {
-              const data:
-                | NatureAPIGetAppliancesResponse
-                | NatureAPIGetDevicesResponse = await cloned.json();
-
-              const collectedItems: AnonymizeDetailRecord[] = [];
-              for (const item of data) {
-                if ("firmware_version" in item) {
-                  collectedItems.push({
-                    type: "devices",
-                    id: item.id,
-                    value: item.firmware_version,
-                  });
-                }
-
-                if ("type" in item) {
-                  collectedItems.push({
-                    type: "appliances",
-                    id: item.id,
-                    value: item.type,
-                  });
-                }
-
-                if ("device" in item) {
-                  collectedItems.push({
-                    type: "devices",
-                    id: item.device.id,
-                    value: item.device.firmware_version,
-                  });
-                }
-              }
-
-              await storeAnonymizeDetailData(collectedItems);
-            })()
-          );
-        }
-
-        return response;
-      });
-    }
+    // we cannot collect anonymized data from Nature API calls here as they are `fetch`ed in Service Worker and therefore do not come here ("fetch" event)
 
     event.respondWith(response);
 

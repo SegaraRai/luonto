@@ -1,3 +1,4 @@
+import { collectAnonymizeDetailDataFromResponse } from "~/server/utils/anonymizeDetailCache";
 import {
   CACHE_SWR_MAX_AGE_RESPONSE_CACHE_ERROR,
   CACHE_SWR_MAX_AGE_RESPONSE_CACHE_SUCCESSFUL,
@@ -59,6 +60,8 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
       mode: "cors",
       credentials: "omit",
     });
+
+    event.waitUntil(collectAnonymizeDetailDataFromResponse(method, url, res));
 
     const rateLimit = createRateLimitFromHeaders(res.headers);
     if (rateLimit) {

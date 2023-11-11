@@ -1,4 +1,5 @@
 import { LRUCache } from "lru-cache";
+import { collectAnonymizeDetailDataFromResponse } from "~/server/utils/anonymizeDetailCache";
 import {
   CACHE_MAX_RESPONSE_CACHE,
   CACHE_TTL_RESPONSE_CACHE,
@@ -106,6 +107,8 @@ export const natureAPICache = new LRUCache<string, CacheValue, FetchContext>({
         credentials: "omit",
         signal,
       });
+
+      waitUntil(collectAnonymizeDetailDataFromResponse(method, url, res));
 
       const rateLimit = createRateLimitFromHeaders(res.headers);
       if (rateLimit) {
