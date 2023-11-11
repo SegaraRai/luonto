@@ -70,7 +70,7 @@ for (const file of await readdir("icons")) {
 icons.sort((a, b) => a.name.localeCompare(b.name));
 
 await writeFile(
-  "luonto-icons.json",
+  "luontoIcons.json",
   JSON.stringify(
     Object.fromEntries(icons.map(({ name, ...rest }) => [name, rest])),
     null,

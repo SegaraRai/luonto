@@ -1,6 +1,6 @@
 import { getIconCollections, iconsPlugin } from "@egoist/tailwindcss-icons";
 import type { Config } from "tailwindcss";
-import luontoIcons from "./luonto-icons.json";
+import luontoIcons from "./luontoIcons.json";
 
 const iconCollections = {
   ...getIconCollections(["material-symbols", "mdi", "mingcute", "ph", "solar"]),
