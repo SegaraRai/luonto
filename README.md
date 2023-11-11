@@ -1,22 +1,18 @@
 # Luonto
 
-<center>
-<img src="https://github.com/SegaraRai/luonto/assets/29276700/484aa404-b3ea-438c-9166-79bdbe134b65" alt="Luonto Demo" />
-</center>
-
-<br />
+<img align="center" src="https://github.com/SegaraRai/luonto/assets/29276700/484aa404-b3ea-438c-9166-79bdbe134b65" alt="Luonto Demo" />
 
 [Luonto](https://luonto.null.lu/) は [Nature Remo](https://nature.global/) の非公式 Web アプリケーションです
 
-Nuxt 3 で作成しており、Service Worker 上で SSR を行います  
+Nuxt 3 で作成しており、Service Worker 上で SSR を行います (SWSR; Service Worker Side Rendering)  
 PWA にも対応しているので、オフラインでも動作します (キャッシュされた情報が見れるだけですが…)
 
 使用にあたっては予め Nature の API アクセストークンを取得しておく必要があります  
-[こちら](https://home.nature.global/) から取得してください
+[home.nature.global](https://home.nature.global/) から取得してください
 
 API への送信処理はすべてローカルで行われるため、アクセストークンが Nature の API サーバー以外に送信されることはありません  
 Luonto をホストしているサーバー (Cloudflare Pages) は静的アセットの配信にのみ使用しています  
-万が一アクセストークンが漏洩した場合は、Nature の API サーバーからアクセストークンを無効化してください
+万が一アクセストークンが漏洩した場合は、上記リンクからアクセストークンを無効化してください
 
 ## 開発方法
 
