@@ -105,9 +105,19 @@ self.addEventListener("fetch", (event): void => {
     }
 
     // fetch using workbox
-    let response = Promise.resolve(request).then(
-      (request) => router.handleRequest({ event, request }) ?? fetch(request)
-    );
+    let response =
+      request instanceof Promise
+        ? request.then(
+            (request) =>
+              // if request is a promise, it's modified by us so we have to send manually (we cannot use browser's default fetch) if workbox didn't handle it
+              router.handleRequest({ event, request }) ?? fetch(request)
+          )
+        : router.handleRequest({ event, request });
+
+    // we didn't modify the request and workbox didn't handle the request, use browser's default fetch
+    if (!response) {
+      return;
+    }
 
     // collect anonymize detail data
     if (
@@ -160,9 +170,7 @@ self.addEventListener("fetch", (event): void => {
       });
     }
 
-    if (response) {
-      event.respondWith(response);
-    }
+    event.respondWith(response);
 
     return;
   }
