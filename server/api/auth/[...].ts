@@ -1,6 +1,7 @@
 import Credentials from "@auth/core/providers/credentials";
 import type { AuthConfig, User } from "@auth/core/types";
 import { NuxtAuthHandler } from "#auth";
+import { clearAnonymizeDetailStorage } from "~/server/utils/anonymizeDetailCache";
 import { clearNatureAPICacheStorage } from "~/server/utils/natureAPICache";
 import { clearRateLimitCacheStorage } from "~/server/utils/rateLimitCache";
 import type { SessionUserData } from "~/server/utils/session";
@@ -57,6 +58,7 @@ const baseHandler = NuxtAuthHandler(authOptions, runtimeConfig);
 export default defineSWEventHandler((event) => {
   if (event.path === "/api/auth/signout") {
     // clear storage
+    event.waitUntil(clearAnonymizeDetailStorage());
     event.waitUntil(clearCookieStorage());
     event.waitUntil(clearRateLimitCacheStorage());
     event.waitUntil(clearNatureAPICacheStorage());

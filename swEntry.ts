@@ -7,11 +7,20 @@ import { Router } from "workbox-routing";
 import { NetworkFirst } from "workbox-strategies";
 import { nitroApp } from "#internal/nitro/app";
 import { isPublicAssetURL } from "#internal/nitro/virtual/public-assets";
+import {
+  type AnonymizeDetailRecord,
+  anonymizeData,
+  storeAnonymizeDetailData,
+} from "./server/utils/anonymizeDetailCache";
 import { extendHeaders } from "./server/utils/swExtendHeaders";
 import {
   createCookieForRequest,
   storeCookiesFromResponse,
 } from "./server/utils/swCookieStorage";
+import type {
+  NatureAPIGetAppliancesResponse,
+  NatureAPIGetDevicesResponse,
+} from "./utils/natureTypes";
 
 declare const self: globalThis.ServiceWorkerGlobalScope;
 
@@ -80,10 +89,88 @@ self.addEventListener("fetch", (event): void => {
     url.pathname === "/sw.js" ||
     url.pathname.startsWith("/server.")
   ) {
-    const res = router.handleRequest({ event, request: event.request });
-    if (res) {
-      event.respondWith(res);
+    let { request }: { request: Request | Promise<Request> } = event;
+    const { method } = request;
+
+    // anonymize data before sending metrics
+    if (method === "POST" && url.pathname === "/cdn-cgi/rum") {
+      const orgRequest = request.clone();
+      request = (async () =>
+        new Request(request, {
+          ...request,
+          body: await anonymizeData(await request.text()),
+        }))().catch(() => orgRequest);
     }
+
+    // fetch using workbox
+    let response =
+      request instanceof Promise
+        ? request.then(
+            (request) =>
+              router.handleRequest({ event, request }) ??
+              new Response(null, { status: 404 })
+          )
+        : router.handleRequest({ event, request });
+
+    // collect anonymize detail data
+    if (
+      method === "GET" &&
+      url.hostname === "api.nature.global" &&
+      (url.pathname === "/1/appliances" || url.pathname === "/1/devices")
+    ) {
+      if (!response) {
+        response = Promise.resolve(request).then((request) => fetch(request));
+      }
+
+      response = response.then((response) => {
+        if (response.ok) {
+          const cloned = response.clone();
+          event.waitUntil(
+            (async (): Promise<void> => {
+              const data:
+                | NatureAPIGetAppliancesResponse
+                | NatureAPIGetDevicesResponse = await cloned.json();
+
+              const collectedItems: AnonymizeDetailRecord[] = [];
+              for (const item of data) {
+                if ("firmware_version" in item) {
+                  collectedItems.push({
+                    type: "devices",
+                    id: item.id,
+                    value: item.firmware_version,
+                  });
+                }
+
+                if ("type" in item) {
+                  collectedItems.push({
+                    type: "appliances",
+                    id: item.id,
+                    value: item.type,
+                  });
+                }
+
+                if ("device" in item) {
+                  collectedItems.push({
+                    type: "devices",
+                    id: item.device.id,
+                    value: item.device.firmware_version,
+                  });
+                }
+              }
+
+              await storeAnonymizeDetailData(collectedItems);
+            })()
+          );
+        }
+
+        return response;
+      });
+    }
+
+    if (response) {
+      event.respondWith(response);
+    }
+
     return;
   }
 
