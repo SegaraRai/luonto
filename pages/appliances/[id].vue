@@ -3,7 +3,10 @@
     v-if="appliance && device"
     class="flex flex-col py-4 w-full items-center"
   >
-    <div class="relative h-40 sm:h-56 pb-4 sm:pb-8 flex-none self-stretch">
+    <div
+      id="overview"
+      class="relative h-40 sm:h-56 pb-4 sm:pb-8 flex-none self-stretch"
+    >
       <div
         class="h-full pt-2 sm:pt-8 max-sm:px-6 max-sm:-mb-8 flex-1 flex flex-col items-start sm:items-center justify-between"
       >
@@ -27,7 +30,7 @@
       />
     </div>
     <UDivider />
-    <div class="max-w-xs px-4 pt-8 w-full">
+    <div id="controllers" class="max-w-xs px-4 pt-8 w-full">
       <NatureApplianceControlAC
         v-if="appliance.type === 'AC'"
         :appliance="appliance"

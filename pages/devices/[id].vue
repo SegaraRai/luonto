@@ -1,6 +1,6 @@
 <template>
   <div v-if="device" class="flex flex-col gap-8 py-4 w-full items-center">
-    <div class="relative flex flex-row items-start gap-16">
+    <div id="overview" class="relative flex flex-row items-start gap-16">
       <div class="flex-none flex flex-col items-center gap-2 overflow-hidden">
         <div
           class="w-32 h-32 i-solar-notification-unread-outline text-gray-800 dark:text-gray-200"
@@ -12,7 +12,7 @@
         :items="sensorItems"
       />
     </div>
-    <dl class="grid grid-cols-2 gap-4">
+    <dl id="details" class="grid grid-cols-2 gap-4">
       <template v-for="item in detailItems" :key="item.label">
         <dt class="text-right text-gray-500" v-text="item.label" />
         <dd v-text="item.value" />
@@ -21,6 +21,7 @@
     <template v-if="data?.appliances.length">
       <UDivider />
       <div
+        id="controls"
         class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-4"
       >
         <template v-for="appliance in data?.appliances" :key="appliance.id">
