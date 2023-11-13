@@ -52,13 +52,12 @@
 </template>
 
 <script setup lang="ts">
-import type { RateLimit } from "~/server/utils/rateLimit";
 import type { InvalidateTarget } from "~/utils/invalidateTarget";
 
 definePageMeta({ layout: "app", middleware: "auth" });
 
 const route = useRoute();
-const toast = useToast();
+const handleSignalSendPromise = useHandleSignalSendPromise();
 const { forceRefreshTargets, onRequest } = useFetchCacheControlHelper();
 
 const { data, error, refresh } = await useFetch(
@@ -113,38 +112,7 @@ const onSend = (
   forceRefreshTargets: readonly InvalidateTarget[] = []
 ): Promise<void> => {
   submitting.value = true;
-  return promise
-    .then(
-      (): void => {
-        toast.add({
-          color: "green",
-          title: "送信しました",
-        });
-      },
-      (error: any): void => {
-        const rateLimit: RateLimit | undefined = error?.data?.rateLimit;
-        const now = Date.now();
-        const description = rateLimit
-          ? [
-              `Nature API の呼び出しレート制限を超過しました`,
-              rateLimit.reset > now
-                ? `\nレート制限は${formatTimeAgoLocalized(
-                    new Date(rateLimit.reset),
-                    {
-                      showSecond: true,
-                    },
-                    now
-                  )}解除されます`
-                : "",
-            ].join("")
-          : undefined;
-        toast.add({
-          color: "red",
-          title: "送信に失敗しました",
-          description,
-        });
-      }
-    )
+  return handleSignalSendPromise(promise)
     .then(() =>
       forceRefreshTargets.length
         ? onForceRefresh(forceRefreshTargets)

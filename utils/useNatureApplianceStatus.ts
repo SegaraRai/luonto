@@ -22,7 +22,19 @@ export interface NatureApplianceStatus {
   readonly settings: NatureApplianceStatusSettings | null;
 }
 
-function getNatureApplianceIndicatorType(
+export function getNatureApplianceIndicatorFromIndicatorType(
+  indicatorType?: NatureApplianceStatusIndicatorType
+): NatureApplianceStatusIndicator | null {
+  return indicatorType
+    ? {
+        type: indicatorType,
+        class: indicatorType === "ON" ? "bg-green-400" : "bg-gray-400",
+        label: indicatorType === "ON" ? "ON" : "OFF",
+      }
+    : null;
+}
+
+export function getNatureApplianceIndicatorType(
   appliance: NatureAppliance | null | undefined
 ): NatureApplianceStatusIndicatorType | undefined {
   switch (appliance?.type) {
@@ -39,15 +51,9 @@ function getNatureApplianceIndicatorType(
 export function getNatureApplianceStatus(
   appliance: NatureAppliance | null | undefined
 ): NatureApplianceStatus {
-  const indicatorType: NatureApplianceStatusIndicatorType | undefined =
-    getNatureApplianceIndicatorType(appliance);
-  const indicator: NatureApplianceStatusIndicator | null = indicatorType
-    ? {
-        type: indicatorType,
-        class: indicatorType === "ON" ? "bg-green-400" : "bg-gray-400",
-        label: indicatorType === "ON" ? "ON" : "OFF",
-      }
-    : null;
+  const indicator = getNatureApplianceIndicatorFromIndicatorType(
+    getNatureApplianceIndicatorType(appliance)
+  );
 
   let settings: NatureApplianceStatusSettings | null = null;
   switch (appliance?.type) {

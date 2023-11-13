@@ -37,6 +37,7 @@ export default defineNuxtConfig({
   },
   ui: {
     safelistColors: [
+      // bulk power mode toggle button
       "primary",
       // base colors
       "black",
@@ -45,7 +46,7 @@ export default defineNuxtConfig({
       // for light buttons
       "orange",
       "sky",
-      // for AC power button
+      // for AC power button and bulk power mode toggle button
       "emerald",
     ],
   },
