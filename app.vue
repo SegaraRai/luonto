@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout>
-    <UContainer class="min-w-[300px]">
+    <UContainer as="main" class="min-w-[300px]">
       <NuxtErrorBoundary>
         <NuxtPage />
         <template #error="{ error, clearError }">
