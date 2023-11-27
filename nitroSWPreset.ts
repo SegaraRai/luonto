@@ -297,6 +297,8 @@ async function buildAssetArchive({
     ),
     "utf-8"
   );
+
+  return { assetManifestEntries };
 }
 
 const prerenderingFlag = new WeakMap<object, boolean>();
@@ -383,7 +385,11 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
         );
         const workboxOptionsBase: GetManifestOptions = {
           globDirectory: nitro.options.output.publicDir,
-          globPatterns: ["**/*.{js,css,html}", "_nuxt/**/*"],
+          globPatterns: [
+            "**/*.{js,css,html}",
+            "**/_payload.json",
+            "_nuxt/**/*",
+          ],
         };
         await workbox.injectManifest({
           ...workboxOptionsBase,
@@ -392,7 +398,7 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
         });
 
         // create archive
-        await buildAssetArchive({
+        const { assetManifestEntries } = await buildAssetArchive({
           swFile: serverDest,
           getAssetArchiveFilename: async (
             content: Uint8Array
@@ -418,6 +424,10 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
           ): boolean =>
             !filename.endsWith(".map") && content.length < 128 * 1024,
         });
+        console.log(
+          `${assetManifestEntries.length} assets in archive:`,
+          assetManifestEntries.map(([filename]) => filename)
+        );
 
         const serverContent = Buffer.from(
           minifyJS(await fsp.readFile(serverDest, "utf-8")),
