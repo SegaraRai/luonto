@@ -57,6 +57,8 @@
 </template>
 
 <script setup lang="ts">
+import type { DropdownItem } from "@nuxt/ui/dist/runtime/types";
+
 const { signOut, user } = useAuth();
 
 const toast = useToast();
@@ -79,7 +81,7 @@ const signOutHandler = (): void => {
   );
 };
 
-const items = computed(() => [
+const items = computed((): DropdownItem[][] => [
   [
     {
       slot: "account",
@@ -91,7 +93,7 @@ const items = computed(() => [
     {
       label: "サインアウト",
       icon: "i-ph-sign-out-bold",
-      onClick: signOutHandler,
+      click: signOutHandler,
     },
   ],
 ]);
