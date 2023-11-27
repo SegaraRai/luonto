@@ -68,9 +68,9 @@ export const AC_MODE_CONFIG_LIST: readonly ACModeConfig[] = [
   },
 ];
 
-export const AC_MODE_CONFIG_MAP: Readonly<
-  Record<NatureApplianceACMode, ACModeConfig>
-> = Object.fromEntries(AC_MODE_CONFIG_LIST.map((item) => [item.mode, item]));
+export const AC_MODE_CONFIG_MAP = Object.fromEntries(
+  AC_MODE_CONFIG_LIST.map((item) => [item.mode, item])
+) as Readonly<Record<NatureApplianceACMode, ACModeConfig>>;
 
 export const AC_FIXED_BUTTONS: readonly ACFixedButton[] = [
   {
@@ -123,9 +123,9 @@ export const AC_DIR_OPTIONS: readonly ACDirOption[] = [
   },
 ];
 
-export const AC_DIR_OPTION_MAP: Readonly<
-  Record<NatureApplianceACDir, ACDirOption>
-> = Object.fromEntries(AC_DIR_OPTIONS.map((item) => [item.value, item]));
+export const AC_DIR_OPTION_MAP = Object.fromEntries(
+  AC_DIR_OPTIONS.map((item) => [item.value, item])
+) as Readonly<Record<NatureApplianceACDir, ACDirOption>>;
 
 export const AC_DIR_H_OPTIONS: readonly ACDirHOption[] = [
   {
@@ -165,9 +165,9 @@ export const AC_DIR_H_OPTIONS: readonly ACDirHOption[] = [
   },
 ];
 
-export const AC_DIR_H_OPTION_MAP: Readonly<
-  Record<NatureApplianceACDirH, ACDirHOption>
-> = Object.fromEntries(AC_DIR_H_OPTIONS.map((item) => [item.value, item]));
+export const AC_DIR_H_OPTION_MAP = Object.fromEntries(
+  AC_DIR_H_OPTIONS.map((item) => [item.value, item])
+) as Readonly<Record<NatureApplianceACDirH, ACDirHOption>>;
 
 export const AC_VOL_OPTIONS: readonly ACVolOption[] = [
   {
@@ -202,6 +202,6 @@ export const AC_VOL_OPTIONS: readonly ACVolOption[] = [
   },
 ];
 
-export const AC_VOL_OPTION_MAP: Readonly<
-  Record<NatureApplianceACVol, ACVolOption>
-> = Object.fromEntries(AC_VOL_OPTIONS.map((item) => [item.value, item]));
+export const AC_VOL_OPTION_MAP = Object.fromEntries(
+  AC_VOL_OPTIONS.map((item) => [item.value, item])
+) as Readonly<Record<NatureApplianceACVol, ACVolOption>>;

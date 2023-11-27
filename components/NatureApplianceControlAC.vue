@@ -245,7 +245,6 @@ const dirItems = computed(() =>
       label,
       icon,
       click: (): void => sendSettings({ air_direction: value }),
-      active: displayDir.value === value,
     })
   )
 );
@@ -258,7 +257,6 @@ const dirHItems = computed(() =>
       label,
       icon,
       click: (): void => sendSettings({ air_direction_h: value }),
-      active: displayDirH.value === value,
     })
   )
 );
@@ -271,7 +269,6 @@ const volItems = computed(() =>
       label,
       icon,
       click: (): void => sendSettings({ air_volume: value }),
-      active: displayVol.value === value,
     })
   )
 );
