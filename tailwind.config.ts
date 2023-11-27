@@ -21,6 +21,11 @@ export default {
   plugins: [
     iconsPlugin({
       collections: iconCollections,
+      // might solve stretch bug on generate, see https://github.com/egoist/tailwindcss-icons/issues/23
+      extraProperties: {
+        "-webkit-mask-size": "contain",
+        "-webkit-mask-position": "center",
+      },
     }),
     iconsPlugin({
       prefix: "ix",
