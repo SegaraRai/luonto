@@ -2,14 +2,13 @@
 
 import "#internal/nitro/virtual/polyfill";
 
-import type { WorkboxPlugin } from "workbox-core";
 import {
   PrecacheController,
   PrecacheRoute,
   PrecacheStrategy,
 } from "workbox-precaching";
 import { Router } from "workbox-routing";
-import { NetworkFirst, Strategy } from "workbox-strategies";
+import { NetworkFirst } from "workbox-strategies";
 import { nitroApp } from "#internal/nitro/app";
 import { isPublicAssetURL } from "#internal/nitro/virtual/public-assets";
 import { anonymizeData } from "./server/utils/anonymizeDetailCache";
