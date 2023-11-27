@@ -408,7 +408,7 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
             )
               .toString("hex")
               .slice(0, 8);
-            return `assets.${hash}.dat`;
+            return `assets.${hash}.bin`;
           },
           getManifestOptions: workboxOptionsBase,
           getCacheControl: (filename: string): string =>

@@ -56,7 +56,7 @@ function tweakPrecacheStrategyToUseAssetArchive(
         })
         .then((data) => new Uint8Array(data))
         .catch((error) => {
-          console.error("failed to fetch asset archive", error);
+          console.error("Failed to fetch asset archive", error);
           throw error;
         });
     }
