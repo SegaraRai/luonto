@@ -41,8 +41,8 @@ function tweakPrecacheStrategyToUseAssetArchive(
 ): void {
   const assetManifestMap = new Map(assetManifestEntries);
 
-  let archiveDataPromise: Promise<Uint8Array> | undefined;
-  const fetchArchiveDataOnce = (): Promise<Uint8Array> => {
+  let archiveDataPromise: Promise<Blob> | undefined;
+  const fetchArchiveDataOnce = (): Promise<Blob> => {
     if (!archiveDataPromise) {
       archiveDataPromise = fetch(assetArchivePath, {
         integrity: assetArchiveIntegrity,
@@ -51,9 +51,8 @@ function tweakPrecacheStrategyToUseAssetArchive(
           if (!res.ok) {
             throw new Error(`${res.status} ${res.statusText}`);
           }
-          return res.arrayBuffer();
+          return res.blob();
         })
-        .then((data) => new Uint8Array(data))
         .catch((error) => {
           console.error("Failed to fetch asset archive", error);
           throw error;
@@ -73,7 +72,8 @@ function tweakPrecacheStrategyToUseAssetArchive(
         return new Response(
           data.slice(
             assetManifestEntry[0],
-            assetManifestEntry[0] + assetManifestEntry[1]
+            assetManifestEntry[0] + assetManifestEntry[1],
+            assetManifestEntry[3]
           ),
           {
             status: 200,
