@@ -2,7 +2,7 @@ https://:project.pages.dev/*
   X-Robots-Tag: noindex
 
 /*
-  Cache-Control: public, max-age=300, stale-while-revalidate=86400, stale-if-error=604800
+  Cache-Control: public, max-age=300, no-transform, stale-while-revalidate=86400, stale-if-error=604800
   Content-Security-Policy: __CSP_DIRECTIVES_HEADER__
   Permissions-Policy: camera=(), document-domain=(), geolocation=(), interest-cohort=(), microphone=()
   # https://api.nature.global/ is omitted for default Link header, as it may differ by page
@@ -11,22 +11,27 @@ https://:project.pages.dev/*
 /sw.js
   ! Cache-Control
   ! Link
-  Cache-Control: public, max-age=30
+  Cache-Control: public, max-age=30, no-transform
 
 /server.*
   ! Cache-Control
   ! Link
-  Cache-Control: public, immutable, max-age=31536000
+  Cache-Control: public, immutable, max-age=31536000, no-transform
+
+/assets.*
+  ! Cache-Control
+  ! Link
+  Cache-Control: public, immutable, max-age=31536000, no-transform
 
 /_nuxt/*
   ! Cache-Control
   ! Link
-  Cache-Control: public, immutable, max-age=31536000
+  Cache-Control: public, immutable, max-age=31536000, no-transform
 
 /_nuxt/builds/latest.json
   ! Cache-Control
   ! Link
-  Cache-Control: public, max-age=30
+  Cache-Control: public, max-age=30, no-transform
 
 /favicon.*
   ! Link

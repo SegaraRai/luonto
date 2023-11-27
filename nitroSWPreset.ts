@@ -5,8 +5,15 @@ import { minify as minifyHTMLBuffer } from "@minify-html/node";
 import { transformSync } from "esbuild";
 import fg from "fast-glob";
 import { type IText, Window } from "happy-dom";
+import { contentType } from "mime-types";
 import type { NitroConfig } from "nitropack";
 import { joinURL } from "ufo";
+import type { GetManifestOptions } from "workbox-build";
+
+type AssetManifestEntry = [
+  filepath: string,
+  [offset: number, size: number, cacheControl: string, contentType: string],
+];
 
 const CSP_META_PLACEHOLDER = "__CSP_DIRECTIVES_META__";
 const CSP_HEADER_PLACEHOLDER = "__CSP_DIRECTIVES_HEADER__";
@@ -185,6 +192,113 @@ function createCSPDirectives(nitro: object, mode: "header" | "meta"): string {
   ].join("; ");
 }
 
+function findAndReplace(content: string, regex: RegExp, replacement: string) {
+  const matches = content.match(regex);
+  if (!matches?.length) {
+    throw new Error(`Regex ${regex} not found`);
+  }
+
+  return content.replace(regex, replacement);
+}
+
+function injectAssetManifests(
+  content: string,
+  assetArchivePath: string,
+  assetArchiveSRI: string,
+  assetManifestEntries: readonly AssetManifestEntry[]
+): string {
+  content = findAndReplace(
+    content,
+    /\bself\.__WBX_ASSET_ARCHIVE_PATH\b/,
+    JSON.stringify(assetArchivePath)
+  );
+  content = findAndReplace(
+    content,
+    /\bself\.__WBX_ASSET_ARCHIVE_INTEGRITY\b/,
+    JSON.stringify(assetArchiveSRI)
+  );
+  content = findAndReplace(
+    content,
+    /\bself\.__WBX_ASSET_MANIFEST\b/,
+    JSON.stringify(assetManifestEntries)
+  );
+  return content;
+}
+
+async function buildAssetArchive({
+  swFile,
+  getAssetArchiveFilename,
+  getManifestOptions,
+  shouldIncludeAssetInArchive,
+  getCacheControl,
+  getContentType,
+}: {
+  swFile: string;
+  getAssetArchiveFilename: (
+    content: Uint8Array
+  ) => string | PromiseLike<string>;
+  getManifestOptions: GetManifestOptions;
+  shouldIncludeAssetInArchive: (
+    filename: string,
+    content: Uint8Array
+  ) => boolean | PromiseLike<boolean>;
+  getCacheControl: (
+    filename: string,
+    content: Uint8Array
+  ) => string | PromiseLike<string>;
+  getContentType: (
+    filename: string,
+    content: Uint8Array
+  ) => string | PromiseLike<string>;
+}) {
+  const workbox = await import("workbox-build");
+
+  const { manifestEntries } = await workbox.getManifest(getManifestOptions);
+  const assetManifestEntries: AssetManifestEntry[] = [];
+  const assetArchiveContents: Uint8Array[] = [];
+  let offset = 0;
+  for (const { url } of manifestEntries) {
+    const assetContent = await fsp.readFile(
+      path.resolve(getManifestOptions.globDirectory, url)
+    );
+    if (!(await shouldIncludeAssetInArchive(url, assetContent))) {
+      continue;
+    }
+    assetManifestEntries.push([
+      url,
+      [
+        offset,
+        assetContent.length,
+        await getCacheControl(url, assetContent),
+        await getContentType(url, assetContent),
+      ],
+    ]);
+    assetArchiveContents.push(assetContent);
+    offset += assetContent.length;
+  }
+  const archiveContent = Buffer.concat(assetArchiveContents);
+  const archiveContentSRI =
+    "sha256-" +
+    Buffer.from(await crypto.subtle.digest("SHA-256", archiveContent)).toString(
+      "base64"
+    );
+  const assetArchiveFilename = await getAssetArchiveFilename(archiveContent);
+  await fsp.writeFile(
+    path.resolve(getManifestOptions.globDirectory, assetArchiveFilename),
+    archiveContent
+  );
+  await fsp.writeFile(
+    swFile,
+    injectAssetManifests(
+      await fsp.readFile(swFile, "utf-8"),
+      `/${assetArchiveFilename}`,
+      archiveContentSRI,
+      assetManifestEntries
+    ),
+    "utf-8"
+  );
+}
+
 const prerenderingFlag = new WeakMap<object, boolean>();
 
 export interface SWPresetConfig {
@@ -267,10 +381,42 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
           nitro.options.output.publicDir,
           `server/index-injected.mjs`
         );
-        await workbox.injectManifest({
+        const workboxOptionsBase: GetManifestOptions = {
           globDirectory: nitro.options.output.publicDir,
+          globPatterns: ["**/*.{js,css,html}", "_nuxt/**/*"],
+        };
+        await workbox.injectManifest({
+          ...workboxOptionsBase,
           swSrc: serverSrc,
           swDest: serverDest,
+        });
+
+        // create archive
+        await buildAssetArchive({
+          swFile: serverDest,
+          getAssetArchiveFilename: async (
+            content: Uint8Array
+          ): Promise<string> => {
+            const hash = Buffer.from(
+              await crypto.subtle.digest("SHA-256", content)
+            )
+              .toString("hex")
+              .slice(0, 8);
+            return `assets.${hash}.dat`;
+          },
+          getManifestOptions: workboxOptionsBase,
+          getCacheControl: (filename: string): string =>
+            filename.startsWith("_nuxt/") &&
+            filename !== "_nuxt/builds/latest.json"
+              ? "public, immutable, max-age=31536000, no-transform"
+              : "public, max-age=30, no-transform",
+          getContentType: (filename: string): string =>
+            contentType(path.extname(filename)) || "application/octet-stream",
+          shouldIncludeAssetInArchive: (
+            filename: string,
+            content: Uint8Array
+          ): boolean =>
+            !filename.endsWith(".map") && content.length < 128 * 1024,
         });
 
         const serverContent = Buffer.from(
