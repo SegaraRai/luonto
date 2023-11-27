@@ -99,8 +99,8 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
       event.headers.get("luonto-no-stale-cache") === "?1"
         ? natureAPICache.ttl
         : staleValue?.error
-        ? CACHE_SWR_MAX_AGE_RESPONSE_CACHE_ERROR
-        : CACHE_SWR_MAX_AGE_RESPONSE_CACHE_SUCCESSFUL;
+          ? CACHE_SWR_MAX_AGE_RESPONSE_CACHE_ERROR
+          : CACHE_SWR_MAX_AGE_RESPONSE_CACHE_SUCCESSFUL;
     if ((staleValue?.data?.timestamp ?? 0) + maxSWRAge < requestTimestamp) {
       shouldRefresh = true;
     }
@@ -132,10 +132,10 @@ export default defineSWEventHandler(async (event): Promise<Response> => {
       error
         ? "stale-while-error"
         : data.timestamp === requestTimestamp
-        ? "revalidated"
-        : hit
-        ? "hit"
-        : "stale"
+          ? "revalidated"
+          : hit
+            ? "hit"
+            : "stale"
     );
     res.headers.set("luonto-content-timestamp", String(data.timestamp));
   } else {

@@ -164,8 +164,8 @@ const sendPowerControl = (
     powerStatus === "ON"
       ? powerControl.payloadPowerOff
       : powerStatus === "OFF"
-      ? powerControl.payloadPowerOn
-      : null;
+        ? powerControl.payloadPowerOn
+        : null;
   if (!payload) {
     return;
   }

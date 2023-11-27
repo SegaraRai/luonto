@@ -48,8 +48,8 @@ export function fetchNatureAPIs<T extends readonly (keyof NatureAPITypeMap)[]>(
       $cacheStatus: cacheStatuses.every((k) => k === "fresh")
         ? "fresh"
         : cacheStatuses.every((k) => k === "stale")
-        ? "stale"
-        : "mixed",
+          ? "stale"
+          : "mixed",
     };
   });
 }
