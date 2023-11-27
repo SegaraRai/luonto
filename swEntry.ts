@@ -3,9 +3,13 @@
 import "#internal/nitro/virtual/polyfill";
 
 import type { WorkboxPlugin } from "workbox-core";
-import { PrecacheController, PrecacheRoute } from "workbox-precaching";
+import {
+  PrecacheController,
+  PrecacheRoute,
+  PrecacheStrategy,
+} from "workbox-precaching";
 import { Router } from "workbox-routing";
-import { NetworkFirst } from "workbox-strategies";
+import { NetworkFirst, Strategy } from "workbox-strategies";
 import { nitroApp } from "#internal/nitro/app";
 import { isPublicAssetURL } from "#internal/nitro/virtual/public-assets";
 import { anonymizeData } from "./server/utils/anonymizeDetailCache";
@@ -30,11 +34,12 @@ declare global {
 
 declare const self: globalThis.ServiceWorkerGlobalScope;
 
-function createUseAssetArchivePlugin(
+function tweakPrecacheStrategyToUseAssetArchive(
+  strategy: PrecacheStrategy,
   assetArchivePath: string,
   assetArchiveIntegrity: string,
   assetManifestEntries: readonly AssetManifestEntry[]
-): WorkboxPlugin {
+): void {
   const assetManifestMap = new Map(assetManifestEntries);
 
   let archiveDataPromise: Promise<Uint8Array> | undefined;
@@ -45,32 +50,26 @@ function createUseAssetArchivePlugin(
       })
         .then((res) => {
           if (!res.ok) {
-            throw new Error("Failed to fetch archive data");
+            throw new Error(`${res.status} ${res.statusText}`);
           }
-
           return res.arrayBuffer();
         })
-        .then((data) => new Uint8Array(data));
+        .then((data) => new Uint8Array(data))
+        .catch((error) => {
+          console.error("failed to fetch asset archive", error);
+          throw error;
+        });
     }
 
     return archiveDataPromise;
   };
 
-  return {
-    cachedResponseWillBeUsed: async ({
-      request,
-      cachedResponse,
-    }): Promise<Response | undefined> => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      try {
-        const assetManifestEntry = assetManifestMap.get(request.url);
-        if (!assetManifestEntry) {
-          return;
-        }
-
+  const orgHandle = strategy._handle;
+  strategy._handle = async function (request, handler): Promise<Response> {
+    try {
+      const key = new URL(request.url).pathname.slice(1);
+      const assetManifestEntry = assetManifestMap.get(key);
+      if (assetManifestEntry) {
         const data = await fetchArchiveDataOnce();
         return new Response(
           data.slice(
@@ -86,10 +85,12 @@ function createUseAssetArchivePlugin(
             },
           }
         );
-      } catch (e) {
-        console.error("failed to fetch asset archive for", request.url, e);
       }
-    },
+    } catch {
+      // ignore
+    }
+
+    return orgHandle.call(this, request, handler);
   };
 }
 
@@ -127,15 +128,13 @@ async function handleEvent(url: URL, event: FetchEvent): Promise<Response> {
 }
 
 // workbox
-const precacheController = new PrecacheController({
-  plugins: [
-    createUseAssetArchivePlugin(
-      self.__WBX_ASSET_ARCHIVE_PATH,
-      self.__WBX_ASSET_ARCHIVE_INTEGRITY,
-      self.__WBX_ASSET_MANIFEST
-    ),
-  ],
-});
+const precacheController = new PrecacheController();
+tweakPrecacheStrategyToUseAssetArchive(
+  precacheController.strategy as PrecacheStrategy,
+  self.__WBX_ASSET_ARCHIVE_PATH,
+  self.__WBX_ASSET_ARCHIVE_INTEGRITY,
+  self.__WBX_ASSET_MANIFEST
+);
 precacheController.precache(self.__WB_MANIFEST);
 
 const precacheRoute = new PrecacheRoute(precacheController);
