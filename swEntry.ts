@@ -62,34 +62,47 @@ function tweakPrecacheStrategyToUseAssetArchive(
     return archiveDataPromise;
   };
 
-  const orgHandle = strategy._handle;
-  strategy._handle = async function (request, handler): Promise<Response> {
-    try {
-      const key = new URL(request.url).pathname.slice(1);
-      const assetManifestEntry = assetManifestMap.get(key);
-      if (assetManifestEntry) {
-        const data = await fetchArchiveDataOnce();
-        return new Response(
-          data.slice(
-            assetManifestEntry[0],
-            assetManifestEntry[0] + assetManifestEntry[1],
-            assetManifestEntry[3]
-          ),
-          {
-            status: 200,
-            headers: {
-              "cache-control": assetManifestEntry[2],
-              "content-type": assetManifestEntry[3],
-              "content-length": assetManifestEntry[1].toString(),
-            },
+  const orgHandleInstall = strategy._handleInstall;
+  strategy._handleInstall = async function (
+    request,
+    handler
+  ): Promise<Response> {
+    const orgFetch = handler.fetch;
+    if (!(orgFetch as any).__TWEAKED__) {
+      handler.fetch = async function (request: RequestInfo): Promise<Response> {
+        try {
+          const key = new URL(
+            typeof request === "string" ? request : request.url
+          ).pathname.slice(1);
+          const assetManifestEntry = assetManifestMap.get(key);
+          if (assetManifestEntry) {
+            const data = await fetchArchiveDataOnce();
+            return new Response(
+              data.slice(
+                assetManifestEntry[0],
+                assetManifestEntry[0] + assetManifestEntry[1],
+                assetManifestEntry[3]
+              ),
+              {
+                status: 200,
+                headers: {
+                  "cache-control": assetManifestEntry[2],
+                  "content-type": assetManifestEntry[3],
+                  "content-length": assetManifestEntry[1].toString(),
+                },
+              }
+            );
           }
-        );
-      }
-    } catch {
-      // ignore
+        } catch {
+          // ignore
+        }
+
+        return orgFetch.call(this, request);
+      };
+      (handler.fetch as any).__TWEAKED__ = true;
     }
 
-    return orgHandle.call(this, request, handler);
+    return orgHandleInstall.call(this, request, handler);
   };
 }
 
