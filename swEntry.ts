@@ -64,11 +64,8 @@ function tweakPrecacheStrategyToUseAssetArchive(
     return archiveDataPromise;
   };
 
-  const orgHandleInstall = strategy._handleInstall;
-  strategy._handleInstall = async function (
-    request,
-    handler
-  ): Promise<Response> {
+  const orgHandle = strategy._handle;
+  strategy._handle = async function (request, handler): Promise<Response> {
     const orgFetch = handler.fetch;
     if (!(orgFetch as any).__TWEAKED__) {
       handler.fetch = async function (request: RequestInfo): Promise<Response> {
@@ -104,7 +101,7 @@ function tweakPrecacheStrategyToUseAssetArchive(
       (handler.fetch as any).__TWEAKED__ = true;
     }
 
-    return orgHandleInstall.call(this, request, handler);
+    return orgHandle.call(this, request, handler);
   };
 }
 
@@ -164,7 +161,6 @@ function tweakPrecacheControllerToRequestConcurrently(
         (params as { request?: Request }).request?.url === url
     );
     const shouldWait = index < 0 || index === entries.length - 1;
-    console.log(params, index, shouldWait);
     const promise = handleInternal.call(this, params, shouldWait);
     return [promise.then(() => Response.error()), promise];
   };
