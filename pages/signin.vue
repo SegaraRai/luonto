@@ -12,6 +12,7 @@
               <UInput
                 v-model="state.token"
                 type="password"
+                autocomplete="current-password"
                 placeholder="O-oooooooooo_AAAAE-A-A-I-A-U_JO-oooooooooooo_AAE-O-A-A-U-U-A-"
                 required
               />
