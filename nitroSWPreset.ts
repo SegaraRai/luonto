@@ -415,7 +415,7 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
             "**/_payload.json",
             "_nuxt/**/*",
             // PWA resources
-            "favicon.*",
+            "favicon.svg", // though favicon.ico exists, it will not be used on modern browsers that support PWA
             "apple-touch-icon.png",
             "pwa-*.png",
             "*.webmanifest",
