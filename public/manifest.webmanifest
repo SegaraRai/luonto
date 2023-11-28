@@ -34,5 +34,35 @@
       "type": "image/png",
       "purpose": "any"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "ss-desktop-01.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Luonto のホーム画面"
+    },
+    {
+      "src": "ss-desktop-02.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Luonto の照明操作画面"
+    },
+    {
+      "src": "ss-mobile-01.png",
+      "sizes": "827x1791",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Luonto のホーム画面"
+    },
+    {
+      "src": "ss-mobile-02.png",
+      "sizes": "827x1791",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Luonto のエアコン操作画面"
+    }
   ]
 }
