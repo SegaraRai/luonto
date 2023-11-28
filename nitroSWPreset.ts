@@ -354,7 +354,7 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
           return;
         }
 
-        // Write fallback initializer files
+        // write fallback initializer files
         const html = createFallbackHTML(
           await fsp.readFile(
             path.resolve(nitro.options.output.publicDir, config.fallbackBase),
@@ -373,6 +373,31 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
           }
         }
 
+        // minify files
+        for (const file of (
+          await fg("**", {
+            cwd: nitro.options.output.publicDir,
+          })
+        ).sort()) {
+          if (!/\.webmanifest$/.test(file)) {
+            continue;
+          }
+
+          const filepath = path.resolve(nitro.options.output.publicDir, file);
+          if (!fs.existsSync(filepath)) {
+            continue;
+          }
+
+          let content = await fsp.readFile(filepath, "utf-8");
+          if (file.endsWith(".webmanifest")) {
+            content = JSON.stringify({
+              ...JSON.parse(content),
+              $schema: undefined,
+            });
+          }
+          await fsp.writeFile(filepath, content, "utf-8");
+        }
+
         // workbox
         const workbox = await import("workbox-build");
         const serverSrc = path.resolve(
@@ -389,7 +414,13 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
             "**/*.{js,css,html}",
             "**/_payload.json",
             "_nuxt/**/*",
+            // PWA resources
+            "favicon.*",
+            "apple-touch-icon.png",
+            "pwa-*.png",
+            "*.webmanifest",
           ],
+          globIgnores: ["assets.*", "server.*.js", "sw.js"],
         };
         await workbox.injectManifest({
           ...workboxOptionsBase,
@@ -421,8 +452,22 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
           shouldIncludeAssetInArchive: (
             filename: string,
             content: Uint8Array
-          ): boolean =>
-            !filename.endsWith(".map") && content.length < 128 * 1024,
+          ): boolean => {
+            if (filename.endsWith(".map") || content.length >= 128 * 1024) {
+              return false;
+            }
+
+            const textContent = Buffer.from(content).toString("binary");
+            if (
+              textContent.includes(CSP_HEADER_PLACEHOLDER) ||
+              textContent.includes(CSP_META_PLACEHOLDER)
+            ) {
+              console.warn("CSP placeholder found in asset", filename);
+              return false;
+            }
+
+            return true;
+          },
         });
         console.log(
           `${assetManifestEntries.length} assets in archive:`,
@@ -441,7 +486,7 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
           .slice(0, 8);
         const serverBuildFilename = `server.${serverHash}.js`;
 
-        // Write server file
+        // write server file
         await fsp.writeFile(
           path.resolve(nitro.options.output.publicDir, serverBuildFilename),
           serverContent
@@ -450,7 +495,7 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
         // cleanup server directory
         await fsp.rm(nitro.options.output.serverDir, { recursive: true });
 
-        // Write sw.js file
+        // write sw.js file
         await fsp.writeFile(
           path.resolve(nitro.options.output.publicDir, "sw.js"),
           `self.importScripts("${joinURL(
@@ -488,7 +533,7 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
           );
         }
 
-        // Post-process files
+        // post-process files (CSP)
         const cspMeta = createCSPDirectives(nitro, "meta");
         const cspHeader = createCSPDirectives(nitro, "header");
         console.log("CSP (meta):", cspMeta);
@@ -499,7 +544,7 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
             cwd: nitro.options.output.publicDir,
           })
         ).sort()) {
-          if (/\.gif$|\.jpe?g$|\.png$|\.web[pm]$/.test(file)) {
+          if (/\.gif$|\.jpe?g$|\.png$|\.web[pm]$|\.bin$|\.dat$/.test(file)) {
             continue;
           }
 
@@ -509,24 +554,15 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
           }
 
           let content = await fsp.readFile(filepath, "utf-8");
-          if (file.endsWith(".webmanifest")) {
-            content = JSON.stringify({
-              ...JSON.parse(content),
-              $schema: undefined,
-            });
-          }
-          await fsp.writeFile(
-            filepath,
-            content
-              .replaceAll(`=${CSP_META_PLACEHOLDER}`, `"${cspMeta}"`) // minified attribute values
-              .replaceAll(`"${CSP_META_PLACEHOLDER}"`, `"${cspMeta}"`)
-              .replaceAll(`'${CSP_META_PLACEHOLDER}'`, `"${cspMeta}"`)
-              .replaceAll(CSP_META_PLACEHOLDER, cspMeta)
-              .replaceAll(`"${CSP_HEADER_PLACEHOLDER}"`, `"${cspHeader}"`)
-              .replaceAll(`'${CSP_HEADER_PLACEHOLDER}'`, `"${cspHeader}"`)
-              .replaceAll(CSP_HEADER_PLACEHOLDER, cspHeader),
-            "utf-8"
-          );
+          content = content
+            .replaceAll(`=${CSP_META_PLACEHOLDER}`, `="${cspMeta}"`) // minified attribute values
+            .replaceAll(`"${CSP_META_PLACEHOLDER}"`, `"${cspMeta}"`)
+            .replaceAll(`'${CSP_META_PLACEHOLDER}'`, `"${cspMeta}"`)
+            .replaceAll(CSP_META_PLACEHOLDER, cspMeta)
+            .replaceAll(`"${CSP_HEADER_PLACEHOLDER}"`, `"${cspHeader}"`)
+            .replaceAll(`'${CSP_HEADER_PLACEHOLDER}'`, `"${cspHeader}"`)
+            .replaceAll(CSP_HEADER_PLACEHOLDER, cspHeader);
+          await fsp.writeFile(filepath, content, "utf-8");
         }
       },
     },
