@@ -220,16 +220,23 @@ async function handleEvent(url: URL, event: FetchEvent): Promise<Response> {
 
   event.waitUntil(storeCookiesFromResponse(res.headers));
 
-  const locationHeader = res.headers.get("location");
-  if (locationHeader && res.status >= 300 && res.status < 400) {
-    return Response.redirect(
-      new URL(locationHeader, url.origin).toString(),
-      res.status
-    );
-  }
-
   const resFixed = new Response(res.body, res);
   resFixed.headers.delete("set-cookie");
+
+  // fix location header
+  const locationHeader = resFixed.headers.get("location");
+  const fixedLocationHeader = locationHeader
+    ? new URL(locationHeader, url.origin)
+        .toString()
+        .replace(/^http:\/\//i, "https://")
+    : undefined;
+  if (fixedLocationHeader) {
+    if (resFixed.status >= 300 && resFixed.status < 400) {
+      return Response.redirect(fixedLocationHeader, resFixed.status);
+    }
+
+    resFixed.headers.set("location", fixedLocationHeader);
+  }
 
   return resFixed;
 }
