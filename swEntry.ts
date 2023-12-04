@@ -220,15 +220,16 @@ async function handleEvent(url: URL, event: FetchEvent): Promise<Response> {
 
   event.waitUntil(storeCookiesFromResponse(res.headers));
 
-  const resFixed = new Response(res.body, res);
-  resFixed.headers.delete("set-cookie");
-  const locationHeader = resFixed.headers.get("location");
+  const locationHeader = res.headers.get("location");
   if (locationHeader) {
-    resFixed.headers.set(
-      "location",
-      new URL(locationHeader, url.origin).toString()
+    return Response.redirect(
+      new URL(locationHeader, url.origin).toString(),
+      res.status
     );
   }
+
+  const resFixed = new Response(res.body, res);
+  resFixed.headers.delete("set-cookie");
 
   return resFixed;
 }
