@@ -221,7 +221,7 @@ async function handleEvent(url: URL, event: FetchEvent): Promise<Response> {
   event.waitUntil(storeCookiesFromResponse(res.headers));
 
   const locationHeader = res.headers.get("location");
-  if (locationHeader) {
+  if (locationHeader && res.status >= 300 && res.status < 400) {
     return Response.redirect(
       new URL(locationHeader, url.origin).toString(),
       res.status
