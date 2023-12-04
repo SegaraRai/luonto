@@ -15,25 +15,31 @@ export const authOptions: AuthConfig = {
   pages: {
     signIn: "/signin",
   },
-  cookies: {
-    callbackUrl: {
-      name: "auth.callback-url",
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: true,
-      },
-    },
-    sessionToken: {
-      name: "auth.session-token",
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: true,
-      },
-    },
-  },
-  useSecureCookies: true,
+  ...(process.env.NODE_ENV === "development"
+    ? {}
+    : {
+        cookies: {
+          callbackUrl: {
+            name: "__Secure-authjs.callback-url",
+            options: {
+              httpOnly: true,
+              sameSite: "lax",
+              path: "/",
+              secure: true,
+            },
+          },
+          sessionToken: {
+            name: "__Secure-authjs.session-token",
+            options: {
+              httpOnly: true,
+              sameSite: "lax",
+              path: "/",
+              secure: true,
+            },
+          },
+        },
+        useSecureCookies: true,
+      }),
   providers: [
     Credentials({
       credentials: {
