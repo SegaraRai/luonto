@@ -201,6 +201,9 @@ async function handleEvent(url: URL, event: FetchEvent): Promise<Response> {
   }
 
   const reqHeaders = new Headers(event.request.headers);
+  // set x-forwarded-proto, otherwise H3 will assume http and sign-in will redirect to http
+  // https://github.com/unjs/h3/blob/v1.9.0/src/utils/request.ts#L148-L159
+  reqHeaders.set("x-forwarded-proto", "https");
   const cookie = await createCookieForRequest();
   if (cookie) {
     reqHeaders.set("cookie", cookie);
@@ -226,9 +229,7 @@ async function handleEvent(url: URL, event: FetchEvent): Promise<Response> {
   // fix location header
   const locationHeader = resFixed.headers.get("location");
   const fixedLocationHeader = locationHeader
-    ? new URL(locationHeader, url.origin)
-        .toString()
-        .replace(/^http:\/\//i, "https://")
+    ? new URL(locationHeader, url.origin).toString()
     : undefined;
   if (fixedLocationHeader) {
     if (resFixed.status >= 300 && resFixed.status < 400) {
