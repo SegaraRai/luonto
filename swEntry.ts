@@ -251,6 +251,9 @@ async function start() {
 
   router.addCacheListener();
 
+  // extend Request and Response classes
+  extendHeaders();
+
   // event handlers
   self.addEventListener("fetch", (event): void => {
     const { request } = event;
@@ -331,9 +334,6 @@ async function start() {
     // https://github.com/GoogleChrome/workbox/blob/v7.0.0/packages/workbox-precaching/src/PrecacheController.ts#L111-L115
     event.waitUntil(self.clients.claim());
   });
-
-  // extend Request and Response classes
-  extendHeaders();
 }
 
 start().catch((error) => {
