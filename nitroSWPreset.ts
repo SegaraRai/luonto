@@ -411,7 +411,7 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
         const workboxOptionsBase: GetManifestOptions = {
           globDirectory: nitro.options.output.publicDir,
           globPatterns: [
-            "**/*.{js,css,html}",
+            "**/*.{js,css}",
             "**/_payload.json",
             "_nuxt/**/*",
             // PWA resources
@@ -419,6 +419,8 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
             "*.webmanifest",
           ],
           globIgnores: ["assets.*", "server.*.js", "sw.js"],
+          dontCacheBustURLsMatching:
+            /\.[\da-f]{8}\.(?:bin|css|js)|[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}\.json$/,
         };
         await workbox.injectManifest({
           ...workboxOptionsBase,
