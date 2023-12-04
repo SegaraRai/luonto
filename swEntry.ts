@@ -35,6 +35,33 @@ declare global {
 
 declare const self: globalThis.ServiceWorkerGlobalScope;
 
+// utils
+function createErrorResponse(
+  error: unknown,
+  request: Request,
+  on: string
+): Response {
+  return new Response(
+    `Failed to process request for ${request.method} ${request.url} (${
+      request.mode
+    }) via ${on}:
+
+${error}
+
+${error instanceof Error ? error.stack : ""}
+`,
+    {
+      status: 500,
+      statusText: "Service Worker Error",
+      headers: {
+        "cache-control": "no-store",
+        "content-type": "text/plain; charset=utf-8",
+      },
+    }
+  );
+}
+
+// workbox tweak
 function tweakPrecacheStrategyToUseAssetArchive(
   strategy: PrecacheStrategy,
   assetArchivePath: string,
@@ -224,7 +251,9 @@ router.addCacheListener();
 
 // event handlers
 self.addEventListener("fetch", (event): void => {
-  const url = new URL(event.request.url);
+  const { request } = event;
+  const { method, url: strURL } = request;
+  const url = new URL(strURL);
   if (url.protocol !== "https:" && url.protocol !== "http:") {
     // e.g. chrome-extension:
     return;
@@ -241,13 +270,12 @@ self.addEventListener("fetch", (event): void => {
     url.pathname === "/sw.js" ||
     url.pathname.startsWith("/server.")
   ) {
-    let { request }: { request: Request | Promise<Request> } = event;
-    const { method } = request;
+    let newRequestPromise: Promise<Request> | undefined;
 
     // anonymize data before sending metrics
     if (method === "POST" && url.pathname === "/cdn-cgi/rum") {
       const orgRequest = request.clone();
-      request = (async () =>
+      newRequestPromise = (async () =>
         new Request(request, {
           ...request,
           body: await anonymizeData(await request.text(), (from, to): void => {
@@ -258,13 +286,11 @@ self.addEventListener("fetch", (event): void => {
 
     // fetch using workbox
     const response =
-      request instanceof Promise
-        ? request.then(
-            (request) =>
-              // if request is a promise, it's modified by us so we have to send manually (we cannot use browser's default fetch) if workbox didn't handle it
-              router.handleRequest({ event, request }) ?? fetch(request)
-          )
-        : router.handleRequest({ event, request });
+      newRequestPromise?.then(
+        (request) =>
+          // if request is a promise, it's modified by us so we have to send manually (we cannot use browser's default fetch) if workbox didn't handle it
+          router.handleRequest({ event, request }) ?? fetch(request)
+      ) ?? router.handleRequest({ event, request });
 
     // we didn't modify the request and workbox didn't handle the request, use browser's default fetch
     if (!response) {
@@ -273,12 +299,18 @@ self.addEventListener("fetch", (event): void => {
 
     // we cannot collect anonymized data from Nature API calls here as they are `fetch`ed in Service Worker and therefore do not come here ("fetch" event)
 
-    event.respondWith(response);
+    event.respondWith(
+      response.catch((error) => createErrorResponse(error, request, "workbox"))
+    );
 
     return;
   }
 
-  event.respondWith(handleEvent(url, event));
+  event.respondWith(
+    handleEvent(url, event).catch((error) =>
+      createErrorResponse(error, request, "workbox")
+    )
+  );
 });
 
 self.addEventListener("install", (): void => {
