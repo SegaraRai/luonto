@@ -201,9 +201,9 @@ async function handleEvent(url: URL, event: FetchEvent): Promise<Response> {
   }
 
   const reqHeaders = new Headers(event.request.headers);
-  // set x-forwarded-proto, otherwise H3 will assume http and sign-in will redirect to http
+  // set `x-forwarded-proto` to ensure that H3 assumes correct protocol and redirects correctly
   // https://github.com/unjs/h3/blob/v1.9.0/src/utils/request.ts#L148-L159
-  reqHeaders.set("x-forwarded-proto", "https");
+  reqHeaders.set("x-forwarded-proto", url.protocol.slice(0, -1));
   const cookie = await createCookieForRequest();
   if (cookie) {
     reqHeaders.set("cookie", cookie);

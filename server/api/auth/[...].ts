@@ -15,6 +15,25 @@ export const authOptions: AuthConfig = {
   pages: {
     signIn: "/signin",
   },
+  cookies: {
+    callbackUrl: {
+      name: "auth.callback-url",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: true,
+      },
+    },
+    sessionToken: {
+      name: "auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: true,
+      },
+    },
+  },
+  useSecureCookies: true,
   providers: [
     Credentials({
       credentials: {
