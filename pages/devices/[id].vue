@@ -3,7 +3,8 @@
     <div id="overview" class="relative flex flex-row items-start gap-16">
       <div class="flex-none flex flex-col items-center gap-2 overflow-hidden">
         <div
-          class="w-32 h-32 i-solar-notification-unread-outline text-gray-800 dark:text-gray-200"
+          class="w-32 h-32 text-gray-800 dark:text-gray-200"
+          :class="getNatureDeviceIcon(device)"
         />
         <div class="max-w-full text-2xl line-clamp-2" v-text="device.name" />
       </div>
