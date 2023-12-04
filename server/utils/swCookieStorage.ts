@@ -12,7 +12,7 @@ const restoreOnce = createOnce(async (): Promise<void> => {
       return;
     }
 
-    for (const [key, value] of JSON.parse(data)) {
+    for (const [key, value] of data as [string, string][]) {
       if (!key || !value) {
         continue;
       }
@@ -30,9 +30,7 @@ const persistCookieMap = createSerial(async (): Promise<void> => {
   await restoreOnce();
   await storeServerStorage(
     STORAGE_KEY_COOKIE,
-    JSON.stringify(
-      Array.from(cookieMap.entries()).sort((a, b) => a[0].localeCompare(b[0]))
-    )
+    Array.from(cookieMap.entries()).sort((a, b) => a[0].localeCompare(b[0]))
   );
 });
 

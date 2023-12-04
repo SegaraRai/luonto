@@ -153,12 +153,8 @@ export const restoreNatureAPICacheOnce = createOnce(async (): Promise<void> => {
       return;
     }
 
-    const parsed = JSON.parse(data) as [
-      string,
-      LRUCache.Entry<SerializedCacheValue>,
-    ][];
     natureAPICache.load(
-      parsed
+      (data as [string, LRUCache.Entry<SerializedCacheValue>][])
         .map(([key, value]): [string, LRUCache.Entry<CacheValue | null>] => [
           key,
           { ...value, value: deserializeCacheValue(value.value) },
@@ -195,10 +191,7 @@ export const persistNatureAPICache = createSerial(async (): Promise<void> => {
     (item): item is [string, LRUCache.Entry<SerializedCacheValue>] =>
       !!item[1].value
   );
-  await storeServerStorage(
-    STORAGE_KEY_NATURE_API_CACHE,
-    JSON.stringify(serialized)
-  );
+  await storeServerStorage(STORAGE_KEY_NATURE_API_CACHE, serialized);
 });
 
 export async function clearNatureAPICacheStorage(): Promise<void> {

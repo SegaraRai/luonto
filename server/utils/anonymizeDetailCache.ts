@@ -27,7 +27,7 @@ const restoreOnce = createOnce(async (): Promise<void> => {
       return;
     }
 
-    for (const [key, value] of JSON.parse(data)) {
+    for (const [key, value] of data as [string, string][]) {
       if (!key || !value) {
         continue;
       }
@@ -45,10 +45,8 @@ const persistAnonymizeDetailMap = createSerial(async (): Promise<void> => {
   await restoreOnce();
   await storeServerStorage(
     STORAGE_KEY_ANONYMIZE_DETAIL_CACHE,
-    JSON.stringify(
-      Array.from(anonymizeDetailMap.entries()).sort((a, b) =>
-        a[0].localeCompare(b[0])
-      )
+    Array.from(anonymizeDetailMap.entries()).sort((a, b) =>
+      a[0].localeCompare(b[0])
     )
   );
 });
