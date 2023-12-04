@@ -220,10 +220,17 @@ async function handleEvent(url: URL, event: FetchEvent): Promise<Response> {
 
   event.waitUntil(storeCookiesFromResponse(res.headers));
 
-  const resWithoutSetCookie = new Response(res.body, res);
-  resWithoutSetCookie.headers.delete("set-cookie");
+  const resFixed = new Response(res.body, res);
+  resFixed.headers.delete("set-cookie");
+  const locationHeader = resFixed.headers.get("location");
+  if (locationHeader) {
+    resFixed.headers.set(
+      "location",
+      new URL(locationHeader, url.origin).toString()
+    );
+  }
 
-  return resWithoutSetCookie;
+  return resFixed;
 }
 
 // start
