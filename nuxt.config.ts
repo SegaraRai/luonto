@@ -2,7 +2,7 @@ import path from "node:path";
 import { createNitroSWPreset } from "./nitroSWPreset";
 
 const nitro: {} =
-  process.env.NODE_ENV === "development"
+  process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
     ? {}
     : {
         ...createNitroSWPreset({
