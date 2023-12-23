@@ -26,7 +26,7 @@
         class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-4"
       >
         <template v-for="appliance in data?.appliances" :key="appliance.id">
-          <NatureApplianceCard :appliance="appliance" />
+          <NatureApplianceCardLink :appliance="appliance" />
         </template>
       </div>
     </template>
