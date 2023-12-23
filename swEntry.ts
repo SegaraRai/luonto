@@ -233,6 +233,7 @@ async function handleEvent(url: URL, event: FetchEvent): Promise<Response> {
     : undefined;
   if (fixedLocationHeader) {
     if (resFixed.status >= 300 && resFixed.status < 400) {
+      // iOS seems to not be able to handle manually created redirect responses returned from the Service Worker
       return Response.redirect(fixedLocationHeader, resFixed.status);
     }
 
@@ -243,7 +244,7 @@ async function handleEvent(url: URL, event: FetchEvent): Promise<Response> {
 }
 
 // start
-async function start() {
+async function start(): Promise<void> {
   // workbox
   const precacheController = new PrecacheController();
   tweakPrecacheStrategyToUseAssetArchive(
