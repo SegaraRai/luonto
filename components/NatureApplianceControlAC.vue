@@ -173,7 +173,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DropdownItem } from "@nuxt/ui/dist/runtime/types";
+import type { DropdownItem } from "#ui/types";
 import type { InvalidateTarget } from "~/utils/invalidateTarget";
 import type {
   NatureAPIPostApplianceACSettingsRequest,
@@ -238,8 +238,8 @@ const maxTemperature = computed(
 );
 
 const dirItems = computed(() =>
-  AC_DIR_OPTIONS.filter(
-    ({ value }) => currentRange.value?.dir?.includes(value)
+  AC_DIR_OPTIONS.filter(({ value }) =>
+    currentRange.value?.dir?.includes(value)
   ).map(
     ({ icon, label, value }): DropdownItem => ({
       label,
@@ -250,8 +250,8 @@ const dirItems = computed(() =>
 );
 
 const dirHItems = computed(() =>
-  AC_DIR_H_OPTIONS.filter(
-    ({ value }) => currentRange.value?.dirh?.includes(value)
+  AC_DIR_H_OPTIONS.filter(({ value }) =>
+    currentRange.value?.dirh?.includes(value)
   ).map(
     ({ icon, label, value }): DropdownItem => ({
       label,
@@ -262,8 +262,8 @@ const dirHItems = computed(() =>
 );
 
 const volItems = computed(() =>
-  AC_VOL_OPTIONS.filter(
-    ({ value }) => currentRange.value?.vol?.includes(value)
+  AC_VOL_OPTIONS.filter(({ value }) =>
+    currentRange.value?.vol?.includes(value)
   ).map(
     ({ icon, label, value }): DropdownItem => ({
       label,

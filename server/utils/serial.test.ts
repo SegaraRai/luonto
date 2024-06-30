@@ -1,4 +1,4 @@
-import { test, vi, expect, expectTypeOf } from "vitest";
+import { expect, expectTypeOf, test, vi } from "vitest";
 import { createSerial } from "./serial";
 
 function createPromise(): [Promise<void>, () => void] {

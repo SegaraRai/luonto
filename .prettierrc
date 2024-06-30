@@ -1,6 +1,4 @@
 {
-  "arrowParens": "always",
-  "semi": true,
-  "singleQuote": false,
+  "plugins": ["prettier-plugin-organize-imports"],
   "trailingComma": "es5"
 }

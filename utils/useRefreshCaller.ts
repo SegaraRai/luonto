@@ -14,7 +14,7 @@ export function useRefreshCaller(
   callback: () => void,
   options: RefreshCallerOptions = {}
 ) {
-  if (!process.client) {
+  if (!import.meta.client) {
     return {};
   }
 

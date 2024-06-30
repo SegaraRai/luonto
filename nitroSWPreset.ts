@@ -1,12 +1,12 @@
-import fs from "node:fs";
-import fsp from "node:fs/promises";
-import path from "node:path";
 import { minify as minifyHTMLBuffer } from "@minify-html/node";
 import { transformSync } from "esbuild";
 import fg from "fast-glob";
-import { type IText, Window } from "happy-dom";
+import { type Text, Window } from "happy-dom";
 import { contentType } from "mime-types";
 import type { NitroConfig } from "nitropack";
+import fs from "node:fs";
+import fsp from "node:fs/promises";
+import path from "node:path";
 import { joinURL } from "ufo";
 import type { GetManifestOptions } from "workbox-build";
 
@@ -100,10 +100,10 @@ function createFallbackHTML(baseHTML: string): string {
 
   // remove all text nodes from head
   let node = dom.querySelector("head")!.firstChild;
-  const nodesToRemove: IText[] = [];
+  const nodesToRemove: Text[] = [];
   while (node) {
     if (node.nodeType === 3) {
-      nodesToRemove.unshift(node as IText);
+      nodesToRemove.unshift(node as Text);
     }
     node = node.nextSibling;
   }

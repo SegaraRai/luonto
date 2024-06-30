@@ -2,21 +2,21 @@
 
 import "#internal/nitro/virtual/polyfill";
 
+import { nitroApp } from "#internal/nitro/app";
+import { isPublicAssetURL } from "#internal/nitro/virtual/public-assets";
 import {
   PrecacheController,
   PrecacheRoute,
-  PrecacheStrategy,
+  type PrecacheStrategy,
 } from "workbox-precaching";
 import { Router } from "workbox-routing";
 import { NetworkFirst, type Strategy } from "workbox-strategies";
-import { nitroApp } from "#internal/nitro/app";
-import { isPublicAssetURL } from "#internal/nitro/virtual/public-assets";
 import { anonymizeData } from "./server/utils/anonymizeDetailCache";
-import { extendHeaders } from "./server/utils/swExtendHeaders";
 import {
   createCookieForRequest,
   storeCookiesFromResponse,
 } from "./server/utils/swCookieStorage";
+import { extendHeaders } from "./server/utils/swExtendHeaders";
 
 const MAX_CONCURRENCY = 6;
 

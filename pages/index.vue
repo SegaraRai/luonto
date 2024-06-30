@@ -120,13 +120,12 @@ if (error.value) {
 
 // bulk power operation
 const bulkPowerMode = ref(false);
-const applianceAndPowerControls = computed(
-  () =>
-    data.value?.appliances.map((appliance) => ({
-      appliance,
-      powerStatus: getNatureApplianceIndicatorType(appliance),
-      powerControl: getNatureAppliancePowerControl(appliance),
-    }))
+const applianceAndPowerControls = computed(() =>
+  data.value?.appliances.map((appliance) => ({
+    appliance,
+    powerStatus: getNatureApplianceIndicatorType(appliance),
+    powerControl: getNatureAppliancePowerControl(appliance),
+  }))
 );
 
 const submitting = ref(false);

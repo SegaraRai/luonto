@@ -20,20 +20,23 @@ export function extendHeaders(): void {
   globalThis.__REQ_RES_TWEAKED__ = true;
 
   globalThis.Request = class Request extends globalThis.Request {
-    readonly #headersOverride?: Headers | undefined;
+    readonly #headersOverride: Headers | undefined;
 
     constructor(input: RequestInfo | URL, init?: RequestInit | undefined) {
       super(input, init);
       this.#headersOverride = init?.headers && new Headers(init.headers);
     }
 
-    get headers(): Headers {
+    override get headers(): Headers {
       return this.#headersOverride ?? super.headers;
     }
   };
 
   globalThis.Response = class Response extends globalThis.Response {
-    static json(data: unknown, init?: ResponseInit): globalThis.Response {
+    static override json(
+      data: unknown,
+      init?: ResponseInit
+    ): globalThis.Response {
       const base = super.json(data, init);
 
       // as `Response.headers` is mutable, we must always override it
@@ -51,7 +54,7 @@ export function extendHeaders(): void {
       });
     }
 
-    readonly #headersOverride?: Headers | undefined;
+    readonly #headersOverride: Headers | undefined;
 
     constructor(body?: BodyInit | null, init?: ResponseInit) {
       super(body, init);
@@ -59,7 +62,7 @@ export function extendHeaders(): void {
       this.#headersOverride = new Headers(init?.headers);
     }
 
-    get headers(): Headers {
+    override get headers(): Headers {
       return this.#headersOverride ?? super.headers;
     }
   };

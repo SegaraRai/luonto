@@ -1,7 +1,7 @@
 import path from "node:path";
 import { createNitroSWPreset } from "./nitroSWPreset";
 
-const nitro: {} =
+const nitro =
   process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
     ? {}
     : {
@@ -20,7 +20,13 @@ const nitro: {} =
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ["@hebilicious/authjs-nuxt", "@nuxt/ui", "@vueuse/nuxt"],
+  modules: [
+    "@nuxt/eslint",
+    // runtime related
+    "@hebilicious/authjs-nuxt",
+    "@nuxt/ui",
+    "@vueuse/nuxt",
+  ],
   nitro,
   authJs: {
     guestRedirectTo: "/signin",

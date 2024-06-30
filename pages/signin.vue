@@ -56,8 +56,8 @@
 </template>
 
 <script setup lang="ts">
-import type { FormSubmitEvent } from "@nuxt/ui/dist/runtime/types";
-import { type Input, minLength, object, string } from "valibot";
+import type { FormSubmitEvent } from "#ui/types";
+import { minLength, object, string, pipe, type InferOutput } from "valibot";
 
 useHead({
   title: "サインイン",
@@ -74,9 +74,9 @@ useHead({
 const { signIn } = useAuth();
 
 const schema = object({
-  token: string([minLength(48, "Must be at least 48 characters")]),
+  token: pipe(string(), minLength(48, "Must be at least 48 characters")),
 });
-type Schema = Input<typeof schema>;
+type Schema = InferOutput<typeof schema>;
 
 const state = ref<Partial<Schema>>({
   token: undefined,

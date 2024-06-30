@@ -1,6 +1,6 @@
+import { NuxtAuthHandler } from "#auth";
 import Credentials from "@auth/core/providers/credentials";
 import type { AuthConfig, User } from "@auth/core/types";
-import { NuxtAuthHandler } from "#auth";
 import { clearAnonymizeDetailStorage } from "~/server/utils/anonymizeDetailCache";
 import { clearNatureAPICacheStorage } from "~/server/utils/natureAPICache";
 import { clearRateLimitCacheStorage } from "~/server/utils/rateLimitCache";
@@ -12,6 +12,7 @@ const runtimeConfig = useRuntimeConfig();
 export const authOptions: AuthConfig = {
   // intentionally fixed as this app is SPA only
   secret: "frieren",
+  basePath: "/api/auth",
   pages: {
     signIn: "/signin",
   },
