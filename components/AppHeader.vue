@@ -44,7 +44,7 @@
             </div>
           </template>
           <template #item="{ item }">
-            <span class="truncate" v-text="item.label" />
+            <span class="whitespace-nowrap" v-text="item.label" />
             <UIcon
               :name="item.icon"
               class="flex-shrink-0 h-4 w-4 text-gray-400 dark:text-gray-500 ms-auto"
