@@ -1,7 +1,9 @@
+import { getNatureDeviceType } from "./natureDeviceTypes";
 import type { NatureDevice } from "./natureTypes";
 
 export function getNatureDeviceIcon(device: NatureDevice): string {
-  return /^remo-e(-lite)?\//i.test(device.firmware_version)
-    ? "i-solar-graph-new-linear"
-    : "i-solar-notification-unread-outline";
+  return {
+    remo: "i-solar-notification-unread-outline",
+    "remo-e": "i-solar-graph-new-linear",
+  }[getNatureDeviceType(device)];
 }
