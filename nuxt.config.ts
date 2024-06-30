@@ -1,13 +1,37 @@
-import path from "node:path";
+import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { env } from "node:process";
+import { fileURLToPath } from "node:url";
 import { createNitroSWPreset } from "./nitroSWPreset";
 
+function fromProjectDir(path: string): string {
+  return fileURLToPath(new URL(path, import.meta.url));
+}
+
+function getAppVersion(): string {
+  if (env.NODE_ENV === "development" || env.NODE_ENV === "test") {
+    return "[dev]";
+  }
+
+  const pkg = JSON.parse(readFileSync(fromProjectDir("package.json"), "utf-8"));
+
+  const { stdout } = spawnSync("git", ["rev-parse", "--short", "HEAD"], {
+    encoding: "utf-8",
+  });
+
+  const pkgVersion = pkg.version;
+  const commitHash = stdout.trim();
+
+  return `v${pkgVersion} (${commitHash})`;
+}
+
 const nitro =
-  process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
+  env.NODE_ENV === "development" || env.NODE_ENV === "test"
     ? {}
     : {
         ...createNitroSWPreset({
-          swEntry: path.resolve(__dirname, "swEntry.ts"),
-          prerenderEntry: path.resolve(__dirname, "prerenderEntry.ts"),
+          swEntry: fromProjectDir("swEntry.ts"),
+          prerenderEntry: fromProjectDir("prerenderEntry.ts"),
           fallbackBase: "loading.html",
           fallbackFiles: ["index.html", "200.html", "404.html"],
         }),
@@ -36,10 +60,11 @@ export default defineNuxtConfig({
       authJs: {
         baseUrl: "https://service-worker",
       },
+      appVersion: getAppVersion(),
     },
   },
   alias: {
-    cookie: path.resolve(__dirname, "node_modules/cookie"),
+    cookie: fromProjectDir("node_modules/cookie"),
   },
   ui: {
     safelistColors: [

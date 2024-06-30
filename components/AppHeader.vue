@@ -60,6 +60,9 @@
 import type { DropdownItem } from "#ui/types";
 
 const { signOut, user } = useAuth();
+const {
+  public: { appVersion },
+} = useRuntimeConfig();
 
 const toast = useToast();
 
@@ -87,6 +90,14 @@ const items = computed((): DropdownItem[][] => [
       slot: "account",
       disabled: true,
       label: user.value?.name ?? "",
+    },
+  ],
+  [
+    {
+      label: `Luonto ${appVersion}`,
+      icon: "i-ph-github-logo-bold",
+      href: "https://github.com/SegaraRai/luonto",
+      target: "_blank",
     },
   ],
   [
