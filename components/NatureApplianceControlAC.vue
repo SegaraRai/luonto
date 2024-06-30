@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-col gap-8 items-center">
-    <div>
+    <div class="group flex flex-row">
+      <div class="w-12"></div>
       <div
         ref="temperatureSwipeEl"
         role="slider"
@@ -103,6 +104,31 @@
           </div>
         </template>
       </div>
+      <!-- Up and Down buttons -->
+      <div
+        class="w-12 flex flex-col items-center justify-between opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity"
+      >
+        <UButton
+          :aria-label="sliderUpButtonData.label"
+          class="rounded-full"
+          size="sm"
+          :color="isON ? 'primary' : 'gray'"
+          variant="ghost"
+          icon="i-mdi-chevron-up"
+          :disabled="disabled || !sliderUpButtonData.available"
+          @click="swipeBy(1)"
+        />
+        <UButton
+          :aria-label="sliderDownButtonData.label"
+          class="rounded-full"
+          size="sm"
+          :color="isON ? 'primary' : 'gray'"
+          variant="ghost"
+          icon="i-mdi-chevron-down"
+          :disabled="disabled || !sliderDownButtonData.available"
+          @click="swipeBy(-1)"
+        />
+      </div>
     </div>
     <div>
       <UButton
@@ -183,6 +209,7 @@ import type {
   NatureApplianceACMode,
   NatureApplianceACTemperature,
   NatureApplianceACVol,
+  NatureTemperatureUnit,
 } from "~/utils/natureTypes";
 
 const props = defineProps<{
@@ -209,7 +236,7 @@ const fixedButtons = computed(() =>
   )
 );
 
-// air-con settings for current mode
+// AC settings for current mode
 
 const isON = computed(() => props.appliance.settings?.button !== "power-off");
 
@@ -339,6 +366,59 @@ const sendSettings = (
 
 // temperature slider
 
+/**
+ * - 1: up (right)
+ * - -1: down (left)
+ */
+type SwipeByOffset = 1 | -1;
+
+interface SwipeByData {
+  index: number;
+  temperature: NatureApplianceACTemperature;
+  absDiff: string;
+  diffSign: "+" | "-";
+  unit: NatureTemperatureUnit;
+}
+
+const getSwipeBy = (offset: SwipeByOffset): SwipeByData | null => {
+  if (!supportsTemperature.value || sendingSettings.value) {
+    return null;
+  }
+
+  const availableTemperatures = currentRange.value?.temp ?? [];
+  const currentTemperature = props.appliance.settings?.temp;
+  const currentTemperatureUnit = props.appliance.settings?.temp_unit;
+  const currentIndex = currentTemperature
+    ? availableTemperatures.indexOf(currentTemperature)
+    : -1;
+  if (currentIndex < 0 || !currentTemperatureUnit) {
+    return null;
+  }
+
+  const index = Math.min(
+    Math.max(currentIndex + offset, 0),
+    availableTemperatures.length - 1
+  );
+
+  const newTemperature = availableTemperatures[index];
+  const diff10 = Math.round(
+    Number(newTemperature) * 10 - Number(currentTemperature) * 10
+  );
+  if (diff10 === 0) {
+    return null;
+  }
+
+  const absDiff = Math.abs(diff10 / 10).toFixed(diff10 % 10 === 0 ? 0 : 1);
+
+  return {
+    index,
+    temperature: newTemperature,
+    absDiff,
+    diffSign: diff10 > 0 ? "+" : "-",
+    unit: currentTemperatureUnit,
+  };
+};
+
 const temperatureSwipeEl = ref<HTMLDivElement | null>(null);
 const temperatureTrackEl = ref<HTMLDivElement | null>(null);
 const { isSwiping, distanceY } = usePointerSwipe(temperatureSwipeEl, {
@@ -387,7 +467,7 @@ const displayTemperature = computed(
     props.appliance.settings?.temp
 );
 
-/** temperature slider offset (0 is bottom, 1 is top) */
+/** temperature slider offset (0.0 is bottom, 1.0 is top) */
 const currentTemperatureRatio = computed((): number => {
   const availableTemperatures = currentRange.value?.temp ?? [];
   const index = displayTemperature.value
@@ -396,25 +476,13 @@ const currentTemperatureRatio = computed((): number => {
   return index >= 0 ? index / (availableTemperatures.length - 1) : 0;
 });
 
-const swipeBy = (offset: -1 | 1): void => {
-  if (!supportsTemperature.value || sendingSettings.value) {
+const swipeBy = (offset: SwipeByOffset): void => {
+  const data = getSwipeBy(offset);
+  if (!data) {
     return;
   }
 
-  const availableTemperatures = currentRange.value?.temp ?? [];
-  const currentTemperature = props.appliance.settings?.temp;
-  const currentIndex = currentTemperature
-    ? availableTemperatures.indexOf(currentTemperature)
-    : -1;
-  if (currentIndex < 0) {
-    return;
-  }
-
-  const index = Math.min(
-    Math.max(currentIndex + offset, 0),
-    availableTemperatures.length - 1
-  );
-  sendSettings({ temperature: availableTemperatures[index] });
+  sendSettings({ temperature: data.temperature });
 };
 
 // send settings on swipe end
@@ -427,4 +495,23 @@ watch(swipingTemperature, (value, prevValue): void => {
     });
   }
 });
+
+// temperature slider buttons
+const getSliderButtonData = (offset: SwipeByOffset) => {
+  const data = getSwipeBy(offset);
+  if (!data) {
+    return {
+      label: offset > 0 ? "設定温度を上げる" : "設定温度を下げる",
+      available: false,
+    };
+  }
+
+  return {
+    label: `設定温度を${data.absDiff}${humanizeTemperatureUnitForSR(data.unit)}${data.diffSign > "+" ? "上げる" : "下げる"}`,
+    available: true,
+  };
+};
+
+const sliderUpButtonData = computed(() => getSliderButtonData(1));
+const sliderDownButtonData = computed(() => getSliderButtonData(-1));
 </script>
