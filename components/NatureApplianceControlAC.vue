@@ -107,6 +107,7 @@
       <!-- Up and Down buttons -->
       <div
         class="w-12 flex flex-col items-center justify-between opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity"
+        :class="!supportsTemperature && 'invisible'"
       >
         <UButton
           :aria-label="sliderUpButtonData.label"
