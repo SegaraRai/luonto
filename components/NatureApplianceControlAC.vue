@@ -381,7 +381,7 @@ interface SwipeByData {
   unit: NatureTemperatureUnit;
 }
 
-const getSwipeBy = (offset: SwipeByOffset): SwipeByData | null => {
+const getSwipeByData = (offset: SwipeByOffset): SwipeByData | null => {
   if (!supportsTemperature.value || sendingSettings.value) {
     return null;
   }
@@ -478,7 +478,7 @@ const currentTemperatureRatio = computed((): number => {
 });
 
 const swipeBy = (offset: SwipeByOffset): void => {
-  const data = getSwipeBy(offset);
+  const data = getSwipeByData(offset);
   if (!data) {
     return;
   }
@@ -499,7 +499,7 @@ watch(swipingTemperature, (value, prevValue): void => {
 
 // temperature slider buttons
 const getSliderButtonData = (offset: SwipeByOffset) => {
-  const data = getSwipeBy(offset);
+  const data = getSwipeByData(offset);
   if (!data) {
     return {
       label: offset > 0 ? "設定温度を上げる" : "設定温度を下げる",
@@ -508,7 +508,7 @@ const getSliderButtonData = (offset: SwipeByOffset) => {
   }
 
   return {
-    label: `設定温度を${data.absDiff}${humanizeTemperatureUnitForSR(data.unit)}${data.diffSign > "+" ? "上げる" : "下げる"}`,
+    label: `設定温度を${data.absDiff}${humanizeTemperatureUnitForSR(data.unit)}${data.diffSign === "+" ? "上げる" : "下げる"}`,
     available: true,
   };
 };
