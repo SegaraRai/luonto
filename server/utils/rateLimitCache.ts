@@ -52,7 +52,7 @@ export async function setRateLimitCache(
 ): Promise<void> {
   await restoreOnce();
   rateLimitCache.set(userId, rateLimit, {
-    ttl: Math.max(rateLimit.reset * 1000 - Date.now(), 1),
+    ttl: Math.max(rateLimit.reset - Date.now(), 1),
   });
   await persistRateLimitCache();
 }
