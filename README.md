@@ -51,7 +51,7 @@ pnpm run build
 pnpm run preview
 ```
 
-`http://localhost:3000` でプレビューできます
+`http://localhost:3100` でプレビューできます
 
 ### デプロイ
 

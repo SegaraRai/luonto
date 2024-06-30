@@ -6,7 +6,7 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "serve .output/public",
+    "preview": "serve -p 3100 .output/public",
     "postinstall": "nuxt prepare",
     "lint": "eslint && prettier -c .",
     "test": "vitest",
