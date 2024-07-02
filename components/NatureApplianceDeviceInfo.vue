@@ -3,7 +3,7 @@
     class="flex flex-col items-start sm:items-center gap-1 sm:gap-2 opacity-80"
   >
     <ULink
-      class="max-w-full truncate rounded-sm"
+      class="max-w-full truncate rounded-sm inline-flex items-center gap-1 hover:text-primary-600 dark:hover:text-primary-400"
       :class="STYLE_FOCUS_VISIBLE_RING"
       :to="`/devices/${device.id}`"
     >

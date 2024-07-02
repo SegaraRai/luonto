@@ -3,7 +3,7 @@
     class="group focus:outline-none focus-visible:outline-0"
     :to="`/appliances/${appliance.id}`"
   >
-    <UCard :class="STYLE_FOCUS_VISIBLE_RING_GROUP">
+    <UCard :class="[STYLE_CLICKABLE_CARD, STYLE_FOCUS_VISIBLE_RING_GROUP]">
       <NatureApplianceCardContent :appliance="appliance" :status="status" />
     </UCard>
   </ULink>

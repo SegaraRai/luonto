@@ -2,7 +2,7 @@
   <UCard
     as="button"
     class="disabled:opacity-60"
-    :class="STYLE_FOCUS_VISIBLE_RING"
+    :class="[STYLE_CLICKABLE_CARD, STYLE_FOCUS_VISIBLE_RING]"
     :disabled="disabled"
   >
     <NatureApplianceCardContent

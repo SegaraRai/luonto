@@ -26,7 +26,7 @@
             :class="STYLE_FOCUS_VISIBLE_RING"
           >
             <UAvatar
-              class="select-none"
+              class="select-none hover:bg-gray-200 dark:hover:bg-gray-700"
               :alt="user.name ?? undefined"
               size="sm"
             />
