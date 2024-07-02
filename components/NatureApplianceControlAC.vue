@@ -111,7 +111,7 @@
       >
         <UButton
           :aria-label="sliderUpButtonData.label"
-          class="rounded-full"
+          class="flex-none rounded-full"
           size="sm"
           :color="isON ? 'primary' : 'gray'"
           variant="ghost"
@@ -121,7 +121,7 @@
         />
         <UButton
           :aria-label="sliderDownButtonData.label"
-          class="rounded-full"
+          class="flex-none rounded-full"
           size="sm"
           :color="isON ? 'primary' : 'gray'"
           variant="ghost"
