@@ -63,7 +63,7 @@ const items = computed(() => [
 const current = computed(
   () =>
     items.value.find((item) => item.value === colorMode.preference) ??
-    items.value[0]
+    items.value[0]!
 );
 
 const toggle = (): void => {
@@ -71,6 +71,6 @@ const toggle = (): void => {
     (item) => item.value === colorMode.preference
   );
   colorMode.preference =
-    items.value[(currentIndex + 1) % items.value.length].value;
+    items.value[(currentIndex + 1) % items.value.length]!.value;
 };
 </script>

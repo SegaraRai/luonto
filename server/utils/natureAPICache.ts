@@ -99,7 +99,7 @@ export const natureAPICache = new LRUCache<string, CacheValue, FetchContext>({
     { signal, context: { timestamp, token, waitUntil } }
   ): Promise<CacheValue> => {
     try {
-      const [userId, method, url] = key.split("\0");
+      const [userId, method, url] = key.split("\0") as [string, string, string];
       const res = await fetch(url, {
         method,
         headers: createNatureAPIRequestHeaderInit(token),

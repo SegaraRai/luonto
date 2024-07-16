@@ -10,7 +10,7 @@ function createPromise(): [Promise<void>, () => void] {
 }
 
 test("should return function that executes specified function", () => {
-  const fn = vi.fn<[], Promise<void>>().mockResolvedValue(undefined);
+  const fn = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
   const serial = createSerial(fn);
   expectTypeOf(serial).toBeFunction();
   serial();
@@ -31,18 +31,18 @@ test("should not call next one until running one finishes", async () => {
   });
 
   expect(resolves).toHaveLength(1);
-  expect(promises[0][1]).not.toHaveBeenCalled();
-  expect(promises[1][1]).not.toHaveBeenCalled();
-  resolves[0]();
-  await promises[0][0];
-  expect(promises[0][1]).toHaveBeenCalled();
-  expect(promises[1][1]).not.toHaveBeenCalled();
+  expect(promises[0]![1]).not.toHaveBeenCalled();
+  expect(promises[1]![1]).not.toHaveBeenCalled();
+  resolves[0]!();
+  await promises[0]![0];
+  expect(promises[0]![1]).toHaveBeenCalled();
+  expect(promises[1]![1]).not.toHaveBeenCalled();
 
   expect(resolves).toHaveLength(2);
-  resolves[1]();
-  await promises[1][0];
-  expect(promises[1][1]).toHaveBeenCalled();
-  expect(promises[19][1]).toHaveBeenCalled();
+  resolves[1]!();
+  await promises[1]![0];
+  expect(promises[1]![1]).toHaveBeenCalled();
+  expect(promises[19]![1]).toHaveBeenCalled();
 
   expect(resolves).toHaveLength(2);
 });

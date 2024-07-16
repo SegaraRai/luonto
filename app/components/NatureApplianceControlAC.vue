@@ -401,7 +401,7 @@ const getSwipeByData = (offset: SwipeByOffset): SwipeByData | null => {
     availableTemperatures.length - 1
   );
 
-  const newTemperature = availableTemperatures[index];
+  const newTemperature = availableTemperatures[index]!;
   const diff10 = Math.round(
     Number(newTemperature) * 10 - Number(currentTemperature) * 10
   );
@@ -454,7 +454,7 @@ const swipingTemperature = computed((): NatureApplianceACTemperature | null => {
     Math.max(currentIndex + offset, 0),
     availableTemperatures.length - 1
   );
-  return availableTemperatures[index];
+  return availableTemperatures[index]!;
 });
 
 /**

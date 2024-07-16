@@ -134,7 +134,7 @@ const collectHashes = async (nitro: object, html: string): Promise<void> => {
   }
 
   for (const match of html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)) {
-    if (!match[2] || match[1].includes("application/json")) {
+    if (!match[2] || match[1]!.includes("application/json")) {
       continue;
     }
 
