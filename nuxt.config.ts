@@ -30,8 +30,8 @@ const nitro =
     ? {}
     : {
         ...createNitroSWPreset({
-          swEntry: fromProjectDir("swEntry.ts"),
-          prerenderEntry: fromProjectDir("prerenderEntry.ts"),
+          prerenderEntry: fromProjectDir("entries/prerender/index.ts"),
+          swEntry: fromProjectDir("entries/serviceWorker/index.ts"),
           fallbackBase: "loading.html",
           fallbackFiles: ["index.html", "200.html", "404.html"],
         }),

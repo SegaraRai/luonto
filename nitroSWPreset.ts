@@ -304,8 +304,8 @@ async function buildAssetArchive({
 const prerenderingFlag = new WeakMap<object, boolean>();
 
 export interface SWPresetConfig {
-  readonly swEntry: string;
   readonly prerenderEntry: string;
+  readonly swEntry: string;
   readonly fallbackBase: string;
   readonly fallbackFiles: readonly string[];
 }
