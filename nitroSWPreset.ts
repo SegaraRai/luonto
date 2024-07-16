@@ -445,8 +445,8 @@ export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
           getCacheControl: (filename: string): string =>
             filename.startsWith("_nuxt/") &&
             filename !== "_nuxt/builds/latest.json"
-              ? "public, immutable, max-age=31536000, no-transform"
-              : "public, max-age=30, no-transform",
+              ? "public, immutable, max-age=31536000"
+              : "public, max-age=30",
           getContentType: (filename: string): string =>
             contentType(path.extname(filename)) || "application/octet-stream",
           shouldIncludeAssetInArchive: (
