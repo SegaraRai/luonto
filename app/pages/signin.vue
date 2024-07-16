@@ -57,7 +57,7 @@
 
 <script setup lang="ts">
 import type { FormSubmitEvent } from "#ui/types";
-import { minLength, object, string, pipe, type InferOutput } from "valibot";
+import { minLength, object, pipe, string, type InferOutput } from "valibot";
 
 useHead({
   title: "サインイン",
