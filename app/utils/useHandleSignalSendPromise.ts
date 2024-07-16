@@ -1,4 +1,4 @@
-import type { RateLimit } from "~/server/utils/rateLimit";
+import type { RateLimit } from "~~/server/utils/rateLimit";
 
 export function useHandleSignalSendPromise(): (
   promise: Promise<unknown>

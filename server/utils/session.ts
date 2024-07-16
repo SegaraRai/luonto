@@ -1,7 +1,7 @@
 import { getServerSession } from "#auth";
 import type { Session } from "@auth/core/types";
 import type { H3Event } from "h3";
-import { authOptions } from "~/server/api/auth/[...]";
+import { authOptions } from "~~/server/api/auth/[...]";
 
 export interface SessionUserData {
   readonly id: string;

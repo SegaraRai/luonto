@@ -19,7 +19,7 @@ Luonto をホストしているサーバー (Cloudflare Pages) は静的アセ�
 以下が必要です
 
 - [Node.js](https://nodejs.org/) v20
-- [pnpm](https://pnpm.io/) v8
+- [pnpm](https://pnpm.io/) v9
 
 [Bun](https://bun.sh/) が正式に Windows に対応したら pnpm から移行するかも
 

@@ -1,4 +1,4 @@
-import { fetchNatureAPIs } from "~/server/utils/fetchNatureAPIs";
+import { fetchNatureAPIs } from "~~/server/utils/fetchNatureAPIs";
 
 export default defineSWEventHandler(async (event) => {
   const { appliances, devices, $cacheStatus } = await fetchNatureAPIs(event, [
