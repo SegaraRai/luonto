@@ -36,7 +36,11 @@
             variant="ghost"
             :icon="bulkPowerMode ? 'i-mdi-check' : 'i-mdi-power'"
             size="sm"
-            @click="() => (bulkPowerMode = !bulkPowerMode)"
+            @click="
+              () => {
+                bulkPowerMode = !bulkPowerMode;
+              }
+            "
           />
         </div>
       </div>
@@ -91,7 +95,7 @@
     </template>
     <p v-else>アカウントに Nature デバイスが登録されていません</p>
   </div>
-  <PageContentError v-else-if="error" :error="error" />
+  <ErrorContent v-else-if="error" :error="error" @handle-error="refresh" />
   <PageContentLoading v-else />
 </template>
 

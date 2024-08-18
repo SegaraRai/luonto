@@ -31,7 +31,7 @@
       </div>
     </template>
   </div>
-  <PageContentError v-else-if="error" :error="error" />
+  <ErrorContent v-else-if="error" :error="error" @handle-error="refresh" />
   <PageContentLoading v-else />
 </template>
 

@@ -25,9 +25,13 @@
 
 <script setup lang="ts">
 import type { H3Error } from "h3";
+import type { FetchError } from "ofetch";
 import type { RateLimit } from "~~/server/utils/rateLimit";
 
-const props = defineProps<{ error: H3Error; onHandleError: () => void }>();
+const props = defineProps<{
+  error: H3Error | FetchError<unknown>;
+  onHandleError: () => void;
+}>();
 
 const rateLimit = computed(() => {
   try {
