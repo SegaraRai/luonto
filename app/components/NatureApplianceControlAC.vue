@@ -269,9 +269,10 @@ const dirItems = computed(() =>
   AC_DIR_OPTIONS.filter(({ value }) =>
     currentRange.value?.dir?.includes(value)
   ).map(
-    ({ icon, label, value }): DropdownItem => ({
+    ({ icon, label, shortcuts, value }): DropdownItem => ({
       label,
       icon,
+      shortcuts,
       click: (): void => sendSettings({ air_direction: value }),
     })
   )
@@ -281,9 +282,10 @@ const dirHItems = computed(() =>
   AC_DIR_H_OPTIONS.filter(({ value }) =>
     currentRange.value?.dirh?.includes(value)
   ).map(
-    ({ icon, label, value }): DropdownItem => ({
+    ({ icon, label, shortcuts, value }): DropdownItem => ({
       label,
       icon,
+      shortcuts,
       click: (): void => sendSettings({ air_direction_h: value }),
     })
   )
@@ -293,9 +295,10 @@ const volItems = computed(() =>
   AC_VOL_OPTIONS.filter(({ value }) =>
     currentRange.value?.vol?.includes(value)
   ).map(
-    ({ icon, label, value }): DropdownItem => ({
+    ({ icon, label, shortcuts, value }): DropdownItem => ({
       label,
       icon,
+      shortcuts,
       click: (): void => sendSettings({ air_volume: value }),
     })
   )

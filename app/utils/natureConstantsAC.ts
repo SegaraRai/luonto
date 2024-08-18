@@ -15,18 +15,21 @@ export interface ACFixedButton {
 export interface ACVolOption {
   readonly value: NatureApplianceACVol;
   readonly label: string;
+  readonly shortcuts: string[];
   readonly icon: string;
 }
 
 export interface ACDirOption {
   readonly value: NatureApplianceACDir;
   readonly label: string;
+  readonly shortcuts: string[];
   readonly icon: string;
 }
 
 export interface ACDirHOption {
   readonly value: NatureApplianceACDirH;
   readonly label: string;
+  readonly shortcuts: string[];
   readonly icon: string;
 }
 
@@ -89,36 +92,43 @@ export const AC_DIR_OPTIONS: readonly ACDirOption[] = [
   {
     value: "auto",
     label: "自動",
+    shortcuts: ["A"],
     icon: "i-luonto-mdi-angle-a",
   },
   {
     value: "swing",
     label: "スイング",
+    shortcuts: ["S"],
     icon: "i-luonto-mdi-angle-sync",
   },
   {
     value: "1",
     label: "1（上端）",
+    shortcuts: ["1"],
     icon: "i-luonto-mdi-angle-1",
   },
   {
     value: "2",
     label: "2",
+    shortcuts: ["2"],
     icon: "i-luonto-mdi-angle-2",
   },
   {
     value: "3",
     label: "3",
+    shortcuts: ["3"],
     icon: "i-luonto-mdi-angle-3",
   },
   {
     value: "4",
     label: "4",
+    shortcuts: ["4"],
     icon: "i-luonto-mdi-angle-4",
   },
   {
     value: "5",
     label: "5（下端）",
+    shortcuts: ["5"],
     icon: "i-luonto-mdi-angle-5",
   },
 ];
@@ -131,36 +141,43 @@ export const AC_DIR_H_OPTIONS: readonly ACDirHOption[] = [
   {
     value: "auto",
     label: "自動",
+    shortcuts: ["A"],
     icon: "i-luonto-mdi-angle-a",
   },
   {
     value: "swing",
     label: "スイング",
+    shortcuts: ["S"],
     icon: "i-luonto-mdi-angle-sync",
   },
   {
     value: "1",
     label: "1",
+    shortcuts: ["1"],
     icon: "i-luonto-mdi-angle-1",
   },
   {
     value: "2",
     label: "2",
+    shortcuts: ["2"],
     icon: "i-luonto-mdi-angle-2",
   },
   {
     value: "3",
     label: "3",
+    shortcuts: ["3"],
     icon: "i-luonto-mdi-angle-3",
   },
   {
     value: "4",
     label: "4",
+    shortcuts: ["4"],
     icon: "i-luonto-mdi-angle-4",
   },
   {
     value: "5",
     label: "5",
+    shortcuts: ["5"],
     icon: "i-luonto-mdi-angle-5",
   },
 ];
@@ -173,31 +190,37 @@ export const AC_VOL_OPTIONS: readonly ACVolOption[] = [
   {
     value: "auto",
     label: "自動",
+    shortcuts: ["A"],
     icon: "i-mdi-fan-auto",
   },
   {
     value: "1",
     label: "1",
+    shortcuts: ["1"],
     icon: "i-mdi-fan-speed-1",
   },
   {
     value: "2",
     label: "2",
+    shortcuts: ["2"],
     icon: "i-mdi-fan-speed-2",
   },
   {
     value: "3",
     label: "3",
+    shortcuts: ["3"],
     icon: "i-mdi-fan-speed-3",
   },
   {
     value: "4",
     label: "4",
+    shortcuts: ["4"],
     icon: "i-luonto-mdi-fan-4",
   },
   {
     value: "5",
     label: "5",
+    shortcuts: ["5"],
     icon: "i-luonto-mdi-fan-5",
   },
 ];

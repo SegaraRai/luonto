@@ -167,19 +167,24 @@ const sendPowerControl = (
   powerControl: NatureAppliancePowerControl,
   powerStatus: NatureApplianceStatusIndicatorType
 ): void => {
-  const payload =
-    powerStatus === "ON"
-      ? powerControl.payloadPowerOff
-      : powerStatus === "OFF"
-        ? powerControl.payloadPowerOn
-        : null;
-  if (!payload) {
+  const nextStatus: NatureApplianceStatusIndicatorType = (
+    {
+      ON: "OFF",
+      OFF: "ON",
+    } as const
+  )[powerStatus];
+  if (!nextStatus) {
     return;
   }
 
+  const payload = {
+    ON: powerControl.payloadPowerOn,
+    OFF: powerControl.payloadPowerOff,
+  }[nextStatus];
+
   submitting.value = true;
   submittingIndicatorTypeMap.value = {
-    [applianceId]: powerStatus === "ON" ? "OFF" : "ON",
+    [applianceId]: nextStatus,
   };
 
   handleSignalSendPromise(
