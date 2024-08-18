@@ -15,7 +15,7 @@ export async function handleEvent(
 
   const reqHeaders = new Headers(event.request.headers);
   // set `x-forwarded-proto` to ensure that H3 assumes correct protocol and redirects correctly
-  // https://github.com/unjs/h3/blob/v1.9.0/src/utils/request.ts#L148-L159
+  // https://github.com/unjs/h3/blob/v1.12.0/src/utils/request.ts#L304-L309
   reqHeaders.set("x-forwarded-proto", url.protocol.slice(0, -1));
   const cookie = await createCookieForRequest();
   if (cookie) {
