@@ -85,4 +85,12 @@ export default defineNuxtConfig({
       "emerald",
     ],
   },
+  icon: {
+    customCollections: [
+      {
+        prefix: "luonto",
+        dir: "icons/build/luonto",
+      },
+    ],
+  },
 });

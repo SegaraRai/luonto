@@ -46,17 +46,17 @@ const items = computed(() => [
       ? "システムテーマ"
       : `システムテーマ (${colorMode.value === "dark" ? "ダーク" : "ライト"})`,
     value: "system",
-    icon: "i-ph-circle-half-tilt-fill",
+    icon: "i-ph:circle-half-tilt-fill",
   },
   {
     label: "ライトテーマ",
     value: "light",
-    icon: "i-ph-circle dark:ix-ph-circle-fill",
+    icon: colorMode.value === "dark" ? "i-ph:circle-fill" : "i-ph:circle",
   },
   {
     label: "ダークテーマ",
     value: "dark",
-    icon: "i-ph-circle-fill dark:ix-ph-circle-bold",
+    icon: colorMode.value !== "dark" ? "i-ph:circle-fill" : "i-ph:circle",
   },
 ]);
 

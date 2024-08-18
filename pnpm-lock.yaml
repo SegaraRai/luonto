@@ -11,9 +11,6 @@ importers:
       '@auth/core':
         specifier: ^0.34.2
         version: 0.34.2
-      '@egoist/tailwindcss-icons':
-        specifier: ^1.8.1
-        version: 1.8.1(tailwindcss@3.4.10)
       '@hebilicious/authjs-nuxt':
         specifier: ^0.3.5
         version: 0.3.5(@auth/core@0.34.2)(magicast@0.3.4)(nuxt@3.12.4(@parcel/watcher@2.4.1)(@types/node@22.4.0)(encoding@0.1.13)(eslint@9.9.0(jiti@1.21.6))(idb-keyval@6.2.1)(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@2.79.1)(terser@5.31.6)(typescript@5.5.4)(vite@5.4.1(@types/node@22.4.0)(terser@5.31.6))(vue-tsc@2.0.29(typescript@5.5.4)))(rollup@2.79.1)
@@ -32,6 +29,9 @@ importers:
       '@iconify-json/solar':
         specifier: ^1.1.10
         version: 1.1.10
+      '@iconify-json/tdesign':
+        specifier: ^1.1.8
+        version: 1.1.8
       '@minify-html/node':
         specifier: ^0.15.0
         version: 0.15.0
@@ -849,11 +849,6 @@ packages:
     peerDependencies:
       postcss-selector-parser: ^6.0.13
 
-  '@egoist/tailwindcss-icons@1.8.1':
-    resolution: {integrity: sha512-hqZeASrhT6BOeaBHYDPB0yBH/zgMKqmm7y2Rsq0c4iRnNVv1RWEiXMBMJB38JsDMTHME450FKa/wvdaIhED+Iw==}
-    peerDependencies:
-      tailwindcss: '*'
-
   '@es-joy/jsdoccomment@0.46.0':
     resolution: {integrity: sha512-C3Axuq1xd/9VqFZpW4YAzOx5O9q/LP46uIQy/iNDpHG3fmPa6TBtvfglMCs3RBiBxAIi0Go97r8+jvTt55XMyQ==}
     engines: {node: '>=16'}
@@ -1499,6 +1494,9 @@ packages:
 
   '@iconify-json/solar@1.1.10':
     resolution: {integrity: sha512-g+p9GbYrzfLkbcbs+TwBr42YvUeRgNUbVv0ZRi464MvlTWN9B/ekgFZszbIBqgjQT9GjfToQQLP6GOmDPDhLNw==}
+
+  '@iconify-json/tdesign@1.1.8':
+    resolution: {integrity: sha512-AuUQgdTiG2ED2oXqMhZwZ6wTkOXVAd+4YIJ/Samtx/wf5eKxZAXCGkL1OpFfA6enkzzRPaUkhskyKI6YAZ9oug==}
 
   '@iconify/collections@1.0.450':
     resolution: {integrity: sha512-h8cW4Ut1tAUCxr7wZBp8dwgive6IeY1OCYBraR23ismei7vFgx9FB9oNJvahhOYtIClqX0+BreJwOB05aYxejw==}
@@ -2274,14 +2272,14 @@ packages:
   '@vitest/utils@2.0.5':
     resolution: {integrity: sha512-d8HKbqIcya+GR67mkZbrzhS5kKhtp8dQLcmRZLGTscGVg7yImT82cIrhtn2L8+VujWcy6KZweApgNmPsTAO/UQ==}
 
-  '@volar/language-core@2.4.0-alpha.18':
-    resolution: {integrity: sha512-JAYeJvYQQROmVRtSBIczaPjP3DX4QW1fOqW1Ebs0d3Y3EwSNRglz03dSv0Dm61dzd0Yx3WgTW3hndDnTQqgmyg==}
+  '@volar/language-core@2.4.0-alpha.19':
+    resolution: {integrity: sha512-8H6x3vC0/SbOqy1cU0s7/Hk9nNH61t8qOoghjX7XpguLagEyjF6zkMp6C5F/sBlpr0WpeByc1KDfyBHumB8ZfA==}
 
-  '@volar/source-map@2.4.0-alpha.18':
-    resolution: {integrity: sha512-MTeCV9MUwwsH0sNFiZwKtFrrVZUK6p8ioZs3xFzHc2cvDXHWlYN3bChdQtwKX+FY2HG6H3CfAu1pKijolzIQ8g==}
+  '@volar/source-map@2.4.0-alpha.19':
+    resolution: {integrity: sha512-f86wTDVVjWUtaBcmFYTTLtWpBfooNfZmwvn73f+KXIchYqKgQVzOuGbORuVPwSrAjYLPW0f8Aa5Gb9TbdI17Ug==}
 
-  '@volar/typescript@2.4.0-alpha.18':
-    resolution: {integrity: sha512-sXh5Y8sqGUkgxpMWUGvRXggxYHAVxg0Pa1C42lQZuPDrW6vHJPR0VCK8Sr7WJsAW530HuNQT/ZIskmXtxjybMQ==}
+  '@volar/typescript@2.4.0-alpha.19':
+    resolution: {integrity: sha512-Q7tfVVL3HmvUlqjcoTEk/6LiwlDF13XP8avAARovK4Qc6Djsckc+COLovr+ZX6kIxxTdM+Ggv9C0nCNFjMeiSQ==}
 
   '@voxpelli/config-array-find-files@0.1.2':
     resolution: {integrity: sha512-jOva73R+0Nc5/pyS/piBSjQzO4EehME7rPSkBpPC9PYSta+yj3OpF14v0m0HLLYLVNuyHbBjQh5QvGIZwTH2eA==}
@@ -2580,8 +2578,8 @@ packages:
     resolution: {integrity: sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==}
     engines: {node: '>=12'}
 
-  ast-kit@1.0.1:
-    resolution: {integrity: sha512-XdXKlmX3YIrGKJS7d324CAbswH+C1klMCIRQ4VRy0+iPxGeP2scVOoYd09/V6uGjGAi/ZuEwBLzT7xBerSKNQg==}
+  ast-kit@1.1.0:
+    resolution: {integrity: sha512-RlNqd4u6c/rJ5R+tN/ZTtyNrH8X0NHCvyt6gD8RHa3JjzxxHWoyaU0Ujk3Zjbh7IZqrYl1Sxm6XzZifmVxXxHQ==}
     engines: {node: '>=16.14.0'}
 
   ast-walker-scope@0.6.2:
@@ -7341,13 +7339,6 @@ snapshots:
     dependencies:
       postcss-selector-parser: 6.1.2
 
-  '@egoist/tailwindcss-icons@1.8.1(tailwindcss@3.4.10)':
-    dependencies:
-      '@iconify/utils': 2.1.30
-      tailwindcss: 3.4.10
-    transitivePeerDependencies:
-      - supports-color
-
   '@es-joy/jsdoccomment@0.46.0':
     dependencies:
       comment-parser: 1.4.1
@@ -7751,6 +7742,10 @@ snapshots:
       '@iconify/types': 2.0.0
 
   '@iconify-json/solar@1.1.10':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/tdesign@1.1.8':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -8901,15 +8896,15 @@ snapshots:
       loupe: 3.1.1
       tinyrainbow: 1.2.0
 
-  '@volar/language-core@2.4.0-alpha.18':
+  '@volar/language-core@2.4.0-alpha.19':
     dependencies:
-      '@volar/source-map': 2.4.0-alpha.18
+      '@volar/source-map': 2.4.0-alpha.19
 
-  '@volar/source-map@2.4.0-alpha.18': {}
+  '@volar/source-map@2.4.0-alpha.19': {}
 
-  '@volar/typescript@2.4.0-alpha.18':
+  '@volar/typescript@2.4.0-alpha.19':
     dependencies:
-      '@volar/language-core': 2.4.0-alpha.18
+      '@volar/language-core': 2.4.0-alpha.19
       path-browserify: 1.0.1
       vscode-uri: 3.0.8
 
@@ -8923,7 +8918,7 @@ snapshots:
       '@babel/types': 7.25.2
       '@rollup/pluginutils': 5.1.0(rollup@2.79.1)
       '@vue/compiler-sfc': 3.4.38
-      ast-kit: 1.0.1
+      ast-kit: 1.1.0
       local-pkg: 0.5.0
       magic-string-ast: 0.6.2
     optionalDependencies:
@@ -9024,7 +9019,7 @@ snapshots:
 
   '@vue/language-core@2.0.29(typescript@5.5.4)':
     dependencies:
-      '@volar/language-core': 2.4.0-alpha.18
+      '@volar/language-core': 2.4.0-alpha.19
       '@vue/compiler-dom': 3.4.38
       '@vue/compiler-vue2': 2.7.16
       '@vue/shared': 3.4.38
@@ -9294,7 +9289,7 @@ snapshots:
 
   assertion-error@2.0.1: {}
 
-  ast-kit@1.0.1:
+  ast-kit@1.1.0:
     dependencies:
       '@babel/parser': 7.25.3
       pathe: 1.1.2
@@ -9302,7 +9297,7 @@ snapshots:
   ast-walker-scope@0.6.2:
     dependencies:
       '@babel/parser': 7.25.3
-      ast-kit: 1.0.1
+      ast-kit: 1.1.0
 
   async-sema@3.1.1: {}
 
@@ -13477,7 +13472,7 @@ snapshots:
 
   vue-tsc@2.0.29(typescript@5.5.4):
     dependencies:
-      '@volar/typescript': 2.4.0-alpha.18
+      '@volar/typescript': 2.4.0-alpha.19
       '@vue/language-core': 2.0.29(typescript@5.5.4)
       semver: 7.6.3
       typescript: 5.5.4

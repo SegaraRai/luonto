@@ -95,7 +95,7 @@ const items = computed((): DropdownItem[][] => [
   [
     {
       label: `Luonto ${appVersion}`,
-      icon: "i-ph-github-logo-bold",
+      icon: "i-ph:github-logo-bold",
       href: "https://github.com/SegaraRai/luonto",
       target: "_blank",
     },
@@ -103,7 +103,7 @@ const items = computed((): DropdownItem[][] => [
   [
     {
       label: "サインアウト",
-      icon: "i-ph-sign-out-bold",
+      icon: "i-ph:sign-out-bold",
       click: signOutHandler,
     },
   ],

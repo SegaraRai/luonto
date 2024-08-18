@@ -12,10 +12,11 @@
     <div v-if="sensorItems.length" class="flex items-center gap-6">
       <template v-for="item in sensorItems" :key="item.label">
         <div v-if="item.available" class="flex items-center gap-2 text-sm">
-          <span
+          <UIcon
             role="img"
+            :name="item.icon"
             class="flex-none w-[1.25em] h-[1.25em]"
-            :class="[item.color, item.icon]"
+            :class="item.color"
             :aria-label="item.label"
           />
           <UTooltip

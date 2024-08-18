@@ -1,12 +1,5 @@
-import { readdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { type Config, optimize } from "svgo";
-
-interface Icon {
-  name: string;
-  body: string;
-  width: number;
-  height: number;
-}
 
 const config: Config = {
   multipass: true,
@@ -37,15 +30,15 @@ const config: Config = {
   ],
 };
 
-const icons: Icon[] = [];
+await mkdir("icons/build/luonto", { recursive: true });
 
-for (const file of await readdir("icons")) {
+for (const file of await readdir("icons/src")) {
   const name = file.match(/^luonto-([^.]+)\.svg$/)?.[1];
   if (!name) {
     continue;
   }
 
-  const content = await readFile(`icons/${file}`, "utf-8");
+  const content = await readFile(`icons/src/${file}`, "utf-8");
   const { data } = optimize(content, config);
 
   const [, width, height] = data.match(/viewBox="0 0 (\d+) (\d+)"/) ?? [];
@@ -59,21 +52,8 @@ for (const file of await readdir("icons")) {
     .replace(/<path /, '$&fill="currentColor" ')
     .trim();
 
-  icons.push({
-    name,
-    body,
-    width: Number(width),
-    height: Number(height),
-  });
+  await writeFile(
+    `icons/build/luonto/${name}.svg`,
+    `<svg viewBox="0 0 ${width} ${height}">${body}</svg>`
+  );
 }
-
-icons.sort((a, b) => a.name.localeCompare(b.name));
-
-await writeFile(
-  "luontoIcons.json",
-  JSON.stringify(
-    Object.fromEntries(icons.map(({ name, ...rest }) => [name, rest])),
-    null,
-    2
-  ) + "\n"
-);

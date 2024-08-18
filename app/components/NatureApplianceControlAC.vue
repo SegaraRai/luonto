@@ -115,7 +115,7 @@
           size="sm"
           :color="isON ? 'primary' : 'gray'"
           variant="ghost"
-          icon="i-mdi-chevron-up"
+          icon="i-mdi:chevron-up"
           :disabled="disabled || !sliderUpButtonData.available"
           @click="swipeBy(1)"
         />
@@ -125,7 +125,7 @@
           size="sm"
           :color="isON ? 'primary' : 'gray'"
           variant="ghost"
-          icon="i-mdi-chevron-down"
+          icon="i-mdi:chevron-down"
           :disabled="disabled || !sliderDownButtonData.available"
           @click="swipeBy(-1)"
         />
@@ -139,7 +139,7 @@
         size="lg"
         :color="isON ? 'emerald' : 'gray'"
         variant="solid"
-        icon="i-mdi-power"
+        icon="i-mdi:power"
         :disabled="disabled"
         @click="sendSettings({ button: isON ? 'power-off' : 'power-on' })"
       />
@@ -155,7 +155,7 @@
           :disabled="disabled"
           @click="sendSettings({ operation_mode: mode })"
         >
-          <div class="w-5 h-5" :class="[icon, fgColor]" />
+          <UIcon :name="icon" class="w-5 h-5" :class="fgColor" />
           <div v-text="label" />
         </UButton>
       </template>

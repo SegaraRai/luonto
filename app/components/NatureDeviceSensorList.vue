@@ -5,10 +5,11 @@
   >
     <template v-for="item in items" :key="item.label">
       <div class="flex items-center gap-1">
-        <div
+        <UIcon
           role="img"
+          :name="item.icon"
           class="flex-none w-[1.25em] h-[1.25em]"
-          :class="[item.color, item.icon, !item.available && 'opacity-50']"
+          :class="[item.color, !item.available && 'opacity-50']"
           :aria-label="item.label"
         />
         <template v-if="item.available">

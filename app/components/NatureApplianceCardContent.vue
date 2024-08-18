@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-row items-center gap-4">
     <div class="flex-1 flex flex-col items-center gap-4 overflow-hidden">
-      <div
+      <UIcon
+        :name="natureIconToClass(appliance.image)"
         class="w-24 h-24 text-gray-800 dark:text-gray-200"
-        :class="natureIconToClass(appliance.image)"
       />
       <div class="max-w-full truncate" v-text="appliance.nickname" />
     </div>
@@ -23,11 +23,11 @@
         class="flex-none text-sm font-bold flex items-center gap-1"
         :class="status.settings.class"
       >
-        <span
+        <UIcon
           v-if="status.settings.icon && status.settings.iconLabel"
           role="img"
           class="flex-none w-4 h-4"
-          :class="status.settings.icon"
+          :name="status.settings.icon"
           :aria-label="status.settings.iconLabel"
         />
         <span

@@ -35,16 +35,16 @@
               to="https://home.nature.global/"
               target="_blank"
             >
-              <UIcon class="text-lg" name="i-mdi-key-chain" />
+              <UIcon class="text-lg" name="i-mdi:key-chain" />
               アクセストークンの発行
-              <UIcon class="text-gray-400 -mt-0.5" name="i-mdi-external-link" />
+              <UIcon class="text-gray-400 -mt-0.5" name="i-mdi:external-link" />
             </ULink>
             <ULink
               class="inline-flex items-center gap-1 text-sky-400 rounded"
               :class="STYLE_FOCUS_VISIBLE_RING"
               to="/about"
             >
-              <UIcon class="text-lg" name="i-mdi-help-circle-outline" />
+              <UIcon class="text-lg" name="i-mdi:help-circle-outline" />
               このアプリについて
             </ULink>
           </div>

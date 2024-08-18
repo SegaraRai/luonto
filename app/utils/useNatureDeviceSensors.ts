@@ -55,7 +55,7 @@ export function getNatureDeviceSensors(
   return [
     {
       color: "text-orange-400",
-      icon: "i-mingcute-high-temperature-line",
+      icon: "i-mingcute:high-temperature-line",
       label: "室温",
       // I think device's unit is always Celsius
       unit: "\u00BAC",
@@ -67,7 +67,7 @@ export function getNatureDeviceSensors(
     },
     {
       color: "text-blue-400",
-      icon: "i-mingcute-drop-line",
+      icon: "i-mingcute:drop-line",
       label: "湿度",
       unit: "%",
       data: events.hu && {
@@ -78,7 +78,7 @@ export function getNatureDeviceSensors(
     },
     {
       color: "text-yellow-400",
-      icon: "i-mingcute-light-line",
+      icon: "i-mingcute:light-line",
       label: "明るさ",
       unit: "lx",
       data: events.il && {

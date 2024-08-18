@@ -126,7 +126,7 @@
         to="/"
         aria-label="ホーム"
       >
-        <UIcon name="i-mdi-home" />
+        <UIcon name="i-mdi:home" />
       </ULink>
       <ULink
         class="inline-block rounded"
@@ -135,7 +135,7 @@
         target="_blank"
         aria-label="GitHub リポジトリ"
       >
-        <UIcon name="i-mdi-github" />
+        <UIcon name="i-mdi:github" />
       </ULink>
     </div>
   </div>

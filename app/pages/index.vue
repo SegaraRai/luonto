@@ -34,7 +34,7 @@
             class="rounded-full"
             :color="bulkPowerMode ? 'primary' : 'emerald'"
             variant="ghost"
-            :icon="bulkPowerMode ? 'i-mdi-check' : 'i-mdi-power'"
+            :icon="bulkPowerMode ? 'i-mdi:check' : 'i-mdi:power'"
             size="sm"
             @click="
               () => {
