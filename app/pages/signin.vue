@@ -96,7 +96,7 @@ const submit = async (event: FormSubmitEvent<Schema>): Promise<void> => {
       callbackUrl: "/",
       redirect: true,
     });
-  } catch (error) {
+  } catch {
     form.value.setErrors([
       {
         path: "nature_access_token",
