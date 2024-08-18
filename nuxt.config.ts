@@ -86,6 +86,7 @@ export default defineNuxtConfig({
     ],
   },
   icon: {
+    serverBundle: "local",
     customCollections: [
       {
         prefix: "luonto",
