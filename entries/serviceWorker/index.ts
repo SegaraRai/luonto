@@ -13,6 +13,7 @@ import { NetworkFirst } from "workbox-strategies";
 import { anonymizeData } from "~~/server/utils/anonymizeDetailCache";
 import { extendHeaders } from "~~/server/utils/swExtendHeaders";
 import { handleEvent } from "./nitro";
+import { createErrorResponse } from "./utils";
 import {
   tweakPrecacheStrategyToUseAssetArchive,
   type AssetManifestEntry,
@@ -31,37 +32,6 @@ declare global {
 
 declare const self: globalThis.ServiceWorkerGlobalScope;
 
-// utils
-function createErrorResponse(
-  error: unknown,
-  request: Request,
-  on: string
-): Response {
-  return new Response(
-    `Failed to process request for ${request.method} ${request.url} (${
-      request.mode
-    }) via ${on}:
-
-${error}
-
-${error instanceof Error ? error.stack : ""}
-`,
-    {
-      status: 500,
-      statusText: "Service Worker Error",
-      headers: {
-        "cache-control": "no-store",
-        "content-type": "text/plain; charset=utf-8",
-      },
-    }
-  );
-}
-
-// workbox tweak
-
-// nitro
-
-// start
 async function start(): Promise<void> {
   // workbox
   const precacheController = new PrecacheController();
