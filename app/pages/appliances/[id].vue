@@ -47,7 +47,7 @@
       />
     </div>
   </div>
-  <PageContentError v-else-if="error" :error="error" />
+  <ErrorContent v-else-if="error" :error="error" @handle-error="refresh" />
   <PageContentLoading v-else />
 </template>
 
@@ -59,10 +59,11 @@ definePageMeta({ layout: "app", middleware: "auth" });
 const route = useRoute();
 const handleSignalSendPromise = useHandleSignalSendPromise();
 const { forceRefreshTargets, onRequest } = useFetchCacheControlHelper();
+const { onResponseError } = useFetchSigninRedirectHelper();
 
 const { data, error, refresh } = await useFetch(
   `/api/bff/appliances/${route.params.id}`,
-  { onRequest }
+  { onRequest, onResponseError }
 );
 if (error.value) {
   throw error.value;

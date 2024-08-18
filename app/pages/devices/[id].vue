@@ -40,10 +40,11 @@ definePageMeta({ layout: "app", middleware: "auth" });
 
 const route = useRoute();
 const { onRequest } = useFetchCacheControlHelper();
+const { onResponseError } = useFetchSigninRedirectHelper();
 
 const { data, error, refresh } = await useFetch(
   `/api/bff/devices/${route.params.id}`,
-  { onRequest }
+  { onRequest, onResponseError }
 );
 if (error.value) {
   throw error.value;

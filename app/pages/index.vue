@@ -104,6 +104,7 @@ definePageMeta({ layout: "app", middleware: "auth" });
 
 const handleSignalSendPromise = useHandleSignalSendPromise();
 const { forceRefreshTargets, onRequest } = useFetchCacheControlHelper();
+const { onResponseError } = useFetchSigninRedirectHelper();
 
 useHead({
   title: "ホーム",
@@ -117,7 +118,10 @@ useHead({
   },
 });
 
-const { data, error, refresh } = await useFetch("/api/bff/home", { onRequest });
+const { data, error, refresh } = await useFetch("/api/bff/home", {
+  onRequest,
+  onResponseError,
+});
 if (error.value) {
   throw error.value;
 }
