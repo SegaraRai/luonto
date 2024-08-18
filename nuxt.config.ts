@@ -1,7 +1,9 @@
+import fg from "fast-glob";
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { env } from "node:process";
 import { fileURLToPath } from "node:url";
+import type { NuxtConfig } from "nuxt/schema";
 import { createNitroSWPreset } from "./nitroSWPreset";
 
 function fromProjectDir(path: string): string {
@@ -25,6 +27,26 @@ function getAppVersion(): string {
   return `v${pkgVersion} (${commitHash})`;
 }
 
+function getUsedIcons(ignoreCollections: string[]): string[] {
+  const iconSet = new Set<string>();
+  const files = fg.sync("app/**/*.{ts,vue}", { absolute: true });
+  for (const file of files) {
+    const content = readFileSync(file, "utf-8");
+    const matches = content.matchAll(/\bi-([a-z\d-]+:[a-z\d-]+)/g);
+    for (const match of matches) {
+      const name = match[1]!;
+      const collection = name.split(":")[0]!;
+      if (ignoreCollections.includes(collection)) {
+        continue;
+      }
+
+      iconSet.add(name);
+    }
+  }
+
+  return Array.from(iconSet).sort();
+}
+
 const nitro =
   env.NODE_ENV === "development" || env.NODE_ENV === "test"
     ? {}
@@ -38,6 +60,19 @@ const nitro =
         prerender: {
           autoSubfolderIndex: false,
           routes: ["/about", "/signin", "/loading"],
+        },
+      };
+
+const iconBundleOptions: NuxtConfig["icon"] =
+  env.NODE_ENV === "development" || env.NODE_ENV === "test"
+    ? {
+        serverBundle: "local",
+      }
+    : {
+        serverBundle: false,
+        clientBundle: {
+          includeCustomCollections: true,
+          icons: getUsedIcons(["luonto"]),
         },
       };
 
@@ -86,12 +121,13 @@ export default defineNuxtConfig({
     ],
   },
   icon: {
-    serverBundle: "local",
+    provider: "server",
     customCollections: [
       {
         prefix: "luonto",
         dir: "icons/build/luonto",
       },
     ],
+    ...iconBundleOptions,
   },
 });
