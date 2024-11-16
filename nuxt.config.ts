@@ -89,6 +89,7 @@ export default defineNuxtConfig({
     "@hebilicious/authjs-nuxt",
     "@nuxt/ui",
     "@vueuse/nuxt",
+    "nuxt-time",
   ],
   nitro,
   authJs: {
@@ -118,6 +119,8 @@ export default defineNuxtConfig({
       "sky",
       // for AC power button and bulk power mode toggle button
       "emerald",
+      // for AC buttons: blue, sky, orange, gray
+      "blue",
     ],
   },
   icon: {

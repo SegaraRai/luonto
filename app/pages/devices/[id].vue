@@ -13,12 +13,39 @@
         :items="sensorItems"
       />
     </div>
-    <dl id="details" class="grid grid-cols-2 gap-4">
-      <template v-for="item in detailItems" :key="item.label">
-        <dt class="text-right text-gray-500" v-text="item.label" />
-        <dd v-text="item.value" />
+    <div class="flex flex-col gap-4 items-center">
+      <template v-if="hasSensitiveItem">
+        <UButton
+          size="sm"
+          square
+          color="gray"
+          variant="soft"
+          :icon="revealAllItems ? 'i-mdi:eye-off' : 'i-mdi:eye'"
+          :label="
+            revealAllItems ? '一部の項目を隠す' : 'マスクされた項目を表示する'
+          "
+          @click="revealAllItems = !revealAllItems"
+        />
       </template>
-    </dl>
+      <dl id="details" class="grid grid-cols-2 gap-4">
+        <template v-for="item in detailItems" :key="item.label">
+          <dt class="text-right text-gray-500" v-text="item.label" />
+          <template v-if="revealAllItems || item.sensitivity === 'low'">
+            <template v-if="item.type === 'datetime'">
+              <dd>
+                <NuxtTime :datetime="item.value" date-style="medium" time-style="medium" />
+              </dd>
+            </template>
+            <template v-else>
+              <dd v-text="item.value" />
+            </template>
+          </template>
+          <template v-else>
+            <dd class="before:content-['********']" aria-label="Masked." />
+          </template>
+        </template>
+      </dl>
+    </div>
     <template v-if="data?.appliances.length">
       <UDivider />
       <div
@@ -65,6 +92,11 @@ useHead({
 const device = computed(() => data.value?.device);
 const sensorItems = useNatureDeviceSensors(device);
 const detailItems = useNatureDeviceDetails(device);
+
+const revealAllItems = ref(false);
+const hasSensitiveItem = computed(() =>
+  detailItems.value.some((item) => item.sensitivity === "high")
+);
 
 useRefreshCaller(refresh, {
   refreshInterval: REFRESH_INTERVAL_DEVICE_PAGE,
