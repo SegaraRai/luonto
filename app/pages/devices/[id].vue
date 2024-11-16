@@ -33,7 +33,11 @@
           <template v-if="revealAllItems || item.sensitivity === 'low'">
             <template v-if="item.type === 'datetime'">
               <dd>
-                <NuxtTime :datetime="item.value" date-style="medium" time-style="medium" />
+                <NuxtTime
+                  :datetime="item.value"
+                  date-style="medium"
+                  time-style="medium"
+                />
               </dd>
             </template>
             <template v-else>
