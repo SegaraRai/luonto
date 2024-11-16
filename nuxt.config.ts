@@ -4,7 +4,6 @@ import { readFileSync } from "node:fs";
 import { env } from "node:process";
 import { fileURLToPath } from "node:url";
 import type { NuxtConfig } from "nuxt/schema";
-import { createNitroSWPreset } from "./nitroSWPreset";
 
 function fromProjectDir(path: string): string {
   return fileURLToPath(new URL(path, import.meta.url));
@@ -51,12 +50,11 @@ const nitro =
   env.NODE_ENV === "development" || env.NODE_ENV === "test"
     ? {}
     : {
-        ...createNitroSWPreset({
-          prerenderEntry: fromProjectDir("entries/prerender/index.ts"),
-          swEntry: fromProjectDir("entries/serviceWorker/index.ts"),
+        preset: "./preset",
+        swsr: {
           fallbackBase: "loading.html",
           fallbackFiles: ["index.html", "200.html", "404.html"],
-        }),
+        },
         prerender: {
           autoSubfolderIndex: false,
           routes: ["/about", "/signin", "/loading"],
@@ -78,7 +76,7 @@ const iconBundleOptions: NuxtConfig["icon"] =
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: "2024-07-16",
+  compatibilityDate: "2024-11-11",
   future: {
     compatibilityVersion: 4,
   },

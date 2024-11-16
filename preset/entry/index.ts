@@ -1,8 +1,8 @@
 /// <reference lib="webworker" />
 
-import "#internal/nitro/virtual/polyfill";
+import "#nitro-internal-pollyfills";
 
-import { isPublicAssetURL } from "#internal/nitro/virtual/public-assets";
+import { isPublicAssetURL } from "#nitro-internal-virtual/public-assets";
 import {
   PrecacheController,
   PrecacheRoute,

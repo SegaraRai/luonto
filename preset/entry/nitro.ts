@@ -1,8 +1,10 @@
-import { nitroApp } from "#internal/nitro/app";
+import { useNitroApp } from "nitropack/runtime";
 import {
   createCookieForRequest,
   storeCookiesFromResponse,
 } from "~~/server/utils/swCookieStorage";
+
+const nitroApp = /* @__PURE__ */ useNitroApp();
 
 export async function handleEvent(
   url: URL,

@@ -3,10 +3,11 @@ import { transformSync } from "esbuild";
 import fg from "fast-glob";
 import { type Text, Window } from "happy-dom";
 import { contentType } from "mime-types";
-import type { NitroConfig } from "nitropack";
+import type { NitroPreset } from "nitropack";
 import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { joinURL } from "ufo";
 import type { GetManifestOptions } from "workbox-build";
 
@@ -301,270 +302,242 @@ async function buildAssetArchive({
   return { assetManifestEntries };
 }
 
-const prerenderingFlag = new WeakMap<object, boolean>();
-
-export interface SWPresetConfig {
-  readonly prerenderEntry: string;
-  readonly swEntry: string;
-  readonly fallbackBase: string;
-  readonly fallbackFiles: readonly string[];
-}
-
-export function createNitroSWPreset(config: SWPresetConfig): NitroConfig {
-  return {
-    preset: "base-worker",
-    entry: config.swEntry,
-    commands: {
-      preview: "npx serve ./public",
-    },
-    output: {
-      serverDir: "{{ output.dir }}/public/server",
-    },
-    routeRules: {
-      "/**": {
-        headers: {
-          "content-security-policy": CSP_HEADER_PLACEHOLDER,
-        },
+export default <NitroPreset>{
+  extends: "base-worker",
+  entry: fileURLToPath(new URL("entry/index.ts", import.meta.url)),
+  commands: {
+    preview: "pnpm serve .output/public",
+  },
+  output: {
+    serverDir: "{{ output.dir }}/public/server",
+  },
+  routeRules: {
+    "/**": {
+      headers: {
+        "content-security-policy": CSP_HEADER_PLACEHOLDER,
       },
     },
-    hooks: {
-      async "rollup:before"(nitro, rollupConfig) {
-        // rollupConfig.output.format: "esm" if prerendering, "iife" if building
-        const isPrerendering = rollupConfig.output.format === "esm";
+  },
+  hooks: {
+    async "prerender:generate"(route, nitro) {
+      if (!route.contents) {
+        return;
+      }
 
-        prerenderingFlag.set(nitro, isPrerendering);
-
-        if (isPrerendering) {
-          rollupConfig.input = config.prerenderEntry;
-        } else {
-          // cleanup server directory before building
-          await fsp.rm(nitro.options.output.serverDir, { recursive: true });
-        }
-      },
-      async "prerender:generate"(route, nitro) {
-        if (!route.contents) {
-          return;
-        }
-
-        route.contents = tweakHTML(route.contents, nitro.options.baseURL);
-        await collectHashes(nitro, route.contents);
-      },
-      async compiled(nitro) {
-        if (prerenderingFlag.get(nitro)) {
-          return;
-        }
-
-        // write fallback initializer files
-        const html = createFallbackHTML(
-          await fsp.readFile(
-            path.resolve(nitro.options.output.publicDir, config.fallbackBase),
-            "utf-8"
-          )
-        );
-        await collectHashes(nitro, html);
-
-        for (const filename of config.fallbackFiles) {
-          const filepath = path.resolve(
+      route.contents = tweakHTML(route.contents, nitro.options.baseURL);
+      await collectHashes(nitro, route.contents);
+    },
+    async compiled(nitro) {
+      // write fallback initializer files
+      const html = createFallbackHTML(
+        await fsp.readFile(
+          path.resolve(
             nitro.options.output.publicDir,
-            filename
-          );
-          if (!fs.existsSync(filepath)) {
-            await fsp.writeFile(filepath, html, "utf-8");
-          }
-        }
-
-        // minify files
-        for (const file of (
-          await fg("**", {
-            cwd: nitro.options.output.publicDir,
-          })
-        ).sort()) {
-          if (!/\.webmanifest$/.test(file)) {
-            continue;
-          }
-
-          const filepath = path.resolve(nitro.options.output.publicDir, file);
-          if (!fs.existsSync(filepath)) {
-            continue;
-          }
-
-          let content = await fsp.readFile(filepath, "utf-8");
-          if (file.endsWith(".webmanifest")) {
-            content = JSON.stringify({
-              ...JSON.parse(content),
-              $schema: undefined,
-            });
-          }
-          await fsp.writeFile(filepath, content, "utf-8");
-        }
-
-        // workbox
-        const workbox = await import("workbox-build");
-        const serverSrc = path.resolve(
-          nitro.options.output.publicDir,
-          "server/index.mjs"
-        );
-        const serverDest = path.resolve(
-          nitro.options.output.publicDir,
-          `server/index-injected.mjs`
-        );
-        const workboxOptionsBase: GetManifestOptions = {
-          globDirectory: nitro.options.output.publicDir,
-          globPatterns: [
-            "**/*.{js,css}",
-            "**/_payload.json",
-            "_nuxt/**/*",
-            // PWA resources
-            "favicon.svg", // though favicon.ico exists, it will not be used on modern browsers that support PWA
-            "*.webmanifest",
-          ],
-          globIgnores: ["assets.*", "server.*.js", "sw.js"],
-          dontCacheBustURLsMatching:
-            /\.[\da-f]{8}\.(?:bin|css|js)|[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}\.json$/,
-        };
-        await workbox.injectManifest({
-          ...workboxOptionsBase,
-          swSrc: serverSrc,
-          swDest: serverDest,
-        });
-
-        // create archive
-        const { assetManifestEntries } = await buildAssetArchive({
-          swFile: serverDest,
-          getAssetArchiveFilename: async (
-            content: Uint8Array
-          ): Promise<string> => {
-            const hash = Buffer.from(
-              await crypto.subtle.digest("SHA-256", content)
-            )
-              .toString("hex")
-              .slice(0, 8);
-            return `assets.${hash}.bin`;
-          },
-          getManifestOptions: workboxOptionsBase,
-          getCacheControl: (filename: string): string =>
-            filename.startsWith("_nuxt/") &&
-            filename !== "_nuxt/builds/latest.json"
-              ? "public, immutable, max-age=31536000"
-              : "public, max-age=30",
-          getContentType: (filename: string): string =>
-            contentType(path.extname(filename)) || "application/octet-stream",
-          shouldIncludeAssetInArchive: (
-            filename: string,
-            content: Uint8Array
-          ): boolean => {
-            if (filename.endsWith(".map") || content.length >= 128 * 1024) {
-              return false;
-            }
-
-            const textContent = Buffer.from(content).toString("binary");
-            if (
-              textContent.includes(CSP_HEADER_PLACEHOLDER) ||
-              textContent.includes(CSP_META_PLACEHOLDER)
-            ) {
-              console.warn("CSP placeholder found in asset", filename);
-              return false;
-            }
-
-            return true;
-          },
-        });
-        console.log(
-          `${assetManifestEntries.length} assets in archive:`,
-          assetManifestEntries.map(([filename]) => filename)
-        );
-
-        const serverContent = Buffer.from(
-          minifyJS(await fsp.readFile(serverDest, "utf-8")),
+            nitro.options.swsr.fallbackBase
+          ),
           "utf-8"
-        );
-
-        const serverHash = Buffer.from(
-          await crypto.subtle.digest("SHA-256", serverContent)
         )
-          .toString("hex")
-          .slice(0, 8);
-        const serverBuildFilename = `server.${serverHash}.js`;
+      );
+      await collectHashes(nitro, html);
 
-        // write server file
-        await fsp.writeFile(
-          path.resolve(nitro.options.output.publicDir, serverBuildFilename),
-          serverContent
+      for (const filename of nitro.options.swsr.fallbackFiles) {
+        const filepath = path.resolve(nitro.options.output.publicDir, filename);
+        if (!fs.existsSync(filepath)) {
+          await fsp.writeFile(filepath, html, "utf-8");
+        }
+      }
+
+      // minify files
+      for (const file of (
+        await fg("**", {
+          cwd: nitro.options.output.publicDir,
+        })
+      ).sort()) {
+        if (!file.endsWith(".webmanifest")) {
+          continue;
+        }
+
+        const filepath = path.resolve(nitro.options.output.publicDir, file);
+        if (!fs.existsSync(filepath)) {
+          continue;
+        }
+
+        let content = await fsp.readFile(filepath, "utf-8");
+        if (file.endsWith(".webmanifest")) {
+          content = JSON.stringify({
+            ...JSON.parse(content),
+            $schema: undefined,
+          });
+        }
+        await fsp.writeFile(filepath, content, "utf-8");
+      }
+
+      // workbox
+      const workbox = await import("workbox-build");
+      const serverSrc = path.resolve(
+        nitro.options.output.publicDir,
+        "server/index.mjs"
+      );
+      const serverDest = path.resolve(
+        nitro.options.output.publicDir,
+        `server/index-injected.mjs`
+      );
+      const workboxOptionsBase: GetManifestOptions = {
+        globDirectory: nitro.options.output.publicDir,
+        globPatterns: [
+          "**/*.{js,css}",
+          "**/_payload.json",
+          "_nuxt/**/*",
+          // PWA resources
+          "favicon.svg", // though favicon.ico exists, it will not be used on modern browsers that support PWA
+          "*.webmanifest",
+        ],
+        globIgnores: ["assets.*", "server.*.js", "sw.js"],
+        dontCacheBustURLsMatching:
+          /\.[\da-f]{8}\.(?:bin|css|js)|[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}\.json$/,
+      };
+      await workbox.injectManifest({
+        ...workboxOptionsBase,
+        swSrc: serverSrc,
+        swDest: serverDest,
+      });
+
+      // create archive
+      const { assetManifestEntries } = await buildAssetArchive({
+        swFile: serverDest,
+        getAssetArchiveFilename: async (
+          content: Uint8Array
+        ): Promise<string> => {
+          const hash = Buffer.from(
+            await crypto.subtle.digest("SHA-256", content)
+          )
+            .toString("hex")
+            .slice(0, 8);
+          return `assets.${hash}.bin`;
+        },
+        getManifestOptions: workboxOptionsBase,
+        getCacheControl: (filename: string): string =>
+          filename.startsWith("_nuxt/") &&
+          filename !== "_nuxt/builds/latest.json"
+            ? "public, immutable, max-age=31536000"
+            : "public, max-age=30",
+        getContentType: (filename: string): string =>
+          contentType(path.extname(filename)) || "application/octet-stream",
+        shouldIncludeAssetInArchive: (
+          filename: string,
+          content: Uint8Array
+        ): boolean => {
+          if (filename.endsWith(".map") || content.length >= 128 * 1024) {
+            return false;
+          }
+
+          const textContent = Buffer.from(content).toString("binary");
+          if (
+            textContent.includes(CSP_HEADER_PLACEHOLDER) ||
+            textContent.includes(CSP_META_PLACEHOLDER)
+          ) {
+            console.warn("CSP placeholder found in asset", filename);
+            return false;
+          }
+
+          return true;
+        },
+      });
+      console.log(
+        `${assetManifestEntries.length} assets in archive:`,
+        assetManifestEntries.map(([filename]) => filename)
+      );
+
+      const serverContent = Buffer.from(
+        minifyJS(await fsp.readFile(serverDest, "utf-8")),
+        "utf-8"
+      );
+
+      const serverHash = Buffer.from(
+        await crypto.subtle.digest("SHA-256", serverContent)
+      )
+        .toString("hex")
+        .slice(0, 8);
+      const serverBuildFilename = `server.${serverHash}.js`;
+
+      // write server file
+      await fsp.writeFile(
+        path.resolve(nitro.options.output.publicDir, serverBuildFilename),
+        serverContent
+      );
+
+      // cleanup server directory
+      await fsp.rm(nitro.options.output.serverDir, { recursive: true });
+
+      // write sw.js file
+      await fsp.writeFile(
+        path.resolve(nitro.options.output.publicDir, "sw.js"),
+        `self.importScripts("${joinURL(
+          nitro.options.baseURL,
+          serverBuildFilename
+        )}");`,
+        "utf-8"
+      );
+
+      // replace __SERVER_JS__ placeholder
+      for (const filename of [
+        ...(nitro._prerenderedRoutes ?? [])
+          .map((route) => route.fileName)
+          .filter(
+            (fileName): fileName is string => !!fileName?.endsWith(".html")
+          ),
+        ...nitro.options.swsr.fallbackFiles,
+      ]) {
+        const filepath = path.resolve(
+          nitro.options.output.publicDir,
+          filename.replace(/^\//, "")
         );
+        if (!fs.existsSync(filepath)) {
+          continue;
+        }
 
-        // cleanup server directory
-        await fsp.rm(nitro.options.output.serverDir, { recursive: true });
-
-        // write sw.js file
+        const html = await fsp.readFile(filepath, "utf-8");
         await fsp.writeFile(
-          path.resolve(nitro.options.output.publicDir, "sw.js"),
-          `self.importScripts("${joinURL(
-            nitro.options.baseURL,
-            serverBuildFilename
-          )}");`,
+          filepath,
+          html.replaceAll(
+            SERVER_JS_PLACEHOLDER,
+            joinURL(nitro.options.baseURL, serverBuildFilename)
+          ),
           "utf-8"
         );
+      }
 
-        // replace __SERVER_JS__ placeholder
-        for (const filename of [
-          ...(nitro._prerenderedRoutes ?? [])
-            .map((route) => route.fileName)
-            .filter(
-              (fileName): fileName is string => !!fileName?.endsWith(".html")
-            ),
-          ...config.fallbackFiles,
-        ]) {
-          const filepath = path.resolve(
-            nitro.options.output.publicDir,
-            filename.replace(/^\//, "")
-          );
-          if (!fs.existsSync(filepath)) {
-            continue;
-          }
+      // post-process files (CSP)
+      const cspMeta = createCSPDirectives(nitro, "meta");
+      const cspHeader = createCSPDirectives(nitro, "header");
+      console.log("CSP (meta):", cspMeta);
+      console.log("CSP (header):", cspHeader);
 
-          const html = await fsp.readFile(filepath, "utf-8");
-          await fsp.writeFile(
-            filepath,
-            html.replaceAll(
-              SERVER_JS_PLACEHOLDER,
-              joinURL(nitro.options.baseURL, serverBuildFilename)
-            ),
-            "utf-8"
-          );
+      for (const file of (
+        await fg("**", {
+          cwd: nitro.options.output.publicDir,
+        })
+      ).sort()) {
+        if (/\.gif$|\.jpe?g$|\.png$|\.web[pm]$|\.bin$|\.dat$/.test(file)) {
+          continue;
         }
 
-        // post-process files (CSP)
-        const cspMeta = createCSPDirectives(nitro, "meta");
-        const cspHeader = createCSPDirectives(nitro, "header");
-        console.log("CSP (meta):", cspMeta);
-        console.log("CSP (header):", cspHeader);
-
-        for (const file of (
-          await fg("**", {
-            cwd: nitro.options.output.publicDir,
-          })
-        ).sort()) {
-          if (/\.gif$|\.jpe?g$|\.png$|\.web[pm]$|\.bin$|\.dat$/.test(file)) {
-            continue;
-          }
-
-          const filepath = path.resolve(nitro.options.output.publicDir, file);
-          if (!fs.existsSync(filepath)) {
-            continue;
-          }
-
-          let content = await fsp.readFile(filepath, "utf-8");
-          content = content
-            .replaceAll(`=${CSP_META_PLACEHOLDER}`, `="${cspMeta}"`) // minified attribute values
-            .replaceAll(`"${CSP_META_PLACEHOLDER}"`, `"${cspMeta}"`)
-            .replaceAll(`'${CSP_META_PLACEHOLDER}'`, `"${cspMeta}"`)
-            .replaceAll(CSP_META_PLACEHOLDER, cspMeta)
-            .replaceAll(`"${CSP_HEADER_PLACEHOLDER}"`, `"${cspHeader}"`)
-            .replaceAll(`'${CSP_HEADER_PLACEHOLDER}'`, `"${cspHeader}"`)
-            .replaceAll(CSP_HEADER_PLACEHOLDER, cspHeader);
-          await fsp.writeFile(filepath, content, "utf-8");
+        const filepath = path.resolve(nitro.options.output.publicDir, file);
+        if (!fs.existsSync(filepath)) {
+          continue;
         }
-      },
+
+        let content = await fsp.readFile(filepath, "utf-8");
+        content = content
+          .replaceAll(`=${CSP_META_PLACEHOLDER}`, `="${cspMeta}"`) // minified attribute values
+          .replaceAll(`"${CSP_META_PLACEHOLDER}"`, `"${cspMeta}"`)
+          .replaceAll(`'${CSP_META_PLACEHOLDER}'`, `"${cspMeta}"`)
+          .replaceAll(CSP_META_PLACEHOLDER, cspMeta)
+          .replaceAll(`"${CSP_HEADER_PLACEHOLDER}"`, `"${cspHeader}"`)
+          .replaceAll(`'${CSP_HEADER_PLACEHOLDER}'`, `"${cspHeader}"`)
+          .replaceAll(CSP_HEADER_PLACEHOLDER, cspHeader);
+        await fsp.writeFile(filepath, content, "utf-8");
+      }
     },
-  };
-}
+  },
+};
