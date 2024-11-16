@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { env } from "node:process";
 import { fileURLToPath } from "node:url";
 import type { NuxtConfig } from "nuxt/schema";
+import * as nuxtUIConfig from "./node_modules/@nuxt/ui/dist/runtime/ui.config";
 
 function fromProjectDir(path: string): string {
   return fileURLToPath(new URL(path, import.meta.url));
@@ -41,6 +42,12 @@ function getUsedIcons(ignoreCollections: string[]): string[] {
 
       iconSet.add(name);
     }
+  }
+
+  const matches = JSON.stringify(nuxtUIConfig).matchAll(/"i-([a-z\d-]+)"/g);
+  for (const match of matches) {
+    const name = match[1]!.replace(/[-:]/, ":");
+    iconSet.add(name);
   }
 
   return Array.from(iconSet).sort();
