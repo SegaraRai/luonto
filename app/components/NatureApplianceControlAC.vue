@@ -107,28 +107,31 @@
       <!-- Up and Down buttons -->
       <div
         class="w-12 flex flex-col items-center justify-between opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity"
-        :class="!supportsTemperature && 'invisible'"
       >
-        <UButton
-          :aria-label="sliderUpButtonData.label"
-          class="flex-none rounded-full"
-          size="sm"
-          :color="isON ? 'primary' : 'gray'"
-          variant="ghost"
-          icon="i-mdi:chevron-up"
-          :disabled="disabled || !sliderUpButtonData.available"
-          @click="swipeBy(1)"
-        />
-        <UButton
-          :aria-label="sliderDownButtonData.label"
-          class="flex-none rounded-full"
-          size="sm"
-          :color="isON ? 'primary' : 'gray'"
-          variant="ghost"
-          icon="i-mdi:chevron-down"
-          :disabled="disabled || !sliderDownButtonData.available"
-          @click="swipeBy(-1)"
-        />
+        <template
+          v-if="appliance.settings && currentMode && supportsTemperature"
+        >
+          <UButton
+            :aria-label="sliderUpButtonData.label"
+            class="flex-none rounded-full"
+            size="sm"
+            :color="isON ? AC_MODE_CONFIG_MAP[currentMode].buttonColor : 'gray'"
+            variant="ghost"
+            icon="i-mdi:chevron-up"
+            :disabled="disabled || !sliderUpButtonData.available"
+            @click="swipeBy(1)"
+          />
+          <UButton
+            :aria-label="sliderDownButtonData.label"
+            class="flex-none rounded-full"
+            size="sm"
+            :color="isON ? AC_MODE_CONFIG_MAP[currentMode].buttonColor : 'gray'"
+            variant="ghost"
+            icon="i-mdi:chevron-down"
+            :disabled="disabled || !sliderDownButtonData.available"
+            @click="swipeBy(-1)"
+          />
+        </template>
       </div>
     </div>
     <div>
