@@ -1,6 +1,9 @@
+import type { ButtonColor } from "#ui/types";
+
 export interface ACModeConfig {
   readonly mode: NatureApplianceACMode;
   readonly label: string;
+  readonly buttonColor: ButtonColor;
   readonly bgColor: string;
   readonly fgColor: string;
   readonly icon: string;
@@ -37,6 +40,7 @@ export const AC_MODE_CONFIG_LIST: readonly ACModeConfig[] = [
   {
     mode: "auto",
     label: "自動",
+    buttonColor: "gray",
     bgColor: "bg-gray-400/90",
     fgColor: "",
     icon: "i-material-symbols:motion-photos-auto-outline",
@@ -44,6 +48,7 @@ export const AC_MODE_CONFIG_LIST: readonly ACModeConfig[] = [
   {
     mode: "blow",
     label: "送風",
+    buttonColor: "gray",
     bgColor: "bg-gray-400/90",
     fgColor: "text-gray-400",
     icon: "i-mdi:weather-windy",
@@ -51,6 +56,7 @@ export const AC_MODE_CONFIG_LIST: readonly ACModeConfig[] = [
   {
     mode: "cool",
     label: "冷房",
+    buttonColor: "sky",
     bgColor: "bg-sky-400/90",
     fgColor: "text-sky-400",
     icon: "i-mdi:snowflake",
@@ -58,6 +64,7 @@ export const AC_MODE_CONFIG_LIST: readonly ACModeConfig[] = [
   {
     mode: "dry",
     label: "除湿",
+    buttonColor: "blue",
     bgColor: "bg-blue-400/90",
     fgColor: "text-blue-400",
     icon: "i-material-symbols:cool-to-dry",
@@ -65,6 +72,7 @@ export const AC_MODE_CONFIG_LIST: readonly ACModeConfig[] = [
   {
     mode: "warm",
     label: "暖房",
+    buttonColor: "orange",
     bgColor: "bg-orange-400/90",
     fgColor: "text-orange-400",
     icon: "i-mdi:fire",

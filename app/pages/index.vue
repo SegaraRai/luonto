@@ -145,7 +145,7 @@ const onForceRefresh = (
   targets: readonly InvalidateTarget[]
 ): Promise<void> => {
   if (!targets.length) {
-    console.warn("onForceRefresh: targets is empty");
+    console.warn("onForceRefresh: no targets specified");
     return Promise.resolve();
   }
 

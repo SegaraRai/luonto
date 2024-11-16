@@ -161,7 +161,7 @@ export interface NatureDeviceWithEvents extends NatureDevice {
   >;
 }
 
-/** 追加ボタン（ユーザー学習） */
+/** user-defined additional buttons (signals) */
 export interface NatureApplianceSignal {
   readonly id: string;
   readonly name: string;
@@ -276,7 +276,7 @@ export interface NatureApplianceACSettings {
 }
 
 export interface NatureApplianceACModeConfig {
-  /** ascending order (low to high) */
+  /** temperature list is ascending order (low to high) */
   readonly temp: readonly NatureApplianceACTemperature[];
   readonly dir: readonly NatureApplianceACDir[];
   readonly dirh: readonly NatureApplianceACDirH[];

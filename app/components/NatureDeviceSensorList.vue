@@ -16,8 +16,10 @@
           <UTooltip
             class="flex-1 items-center lining-nums tabular-nums"
             :aria-label="item.textForSR"
-            :text="`${item.ago}更新`"
           >
+            <template #text>
+              <NuxtTime :datetime="item.timestamp" relative />
+            </template>
             <span class="flex-1 text-right pl-[0.5em]" v-text="item.value" />
             <span class="flex-none w-[1.3em] text-right" v-text="item.unit" />
           </UTooltip>

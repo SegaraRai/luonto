@@ -1,6 +1,6 @@
 import type { NatureIcon } from "./natureTypes";
 
-const MAP: ReadonlyMap<NatureIcon, string> = new Map([
+const MAP: ReadonlyMap<NatureIcon, string> = /* @__PURE__ */ new Map([
   // appliances
   ["ico_ac_0", "i-ph:hard-drive-light"],
   ["ico_ac_1", "i-ph:hard-drive-light"],

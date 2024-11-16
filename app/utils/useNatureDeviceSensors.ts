@@ -17,7 +17,6 @@ export interface NatureDeviceSensorItemBase {
   readonly textForSR?: string;
   readonly value?: string;
   readonly timestamp?: string;
-  readonly ago?: string;
 }
 
 export interface NatureDeviceSensorItemAvailable
@@ -26,7 +25,6 @@ export interface NatureDeviceSensorItemAvailable
   readonly textForSR: string;
   readonly value: string;
   readonly timestamp: string;
-  readonly ago: string;
 }
 
 export interface NatureDeviceSensorItemNotAvailable
@@ -35,7 +33,6 @@ export interface NatureDeviceSensorItemNotAvailable
   readonly textForSR?: undefined;
   readonly value?: undefined;
   readonly timestamp?: undefined;
-  readonly ago?: undefined;
 }
 
 export type NatureDeviceSensorItem =
@@ -44,7 +41,6 @@ export type NatureDeviceSensorItem =
 
 export function getNatureDeviceSensors(
   device: NatureDevice | NatureDeviceWithEvents | null | undefined,
-  now: Date | number,
   includesNA = false
 ): readonly NatureDeviceSensorItem[] {
   const events = (device as NatureDeviceWithEvents | undefined)?.newest_events;
@@ -102,11 +98,6 @@ export function getNatureDeviceSensors(
         value: data.valueText,
         textForSR: data.textForSR,
         timestamp: data.raw.created_at,
-        ago: formatTimeAgoLocalized(
-          new Date(data.raw.created_at),
-          undefined,
-          now
-        ),
       };
     })
     .filter((v): v is NonNullable<typeof v> => !!v);
@@ -116,12 +107,9 @@ export function useNatureDeviceSensors(
   device: MaybeRefOrGetter<
     NatureDevice | NatureDeviceWithEvents | null | undefined
   >,
-  includesNA: MaybeRefOrGetter<boolean> = false,
-  now: MaybeRefOrGetter<Date | number> = useNow({
-    interval: NOW_UPDATE_INTERVAL_DEVICE_SENSORS,
-  })
+  includesNA: MaybeRefOrGetter<boolean> = false
 ) {
   return computed<readonly NatureDeviceSensorItem[]>(() =>
-    getNatureDeviceSensors(toValue(device), toValue(now), toValue(includesNA))
+    getNatureDeviceSensors(toValue(device), toValue(includesNA))
   );
 }
