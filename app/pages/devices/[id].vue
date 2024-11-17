@@ -2,9 +2,9 @@
   <div v-if="device" class="flex flex-col gap-8 py-4 w-full items-center">
     <div id="overview" class="relative flex flex-row items-start gap-16">
       <div class="flex-none flex flex-col items-center gap-2 overflow-hidden">
-        <div
+        <UIcon
+          :name="getNatureDeviceIcon(device)"
           class="w-32 h-32 text-gray-800 dark:text-gray-200"
-          :class="getNatureDeviceIcon(device)"
         />
         <div class="max-w-full text-2xl line-clamp-2" v-text="device.name" />
       </div>

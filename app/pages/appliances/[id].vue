@@ -19,14 +19,14 @@
           :device="device"
         />
       </div>
-      <div
+      <UIcon
+        :name="natureIconToClass(appliance.image)"
         class="absolute inset-0 m-auto left-auto flex-none w-48 h-48 sm:w-64 sm:h-64 -z-10 transition-colors"
-        :class="[
-          natureIconToClass(appliance.image),
+        :class="
           applianceStatus.indicator?.type === 'ON'
             ? 'text-yellow-300/50 dark:text-yellow-200/50'
-            : 'text-gray-300/50 dark:text-gray-200/50',
-        ]"
+            : 'text-gray-300/50 dark:text-gray-200/50'
+        "
       />
     </div>
     <UDivider />
