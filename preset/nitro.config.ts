@@ -16,8 +16,6 @@ type AssetManifestEntry = [
   [offset: number, size: number, cacheControl: string, contentType: string],
 ];
 
-const CSP_META_PLACEHOLDER = "__CSP_DIRECTIVES_META__";
-const CSP_HEADER_PLACEHOLDER = "__CSP_DIRECTIVES_HEADER__";
 const SERVER_JS_PLACEHOLDER = "__SERVER_JS__";
 
 const minifyJS = (src: string): string =>
@@ -116,81 +114,6 @@ function createFallbackHTML(baseHTML: string): string {
     "<!DOCTYPE html>\n" +
       dom.documentElement.outerHTML.replaceAll('defer=""', "defer")
   );
-}
-
-interface CSPHashes {
-  script: Set<string>;
-  style: Set<string>;
-}
-
-const cspHashesWeakMap = new WeakMap<object, CSPHashes>();
-const collectHashes = async (nitro: object, html: string): Promise<void> => {
-  let hashes = cspHashesWeakMap.get(nitro);
-  if (!hashes) {
-    hashes = {
-      script: new Set(),
-      style: new Set(),
-    };
-    cspHashesWeakMap.set(nitro, hashes);
-  }
-
-  for (const match of html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)) {
-    if (!match[2] || match[1]!.includes("application/json")) {
-      continue;
-    }
-
-    if (
-      match[2].includes(CSP_META_PLACEHOLDER) ||
-      match[2].includes(CSP_HEADER_PLACEHOLDER)
-    ) {
-      throw new Error("CSP_PLACEHOLDER found in inline script");
-    }
-
-    const sha256 = Buffer.from(
-      await crypto.subtle.digest("SHA-256", new TextEncoder().encode(match[2]))
-    ).toString("base64");
-    hashes.script.add(sha256);
-  }
-
-  for (const match of html.matchAll(/<style([^>]*)>([\s\S]*?)<\/style>/g)) {
-    if (!match[2]) {
-      continue;
-    }
-
-    if (
-      match[2].includes(CSP_META_PLACEHOLDER) ||
-      match[2].includes(CSP_HEADER_PLACEHOLDER)
-    ) {
-      throw new Error("CSP_PLACEHOLDER found in inline style");
-    }
-
-    const sha256 = Buffer.from(
-      await crypto.subtle.digest("SHA-256", new TextEncoder().encode(match[2]))
-    ).toString("base64");
-    hashes.style.add(sha256);
-  }
-};
-
-function createCSPDirectives(nitro: object, mode: "header" | "meta"): string {
-  const hashes = cspHashesWeakMap.get(nitro);
-  if (!hashes) {
-    throw new Error("CSP hashes not collected");
-  }
-
-  return [
-    "default-src 'self'",
-    "base-uri 'self'",
-    "block-all-mixed-content",
-    "connect-src 'self' api.nature.global cloudflareinsights.com static.cloudflareinsights.com",
-    "img-src 'self' data:",
-    "object-src 'none'",
-    `script-src 'self' static.cloudflareinsights.com${Array.from(hashes.script)
-      .sort()
-      .map((hash) => ` 'sha256-${hash}'`)
-      .join("")}`,
-    "style-src 'self' 'unsafe-inline'",
-    ...(mode === "header" ? ["frame-ancestors 'none'"] : []),
-  ].join("; ");
 }
 
 function findAndReplace(content: string, regex: RegExp, replacement: string) {
@@ -314,7 +237,8 @@ export default <NitroPreset>{
   routeRules: {
     "/**": {
       headers: {
-        "content-security-policy": CSP_HEADER_PLACEHOLDER,
+        "content-security-policy":
+          "default-src 'self'; base-uri 'self'; block-all-mixed-content; connect-src 'self' api.nature.global cloudflareinsights.com static.cloudflareinsights.com; img-src 'self' data:; object-src 'none'; script-src 'self' static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'",
       },
     },
   },
@@ -325,7 +249,6 @@ export default <NitroPreset>{
       }
 
       route.contents = tweakHTML(route.contents, nitro.options.baseURL);
-      await collectHashes(nitro, route.contents);
     },
     async compiled(nitro) {
       // write fallback initializer files
@@ -338,7 +261,6 @@ export default <NitroPreset>{
           "utf-8"
         )
       );
-      await collectHashes(nitro, html);
 
       for (const filename of nitro.options.swsr.fallbackFiles) {
         const filepath = path.resolve(nitro.options.output.publicDir, filename);
@@ -431,15 +353,6 @@ export default <NitroPreset>{
             return false;
           }
 
-          const textContent = Buffer.from(content).toString("binary");
-          if (
-            textContent.includes(CSP_HEADER_PLACEHOLDER) ||
-            textContent.includes(CSP_META_PLACEHOLDER)
-          ) {
-            console.warn("CSP placeholder found in asset", filename);
-            return false;
-          }
-
           return true;
         },
       });
@@ -505,38 +418,6 @@ export default <NitroPreset>{
           ),
           "utf-8"
         );
-      }
-
-      // post-process files (CSP)
-      const cspMeta = createCSPDirectives(nitro, "meta");
-      const cspHeader = createCSPDirectives(nitro, "header");
-      console.log("CSP (meta):", cspMeta);
-      console.log("CSP (header):", cspHeader);
-
-      for (const file of (
-        await fg("**", {
-          cwd: nitro.options.output.publicDir,
-        })
-      ).sort()) {
-        if (/\.gif$|\.jpe?g$|\.png$|\.web[pm]$|\.bin$|\.dat$/.test(file)) {
-          continue;
-        }
-
-        const filepath = path.resolve(nitro.options.output.publicDir, file);
-        if (!fs.existsSync(filepath)) {
-          continue;
-        }
-
-        let content = await fsp.readFile(filepath, "utf-8");
-        content = content
-          .replaceAll(`=${CSP_META_PLACEHOLDER}`, `="${cspMeta}"`) // minified attribute values
-          .replaceAll(`"${CSP_META_PLACEHOLDER}"`, `"${cspMeta}"`)
-          .replaceAll(`'${CSP_META_PLACEHOLDER}'`, `"${cspMeta}"`)
-          .replaceAll(CSP_META_PLACEHOLDER, cspMeta)
-          .replaceAll(`"${CSP_HEADER_PLACEHOLDER}"`, `"${cspHeader}"`)
-          .replaceAll(`'${CSP_HEADER_PLACEHOLDER}'`, `"${cspHeader}"`)
-          .replaceAll(CSP_HEADER_PLACEHOLDER, cspHeader);
-        await fsp.writeFile(filepath, content, "utf-8");
       }
     },
   },

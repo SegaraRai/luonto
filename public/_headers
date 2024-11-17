@@ -3,7 +3,7 @@ https://:project.pages.dev/*
 
 /*
   Cache-Control: public, max-age=300, stale-while-revalidate=86400, stale-if-error=604800
-  Content-Security-Policy: __CSP_DIRECTIVES_HEADER__
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; block-all-mixed-content; connect-src 'self' api.nature.global cloudflareinsights.com static.cloudflareinsights.com; img-src 'self' data:; object-src 'none'; script-src 'self' static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'
   Permissions-Policy: camera=(), document-domain=(), geolocation=(), interest-cohort=(), microphone=()
   # https://api.nature.global/ is omitted for default Link header, as it may differ by page
   Link: <https://cloudflareinsights.com/>; rel="dns-prefetch", <https://static.cloudflareinsights.com/>; rel="preconnect"; crossorigin="anonymous"

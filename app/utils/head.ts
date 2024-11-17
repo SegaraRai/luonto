@@ -20,7 +20,8 @@ export function getCommonMeta(): Meta[] {
     },
     {
       "http-equiv": "content-security-policy",
-      content: "__CSP_DIRECTIVES_META__",
+      content:
+        "default-src 'self'; base-uri 'self'; block-all-mixed-content; connect-src 'self' api.nature.global cloudflareinsights.com static.cloudflareinsights.com; img-src 'self' data:; object-src 'none'; script-src 'self' static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'",
     },
   ];
 }
