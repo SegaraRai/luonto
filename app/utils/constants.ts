@@ -8,7 +8,7 @@ export const REFRESH_INTERVAL_DEVICE_PAGE = REFRESH_INTERVAL_HOME;
 export const SWIPE_THRESHOLD_DISTANCE_AC_TEMPERATURE = 1;
 
 export const STYLE_CLICKABLE_CARD =
-  "hover:[&:not(:disabled)]:bg-gray-50 dark:hover:[&:not(:disabled)]:bg-gray-800";
+  "[.group:where(:disabled,[aria-disabled=true])_&]:opacity-60 [.group:where(:enabled,:any-link)_&]:hover:bg-gray-50 [.group:where(:enabled,:any-link)_&]:dark:hover:bg-gray-800";
 
 export const STYLE_FOCUS_VISIBLE_RING =
   "focus:outline-none focus-visible:outline-0 focus-visible:ring-2 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400";

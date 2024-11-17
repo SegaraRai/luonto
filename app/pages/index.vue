@@ -58,15 +58,16 @@
         </p>
       </Transition>
       <div
-        v-if="data.appliances.length"
+        v-if="detailedAppliances?.length"
         class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-4"
       >
         <template
           v-for="{
             appliance,
+            supported,
             powerControl,
             powerStatus,
-          } in applianceAndPowerControls"
+          } in detailedAppliances"
           :key="appliance.id"
         >
           <NatureApplianceCardButton
@@ -88,7 +89,11 @@
                 sendPowerControl(appliance.id, powerControl, powerStatus)
             "
           />
-          <NatureApplianceCardLink v-else :appliance="appliance" />
+          <NatureApplianceCardLink
+            v-else
+            :appliance="appliance"
+            :disabled="!supported"
+          />
         </template>
       </div>
       <p v-else>使用可能なコントロールが登録されていません</p>
@@ -128,9 +133,10 @@ if (error.value) {
 
 // bulk power operation
 const bulkPowerMode = ref(false);
-const applianceAndPowerControls = computed(() =>
+const detailedAppliances = computed(() =>
   data.value?.appliances.map((appliance) => ({
     appliance,
+    supported: isNatureApplianceSupportedType(appliance),
     powerStatus: getNatureApplianceIndicatorType(appliance),
     powerControl: getNatureAppliancePowerControl(appliance),
   }))

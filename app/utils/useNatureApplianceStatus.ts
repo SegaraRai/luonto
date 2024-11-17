@@ -18,8 +18,19 @@ export interface NatureApplianceStatusSettings {
 }
 
 export interface NatureApplianceStatus {
+  readonly supported: boolean | null;
   readonly indicator: NatureApplianceStatusIndicator | null;
   readonly settings: NatureApplianceStatusSettings | null;
+}
+
+export function isNatureApplianceSupportedType(
+  appliance: NatureAppliance | null | undefined
+): boolean | null {
+  if (!appliance?.type) {
+    return null;
+  }
+
+  return ["AC", "LIGHT"].includes(appliance.type);
 }
 
 export function getNatureApplianceIndicatorFromIndicatorType(
@@ -90,6 +101,7 @@ export function getNatureApplianceStatus(
   }
 
   return {
+    supported: isNatureApplianceSupportedType(appliance),
     indicator,
     settings,
   };

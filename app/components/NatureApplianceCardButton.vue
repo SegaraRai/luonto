@@ -1,16 +1,16 @@
 <template>
-  <UCard
-    as="button"
-    class="disabled:opacity-60"
-    :class="[STYLE_CLICKABLE_CARD, STYLE_FOCUS_VISIBLE_RING]"
+  <button
+    class="group focus:outline-none focus-visible:outline-0"
     :disabled="disabled"
   >
-    <NatureApplianceCardContent
-      :appliance="appliance"
-      :status="status"
-      :override-indicator-type="overrideIndicatorType"
-    />
-  </UCard>
+    <UCard :class="[STYLE_CLICKABLE_CARD, STYLE_FOCUS_VISIBLE_RING]">
+      <NatureApplianceCardContent
+        :appliance="appliance"
+        :status="status"
+        :override-indicator-type="overrideIndicatorType"
+      />
+    </UCard>
+  </button>
 </template>
 
 <script setup lang="ts">

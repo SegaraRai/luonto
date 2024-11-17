@@ -50,14 +50,20 @@
         </template>
       </dl>
     </div>
-    <template v-if="data?.appliances.length">
+    <template v-if="detailedAppliances?.length">
       <UDivider />
       <div
         id="controls"
         class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-4"
       >
-        <template v-for="appliance in data?.appliances" :key="appliance.id">
-          <NatureApplianceCardLink :appliance="appliance" />
+        <template
+          v-for="{ appliance, supported } in detailedAppliances"
+          :key="appliance.id"
+        >
+          <NatureApplianceCardLink
+            :appliance="appliance"
+            :disabled="!supported"
+          />
         </template>
       </div>
     </template>
@@ -92,6 +98,13 @@ useHead({
     lang: "ja",
   },
 });
+
+const detailedAppliances = computed(() =>
+  data.value?.appliances.map((appliance) => ({
+    appliance,
+    supported: isNatureApplianceSupportedType(appliance),
+  }))
+);
 
 const device = computed(() => data.value?.device);
 const sensorItems = useNatureDeviceSensors(device);
