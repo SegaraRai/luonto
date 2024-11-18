@@ -11,6 +11,16 @@ import { fileURLToPath } from "node:url";
 import { joinURL } from "ufo";
 import type { GetManifestOptions } from "workbox-build";
 
+declare module "nitropack" {
+  interface NitroOptions {
+    swsr: {
+      fallbackBase: string;
+      fallbackFiles: string[];
+    };
+  }
+}
+
+
 type AssetManifestEntry = [
   filepath: string,
   [offset: number, size: number, cacheControl: string, contentType: string],
