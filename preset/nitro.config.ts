@@ -20,7 +20,6 @@ declare module "nitropack" {
   }
 }
 
-
 type AssetManifestEntry = [
   filepath: string,
   [offset: number, size: number, cacheControl: string, contentType: string],
