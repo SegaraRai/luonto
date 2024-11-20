@@ -15,7 +15,7 @@
     "icons": "tsx buildLuontoIcons.mts"
   },
   "devDependencies": {
-    "@auth/core": "^0.37.3",
+    "@auth/core": "^0.37.4",
     "@eslint/js": "9.14.0",
     "@hebilicious/authjs-nuxt": "^0.3.5",
     "@iconify-json/material-symbols": "^1.2.7",
@@ -26,14 +26,14 @@
     "@iconify-json/tdesign": "^1.2.5",
     "@minify-html/node": "^0.15.0",
     "@nuxt/devtools": "latest",
-    "@nuxt/eslint": "^0.7.0",
+    "@nuxt/eslint": "^0.7.1",
     "@nuxt/test-utils": "^3.14.4",
     "@nuxt/ui": "^2.19.2",
     "@types/mime-types": "^2.1.4",
     "@vue/test-utils": "^2.4.6",
     "@vueuse/nuxt": "^11.2.0",
     "defu": "^6.1.4",
-    "eslint": "^9.14.0",
+    "eslint": "^9.15.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-define-config": "^2.1.0",
     "fast-glob": "^3.3.2",
@@ -41,7 +41,7 @@
     "idb-keyval": "^6.2.1",
     "lru-cache": "^11.0.2",
     "mime-types": "^3.0.0",
-    "nuxt": "^3.14.159",
+    "nuxt": "^3.14.1592",
     "nuxt-time": "^1.0.2",
     "prettier": "^3.3.3",
     "prettier-plugin-organize-imports": "^4.1.0",
@@ -60,6 +60,6 @@
     "workbox-precaching": "^7.3.0",
     "workbox-routing": "^7.3.0",
     "workbox-strategies": "^7.3.0",
-    "wrangler": "^3.87.0"
+    "wrangler": "^3.88.0"
   }
 }
